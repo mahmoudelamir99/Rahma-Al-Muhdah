@@ -1,0 +1,60 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userId() {
+      return request.auth.uid;
+    }
+
+    function isAdmin() {
+      return signedIn() && (
+        request.auth.token.admin == true ||
+        request.auth.token.superAdmin == true ||
+        request.auth.token.role == "admin" ||
+        request.auth.token.role == "super_admin" ||
+        request.auth.token.role == "super-admin" ||
+        request.auth.token.adminRole == "super-admin"
+      );
+    }
+
+    function isCompanyOwner(companyId) {
+      return signedIn() && userId() == companyId;
+    }
+
+    function allowedImageUpload() {
+      return request.resource.size < 2 * 1024 * 1024 &&
+        request.resource.contentType.matches("image/.*");
+    }
+
+    function allowedApplicationUpload() {
+      return request.resource.size < 10 * 1024 * 1024 &&
+        request.resource.contentType.matches(
+          "image/.*|application/pdf|application/msword|application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        );
+    }
+
+    function applicationDoc(requestId) {
+      return firestore.get(/databases/(default)/documents/applications/$(requestId)).data;
+    }
+
+    match /company-assets/{companyId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if (isAdmin() || isCompanyOwner(companyId)) && allowedImageUpload();
+      allow delete: if isAdmin() || isCompanyOwner(companyId);
+    }
+
+    match /application-files/{requestId}/{allPaths=**} {
+      allow read: if isAdmin() || (
+        signedIn() &&
+        firestore.exists(/databases/(default)/documents/applications/$(requestId)) &&
+        applicationDoc(requestId).companyId == userId()
+      );
+      allow write: if requestId.matches('^[0-9]{10,}$') && allowedApplicationUpload();
+      allow delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,265 @@
+{
+  "hosting": [
+    {
+      "target": "public",
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        ".firebaserc",
+        "**/.*",
+        "**/node_modules/**",
+        "scripts/**",
+        ".codex-temp/**",
+        ".firebase/**",
+        ".vscode/**",
+        "__pycache__/**",
+        "server-logs/**",
+        "tmp-runtime-logs/**",
+        "test-artifacts/**",
+        "**/*.mjs",
+        "**/*.py",
+        "**/*.ps1",
+        "**/*.bat",
+        "**/*.cmd",
+        "**/*.exe",
+        "**/*.dll",
+        "**/*.so",
+        "**/*.dylib",
+        "**/*.sh",
+        "*.md",
+        "*.log",
+        "functions/**",
+        "firestore.rules",
+        "firestore.indexes.json",
+        "storage.rules",
+        "database.rules.json",
+        "serve-*.py",
+        "serve-*.mjs",
+        "serve-*.ps1",
+        "start-*.ps1",
+        "start-*.bat",
+        "test-*.bat",
+        "stitch/**",
+        "stitch_/**",
+        "stitch_companies_management_system/**",
+        "portal/**",
+        "admin-login.html",
+        "admin-panel.html",
+        "al-rahma-recruitment-admin/**",
+        "تسجيل-الدخول-وإنشاء-حساب/src/**",
+        "تسجيل-الدخول-وإنشاء-حساب/node_modules/**",
+        "تسجيل-الدخول-وإنشاء-حساب/public/**",
+        "تسجيل-الدخول-وإنشاء-حساب/package*.json",
+        "تسجيل-الدخول-وإنشاء-حساب/tsconfig*.json",
+        "تسجيل-الدخول-وإنشاء-حساب/vite.config.ts",
+        "تسجيل-الدخول-وإنشاء-حساب/README.md",
+        "تسجيل-الدخول-وإنشاء-حساب/metadata.json",
+        "تسجيل-الدخول-وإنشاء-حساب/index.html",
+        "تسجيل-الدخول-وإنشاء-حساب/tmp*",
+        "firebase.multisite.example.json",
+        "firebase-site-config.example.js",
+        "tailwind-site.input.css",
+        "python-version.txt",
+        "start-test*.txt",
+        "tmp*",
+        "1.jpg",
+        "2.jpg",
+        "photo_*.jpg",
+        "*.rar",
+        "refs.csv",
+        "refs.txt",
+        "Thumbs.db"
+      ],
+      "cleanUrls": false,
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "Referrer-Policy",
+              "value": "strict-origin-when-cross-origin"
+            },
+            {
+              "key": "Permissions-Policy",
+              "value": "camera=(), microphone=(), geolocation=()"
+            },
+            {
+              "key": "Strict-Transport-Security",
+              "value": "max-age=31536000; includeSubDomains; preload"
+            },
+            {
+              "key": "Content-Security-Policy",
+              "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.gstatic.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.firebasestorage.app https://*.cloudfunctions.net https://*.run.app; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' mailto:"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(js|css)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public,max-age=300"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(png|jpg|jpeg|svg|webp|ico)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public,max-age=604800,immutable"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(woff|woff2|ttf)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public,max-age=604800,immutable"
+            }
+          ]
+        },
+        {
+          "source": "company-dashboard.html",
+          "headers": [
+            {
+              "key": "X-Robots-Tag",
+              "value": "noindex, nofollow, noarchive, nosnippet"
+            }
+          ]
+        },
+        {
+          "source": "messages.html",
+          "headers": [
+            {
+              "key": "X-Robots-Tag",
+              "value": "noindex, nofollow, noarchive, nosnippet"
+            }
+          ]
+        },
+        {
+          "source": "تسجيل-الدخول-وإنشاء-حساب/dist/index.html",
+          "headers": [
+            {
+              "key": "X-Robots-Tag",
+              "value": "noindex, nofollow, noarchive, nosnippet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "admin",
+      "public": "al-rahma-recruitment-admin/dist",
+      "ignore": [
+        "**/.*"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "Referrer-Policy",
+              "value": "strict-origin-when-cross-origin"
+            },
+            {
+              "key": "Permissions-Policy",
+              "value": "camera=(), microphone=(), geolocation=()"
+            },
+            {
+              "key": "Strict-Transport-Security",
+              "value": "max-age=31536000; includeSubDomains; preload"
+            },
+            {
+              "key": "Content-Security-Policy",
+              "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.gstatic.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.firebasestorage.app https://*.cloudfunctions.net https://*.run.app; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+            },
+            {
+              "key": "X-Robots-Tag",
+              "value": "noindex, nofollow, noarchive, nosnippet"
+            }
+          ]
+        },
+        {
+          "source": "index.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-store, max-age=0"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(js|css)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public,max-age=300"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(png|jpg|jpeg|svg|webp|ico)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public,max-age=604800,immutable"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(woff|woff2|ttf)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public,max-age=604800,immutable"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "source": "functions",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "*.local"
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "database": {
+    "rules": "database.rules.json"
+  }
+}

@@ -1,0 +1,32 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8">
+  <title>Mobile Brand Click Harness</title>
+  <script>
+    const originalMatchMedia = window.matchMedia.bind(window);
+    window.matchMedia = (query) => {
+      if (query === '(max-width: 767px)') {
+        return {
+          matches: true,
+          media: query,
+          addEventListener() {},
+          removeEventListener() {},
+          addListener() {},
+          removeListener() {}
+        };
+      }
+      return originalMatchMedia(query);
+    };
+  </script>
+  <script src="/site.js?v=20260318-9" defer></script>
+</head>
+<body>
+  <div class="site-brand"><img class="site-logo" src="/logo-mark.png"><span class="site-name">منصة الرحمة المهداه للوظائف</span></div>
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => document.querySelector('.site-brand').click(), 50);
+    });
+  </script>
+</body>
+</html>

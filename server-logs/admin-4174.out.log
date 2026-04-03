@@ -1,0 +1,41 @@
+
+  [32m[1mVITE[22m v6.4.1[39m  [2mready in [0m[1m994[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4174[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.1.5:[1m4174[22m/[39m
+[2m١٢:٢٠:١١ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /@fs/K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\components\layout\Topbar.tsx, /src/pages/Login.tsx, /src/pages/Dashboard.tsx, /src/pages/Jobs.tsx, /src/pages/Applications.tsx, /src/pages/Settings.tsx[22m
+[2m١٢:٢٢:٣٢ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١٢:٢٢:٣٣ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/lib/admin-store.tsx[22m Could not Fast Refresh ("getAuditSeverityLabel" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m١٢:٢٢:٣٣ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/lib/admin-store.tsx[22m
+[2m١٢:٣٥:٠٠ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١٢:٣٥:٠١ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/lib/admin-store.tsx[22m Could not Fast Refresh ("getAuditSeverityLabel" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m١٢:٣٥:٠١ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/lib/admin-store.tsx[22m
+[2m١٢:٣٥:١٨ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /@fs/K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\components\layout\Topbar.tsx, /src/pages/Login.tsx, /src/pages/Dashboard.tsx, /src/pages/Jobs.tsx, /src/pages/Applications.tsx, /src/pages/Settings.tsx[22m
+[2m١٢:٣٦:٠٧ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Login.tsx, /src/index.css[22m
+[2m١٢:٣٨:٤٣ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/ui/admin-kit.tsx, /src/index.css[22m
+[2m١٢:٣٩:٣٢ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.tsx, /src/index.css[22m
+[2m١٢:٤١:٤٢ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/ui/admin-kit.tsx, /src/index.css[22m
+[2m١٢:٤١:٤٣ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/ui/admin-kit.tsx[22m Could not Fast Refresh (new export)
+[2m١٢:٤١:٤٣ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css, /@fs/K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\components\layout\Topbar.tsx, /src/pages/Login.tsx, /src/pages/Dashboard.tsx, /src/pages/Jobs.tsx, /src/pages/Applications.tsx, /src/pages/Settings.tsx[22m
+[2m١٢:٤١:٥٥ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.tsx, /src/index.css[22m
+[2m١:٠٤:١٩ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:٠٤:٢٠ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/lib/admin-store.tsx[22m Could not Fast Refresh ("getAuditSeverityLabel" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m١:٠٤:٢٠ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/lib/admin-store.tsx[22m
+[2m١:٠٦:١٢ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:٠٦:١٢ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/lib/admin-store.tsx[22m Could not Fast Refresh ("getAuditSeverityLabel" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m١:٠٦:١٢ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/lib/admin-store.tsx[22m
+[2m١:٠٧:٠٣ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:٠٧:٥٦ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:٠٩:٠٢ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:٠٩:٠٦ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:٠٩:٠٨ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:٠٩:٢٠ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:٠٩:٥٠ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:٠٩:٥٠ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/lib/admin-store.tsx[22m Could not Fast Refresh ("getAuditSeverityLabel" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m١:٠٩:٥٠ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/lib/admin-store.tsx[22m
+[2m١:١٠:١٢ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/lib/admin-store.tsx, /src/index.css[22m
+[2m١:١٠:١٣ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/lib/admin-store.tsx[22m Could not Fast Refresh ("getAuditSeverityLabel" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m١:١٠:١٣ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/lib/admin-store.tsx[22m
+[2m١:١٩:١٩ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/ui/admin-kit.tsx, /src/index.css[22m
+[2m١:١٩:٣٩ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.tsx, /src/index.css[22m
+[2m١:١٩:٤٩ ص[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/Reports.tsx, /src/index.css[22m

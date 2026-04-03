@@ -1,0 +1,258 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>متابعة الطلب | اعرف حالة طلبك ورقم الطلب | الرحمة المهداه للتوظيف</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
+  <link rel="icon" type="image/png" href="logo-mark.png"/>
+  <link rel="stylesheet" href="site.css?v=20260403-4"/>
+  <script src="firebase-site-config.js" defer></script>
+  <script src="site.js?v=20260403-4" defer></script>
+  <!-- RAHMA SEO START -->
+  <meta name="description" content="تابع حالة طلبك برقم الطلب أو رقم الهاتف واعرف إن كان الطلب قيد المراجعة أو تم قبوله أو رفضه مع السبب عند توفره.">
+  <meta name="keywords" content="متابعة الطلب, رقم الطلب, حالة الطلب, وظائف في مصر, فرص عمل, توظيف شركات">
+  <meta name="robots" content="index,follow">
+  <meta property="og:site_name" content="الرحمة المهداه للتوظيف">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="متابعة الطلب | اعرف حالة طلبك ورقم الطلب | الرحمة المهداه للتوظيف">
+  <meta property="og:description" content="تابع حالة طلبك برقم الطلب أو رقم الهاتف واعرف إن كان الطلب قيد المراجعة أو تم قبوله أو رفضه مع السبب عند توفره.">
+  <meta property="og:url" content="/track-application.html">
+  <meta property="og:image" content="/logo-mark.png">
+  <meta property="og:locale" content="ar_EG">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="متابعة الطلب | اعرف حالة طلبك ورقم الطلب | الرحمة المهداه للتوظيف">
+  <meta name="twitter:description" content="تابع حالة طلبك برقم الطلب أو رقم الهاتف واعرف إن كان الطلب قيد المراجعة أو تم قبوله أو رفضه مع السبب عند توفره.">
+  <meta name="twitter:image" content="/logo-mark.png">
+  <link rel="canonical" href="/track-application.html">
+<!-- RAHMA SEO END -->
+</head>
+<body class="page-compact antialiased">
+  <header class="glass-nav site-topbar fixed top-0 w-full z-50">
+    <div class="container mx-auto px-5 lg:px-6">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html" aria-label="الرحمة المهداه للتوظيف">
+          <span class="site-brand__mark">
+            <img alt="شعار الرحمة المهداه للتوظيف" class="site-logo" src="logo-mark.png"/>
+          </span>
+          <span class="site-brand__copy">
+            <strong class="site-name">الرحمة المهداه للتوظيف</strong>
+          </span>
+        </a>
+
+        <nav class="site-nav hidden lg:flex" aria-label="التنقل الرئيسي">
+          <a class="site-nav__link" href="index.html">الرئيسية</a>
+          <a class="site-nav__link" href="jobs.html">الوظائف</a>
+          <a class="site-nav__link" href="companies.html">الشركات</a>
+          <a class="site-nav__link" href="about.html">من نحن</a>
+        </nav>
+
+        <div class="site-header__actions">
+          <a class="site-action site-action--ghost" href="track-application.html">متابعة الطلب</a>
+          <a class="site-action site-action--ghost" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
+          <a class="site-action site-action--primary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="product-shell">
+    <section class="page-section page-section--hero">
+      <div class="container mx-auto px-5 lg:px-6">
+        <div class="page-card hero-card hero-card--light">
+          <span class="section-eyebrow">متابعة الطلب</span>
+          <h1>اعرف حالة طلبك أو استرجع طلباتك برقم الهاتف</h1>
+          <p class="hero-card__copy">
+            أدخل رقم الطلب الذي ظهر لك بعد التقديم، أو اكتب رقم الهاتف المستخدم وقت التقديم علشان تظهر كل الطلبات المرتبطة به
+            مع رقم الطلب والحالة وتاريخ الإرسال.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="container mx-auto px-5 lg:px-6">
+        <div class="track-layout">
+          <article class="page-card">
+            <h2>ابحث عن الطلب</h2>
+            <form class="track-form" data-track-form="true">
+              <label>
+                <span>رقم الطلب</span>
+                <input
+                  name="requestId"
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]{10,}"
+                  placeholder="مثال: 202603210001234"
+                  required
+                />
+              </label>
+
+              <button class="site-action site-action--primary" type="submit">عرض الحالة</button>
+            </form>
+
+            <div class="application-status hidden" data-track-feedback></div>
+
+            <div class="track-result-shell">
+              <div class="page-card track-panel track-placeholder is-visible" data-track-placeholder aria-hidden="false">
+                <div class="track-placeholder__brand">
+                  <img src="logo-mark.png" alt="شعار الرحمة المهداه للتوظيف"/>
+                  <strong>متابعة الطلب</strong>
+                  <p>اكتب رقم الطلب واضغط "عرض الحالة" علشان تظهر النتيجة هنا بشكل واضح.</p>
+                </div>
+              </div>
+
+              <div class="page-card track-panel is-hidden" data-track-result aria-hidden="true">
+                <div class="section-head section-head--inline">
+                  <div>
+                    <span class="section-eyebrow">نتيجة المتابعة</span>
+                    <h2 class="section-title" data-track-status-label>جار المراجعة</h2>
+                  </div>
+                  <span class="request-chip" data-track-request-id>000000000000000</span>
+                </div>
+
+              <div class="info-list">
+                <div class="info-list__item">
+                  <span class="info-list__label">الوظيفة</span>
+                  <p data-track-job-title>غير متاح</p>
+                  </div>
+                  <div class="info-list__item">
+                    <span class="info-list__label">الشركة</span>
+                    <p data-track-company-name>غير متاح</p>
+                  </div>
+                  <div class="info-list__item">
+                    <span class="info-list__label">تاريخ الإرسال</span>
+                    <p data-track-submitted-at>غير متاح</p>
+                  </div>
+                  <div class="info-list__item">
+                    <span class="info-list__label">آخر تحديث</span>
+                    <p data-track-responded-at>لم يتم تحديث الحالة بعد</p>
+                  </div>
+                  <div class="info-list__item hidden" data-track-reason-wrap>
+                    <span class="info-list__label">سبب الرفض</span>
+                    <p data-track-rejection-reason>لا يوجد</p>
+                  </div>
+                </div>
+
+                <div class="page-actions">
+                  <button class="site-action site-action--ghost" type="button" data-track-copy-request>
+                    نسخ رقم الطلب
+                  </button>
+                  <a class="site-action site-action--secondary" href="#" target="_blank" rel="noopener noreferrer" data-track-whatsapp>
+                    واتساب الدعم
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="page-card">
+            <div class="section-head section-head--inline">
+              <div>
+                <span class="section-eyebrow">استرجاع الطلبات</span>
+                <h2 class="section-title">برقم الهاتف</h2>
+                <p>اكتب رقم الهاتف المستخدم وقت التقديم، وسيظهر لك كل طلب مرتبط به مع رقم الطلب والحالة والتاريخ والوقت.</p>
+              </div>
+              <span class="request-chip" data-track-phone-count hidden></span>
+            </div>
+
+            <form class="track-form" data-track-phone-form="true">
+              <label>
+                <span>رقم الهاتف</span>
+                <input
+                  name="phone"
+                  type="tel"
+                  inputmode="tel"
+                  autocomplete="tel"
+                  placeholder="مثال: 01012345678 أو +201012345678"
+                  required
+                />
+              </label>
+
+              <button class="site-action site-action--secondary" type="submit">استرجاع الطلبات</button>
+            </form>
+
+            <div class="application-status hidden" data-track-phone-feedback aria-live="polite"></div>
+
+            <div class="compact-grid" data-track-phone-results hidden></div>
+          </article>
+
+          <aside class="page-card">
+            <h2>ماذا تعني الحالات؟</h2>
+            <div class="info-list">
+              <div class="info-list__item">
+                <span class="info-list__label">جار المراجعة</span>
+                <p>تم استلام الطلب وهو تحت المراجعة من فريق التوظيف أو الإدارة.</p>
+              </div>
+              <div class="info-list__item">
+                <span class="info-list__label">تمت الموافقة</span>
+                <p>تم قبول الطلب في المرحلة الحالية وسيتم التواصل على البيانات المسجلة.</p>
+              </div>
+              <div class="info-list__item">
+                <span class="info-list__label">تم الرفض</span>
+                <p>تم إغلاق الطلب، وفي حالة توفر سبب للرفض سيتم عرضه هنا.</p>
+              </div>
+            </div>
+
+            <div class="page-actions page-actions--stack">
+              <a class="site-action site-action--secondary" href="jobs.html">الرجوع للوظائف</a>
+              <a class="site-action site-action--ghost" href="contact.html">تواصل معنا</a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="public-footer">
+    <div class="container mx-auto px-5 lg:px-6">
+      <div class="public-footer__grid">
+        <div class="public-footer__brand">
+          <div class="site-brand">
+            <span class="site-brand__mark">
+              <img alt="شعار الرحمة المهداه للتوظيف" class="site-logo" src="logo-mark.png"/>
+            </span>
+            <span class="site-brand__copy">
+              <strong class="site-name">الرحمة المهداه للتوظيف</strong>
+            </span>
+          </div>
+          <p>صفحة مختصرة لمتابعة الطلبات بدون الحاجة للرجوع للدعم في كل مرة.</p>
+        </div>
+
+        <div class="public-footer__links">
+          <h3>الروابط</h3>
+          <a href="jobs.html">الوظائف</a>
+          <a href="about.html">من نحن</a>
+          <a href="contact.html">تواصل معنا</a>
+        </div>
+
+        <div class="public-footer__links">
+          <h3>مباشر</h3>
+          <a href="track-application.html">متابعة الطلب</a>
+          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
+          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+        </div>
+      </div>
+
+      <div class="public-footer__bottom">
+        <p><span dir="ltr">© 2026</span> الرحمة المهداه للتوظيف</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,39 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8">
+  <title>Mobile Sizing Harness</title>
+  <link rel="stylesheet" href="/site.css?v=20260318-9">
+  <style>
+    .auth-title { font-size: 42px; }
+    .auth-subtitle { font-size: 20px; }
+    .auth-panel { padding: 32px; border-radius: 32px; }
+    .auth-button { min-height: 32px; }
+    .job-card { padding: 32px; border-radius: 32px; }
+  </style>
+</head>
+<body>
+  <div class="auth-panel">
+    <h1 class="auth-title">عنوان تجريبي</h1>
+    <p class="auth-subtitle">وصف تجريبي</p>
+    <button class="auth-button">زر</button>
+  </div>
+  <div class="job-card">كارت</div>
+  <div id="result">pending</div>
+  <script>
+    window.addEventListener('load', () => {
+      const panel = document.querySelector('.auth-panel');
+      const title = document.querySelector('.auth-title');
+      const button = document.querySelector('.auth-button');
+      const card = document.querySelector('.job-card');
+      document.getElementById('result').textContent = JSON.stringify({
+        htmlSize: getComputedStyle(document.documentElement).fontSize,
+        titleSize: getComputedStyle(title).fontSize,
+        panelPadding: getComputedStyle(panel).paddingTop,
+        buttonMinHeight: getComputedStyle(button).minHeight,
+        cardPadding: getComputedStyle(card).paddingTop
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userId() {
+      return request.auth.uid;
+    }
+
+    function isAdmin() {
+      return signedIn() && (
+        request.auth.token.admin == true ||
+        request.auth.token.superAdmin == true ||
+        request.auth.token.role == "admin" ||
+        request.auth.token.role == "super_admin" ||
+        request.auth.token.role == "super-admin" ||
+        request.auth.token.adminRole == "super-admin"
+      );
+    }
+
+    function isCompanyOwner(companyId) {
+      return signedIn() && userId() == companyId;
+    }
+
+    function isMissingOrNull(entry, field) {
+      return !(entry.keys().hasAny([field])) || entry[field] == null;
+    }
+
+    function isPublicCompanyRecord() {
+      return resource.data.status == "approved" && isMissingOrNull(resource.data, "deletedAt");
+    }
+
+    function isPublicJobRecord() {
+      return resource.data.status == "approved" && isMissingOrNull(resource.data, "deletedAt");
+    }
+
+    function canTrackApplication(requestId) {
+      return resource.data.requestId == requestId && requestId.matches('^[0-9]{10,}$');
+    }
+
+    function validCompanyCreate(companyId) {
+      return request.resource.data.keys().hasAll([
+        "id",
+        "uid",
+        "ownerUid",
+        "name",
+        "sector",
+        "city",
+        "location",
+        "teamSize",
+        "phone",
+        "email",
+        "website",
+        "description",
+        "status",
+        "verified",
+        "deletedAt",
+        "logoUrl",
+        "coverUrl",
+        "logoLetter",
+        "createdAt",
+        "updatedAt"
+      ]) &&
+      request.resource.data.id == companyId &&
+      request.resource.data.uid == userId() &&
+      request.resource.data.ownerUid == userId() &&
+      request.resource.data.name is string &&
+      request.resource.data.sector is string &&
+      request.resource.data.city is string &&
+      request.resource.data.status in ["pending", "approved"] &&
+      request.resource.data.verified is bool &&
+      request.resource.data.deletedAt == null;
+    }
+
+    function validCompanyUpdate() {
+      return request.resource.data.keys().hasAll([
+        "id",
+        "uid",
+        "ownerUid",
+        "name",
+        "sector",
+        "city",
+        "location",
+        "teamSize",
+        "phone",
+        "email",
+        "website",
+        "description",
+        "status",
+        "verified",
+        "deletedAt",
+        "logoUrl",
+        "coverUrl",
+        "logoLetter",
+        "createdAt",
+        "updatedAt"
+      ]) &&
+      request.resource.data.id == resource.data.id &&
+      request.resource.data.uid == resource.data.uid &&
+      request.resource.data.ownerUid == resource.data.ownerUid &&
+      request.resource.data.status == resource.data.status &&
+      request.resource.data.deletedAt == resource.data.deletedAt;
+    }
+
+    function validJobCreate(jobId) {
+      return request.resource.data.keys().hasAll([
+        "id",
+        "ownerUid",
+        "companyId",
+        "companyName",
+        "title",
+        "location",
+        "type",
+        "salary",
+        "summary",
+        "sector",
+        "featured",
+        "status",
+        "applicantsCount",
+        "notes",
+        "deletedAt",
+        "postedAt",
+        "postedLabel",
+        "createdAt",
+        "updatedAt"
+      ]) &&
+      request.resource.data.id == jobId &&
+      request.resource.data.ownerUid == userId() &&
+      request.resource.data.companyId == userId() &&
+      request.resource.data.companyName is string &&
+      request.resource.data.title is string &&
+      request.resource.data.location is string &&
+      request.resource.data.status in ["pending", "approved"] &&
+      request.resource.data.featured is bool;
+    }
+
+    function validJobUpdate() {
+      return request.resource.data.keys().hasAll([
+        "id",
+        "ownerUid",
+        "companyId",
+        "companyName",
+        "title",
+        "location",
+        "type",
+        "salary",
+        "summary",
+        "sector",
+        "featured",
+        "status",
+        "applicantsCount",
+        "notes",
+        "deletedAt",
+        "postedAt",
+        "postedLabel",
+        "createdAt",
+        "updatedAt"
+      ]) &&
+      request.resource.data.id == resource.data.id &&
+      request.resource.data.ownerUid == resource.data.ownerUid &&
+      request.resource.data.companyId == resource.data.companyId &&
+      request.resource.data.status == resource.data.status;
+    }
+
+    function validApplicationCreate(requestId) {
+      return request.resource.data.keys().hasAll([
+        "id",
+        "requestId",
+        "companyId",
+        "companyName",
+        "jobId",
+        "jobTitle",
+        "applicantName",
+        "applicantEmail",
+        "applicantPhone",
+        "address",
+        "governorate",
+        "city",
+        "experience",
+        "experienceYears",
+        "expectedSalary",
+        "educationLevel",
+        "specialization",
+        "militaryStatus",
+        "publicServiceCompleted",
+        "maritalStatus",
+        "coverLetter",
+        "cvFileName",
+        "cvFileType",
+        "submittedAt",
+        "status",
+        "rejectionReason",
+        "respondedAt",
+        "forwardedTo",
+        "notes",
+        "deletedAt"
+      ]) &&
+      request.resource.data.id == requestId &&
+      request.resource.data.requestId == requestId &&
+      request.resource.data.requestId.matches('^[0-9]{10,}$') &&
+      request.resource.data.companyId is string &&
+      request.resource.data.companyName is string &&
+      request.resource.data.jobId is string &&
+      request.resource.data.jobTitle is string &&
+      request.resource.data.applicantName is string &&
+      request.resource.data.applicantPhone is string &&
+      request.resource.data.submittedAt is string &&
+      request.resource.data.status == "review" &&
+      request.resource.data.rejectionReason == "" &&
+      request.resource.data.respondedAt == null &&
+      request.resource.data.deletedAt == null;
+    }
+
+    function validApplicationUpdate() {
+      return request.resource.data.keys().hasAll([
+        "id",
+        "requestId",
+        "companyId",
+        "companyName",
+        "jobId",
+        "jobTitle",
+        "applicantName",
+        "applicantEmail",
+        "applicantPhone",
+        "address",
+        "governorate",
+        "city",
+        "experience",
+        "experienceYears",
+        "expectedSalary",
+        "educationLevel",
+        "specialization",
+        "militaryStatus",
+        "publicServiceCompleted",
+        "maritalStatus",
+        "coverLetter",
+        "cvFileName",
+        "cvFileType",
+        "submittedAt",
+        "status",
+        "rejectionReason",
+        "respondedAt",
+        "forwardedTo",
+        "notes",
+        "deletedAt"
+      ]) &&
+      request.resource.data.id == resource.data.id &&
+      request.resource.data.requestId == resource.data.requestId &&
+      request.resource.data.companyId == resource.data.companyId &&
+      request.resource.data.jobId == resource.data.jobId &&
+      request.resource.data.applicantName == resource.data.applicantName &&
+      request.resource.data.submittedAt == resource.data.submittedAt;
+    }
+
+    match /chatThreads/{threadId} {
+      allow read: if signedIn() && (
+        isAdmin() ||
+        (
+          resource.data.memberIds is list &&
+          resource.data.memberIds.hasAny([userId()])
+        )
+      );
+      allow create: if signedIn() && request.resource.data.keys().hasAll([
+        "memberIds",
+        "participantProfiles",
+        "companyId",
+        "applicantId",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]);
+      allow update: if signedIn() && (
+        isAdmin() ||
+        (
+          resource.data.memberIds is list &&
+          resource.data.memberIds.hasAny([userId()])
+        )
+      );
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if signedIn() && (
+          isAdmin() ||
+          (
+            get(/databases/$(database)/documents/chatThreads/$(threadId)).data.memberIds is list &&
+            get(/databases/$(database)/documents/chatThreads/$(threadId)).data.memberIds.hasAny([userId()])
+          )
+        );
+        allow create: if signedIn() && (
+          isAdmin() ||
+          (
+            get(/databases/$(database)/documents/chatThreads/$(threadId)).data.memberIds is list &&
+            get(/databases/$(database)/documents/chatThreads/$(threadId)).data.memberIds.hasAny([userId()])
+          )
+        );
+        allow update: if false;
+        allow delete: if false;
+      }
+
+      match /adminNotes/{noteId} {
+        allow read, write: if isAdmin();
+      }
+
+      match /readState/{uid} {
+        allow read: if signedIn();
+        allow write: if signedIn() && (isAdmin() || uid == userId());
+      }
+    }
+
+    match /chatPresence/{uid} {
+      allow read: if signedIn();
+      allow write: if signedIn() && uid == userId();
+    }
+
+    match /chatAudit/{auditId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /siteConfig/{docId} {
+      allow read: if docId == "public" || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /users/{uid} {
+      allow read, write: if isAdmin() || (signedIn() && uid == userId());
+    }
+
+    match /companies/{companyId} {
+      allow get: if isAdmin() || isCompanyOwner(companyId) || isPublicCompanyRecord();
+      allow list: if isAdmin() || isPublicCompanyRecord();
+      allow create: if isAdmin() || (isCompanyOwner(companyId) && validCompanyCreate(companyId));
+      allow update: if isAdmin() || (isCompanyOwner(companyId) && validCompanyUpdate());
+      allow delete: if isAdmin();
+    }
+
+    match /jobs/{jobId} {
+      allow get: if isAdmin() || (signedIn() && resource.data.companyId == userId()) || isPublicJobRecord();
+      allow list: if isAdmin() || (signedIn() && resource.data.companyId == userId()) || isPublicJobRecord();
+      allow create: if isAdmin() || (signedIn() && validJobCreate(jobId));
+      allow update: if isAdmin() || (signedIn() && resource.data.companyId == userId() && validJobUpdate());
+      allow delete: if isAdmin();
+    }
+
+    match /applications/{requestId} {
+      allow get: if isAdmin() || (signedIn() && resource.data.companyId == userId()) || canTrackApplication(requestId);
+      allow list: if isAdmin() || (signedIn() && resource.data.companyId == userId());
+      allow create: if validApplicationCreate(requestId);
+      allow update: if isAdmin() || (
+        signedIn() &&
+        resource.data.companyId == userId() &&
+        validApplicationUpdate() &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          "status",
+          "rejectionReason",
+          "respondedAt",
+          "forwardedTo",
+          "notes",
+          "updatedAt"
+        ])
+      );
+      allow delete: if isAdmin();
+    }
+  }
+}

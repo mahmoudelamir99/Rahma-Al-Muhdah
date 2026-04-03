@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "rahma-al-muhdah-c0430"
+  },
+  "targets": {
+    "rahma-al-muhdah-c0430": {
+      "hosting": {
+        "public": [
+          "rahma-al-muhdah-c0430"
+        ],
+        "admin": [
+          "rahma-al-muhdah11"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

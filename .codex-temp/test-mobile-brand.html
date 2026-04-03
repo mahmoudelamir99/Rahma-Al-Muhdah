@@ -1,0 +1,41 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8">
+  <title>Mobile Brand Harness</title>
+  <link rel="stylesheet" href="/site.css?v=20260318-9">
+  <script>
+    const originalMatchMedia = window.matchMedia.bind(window);
+    window.matchMedia = (query) => {
+      if (query === '(max-width: 767px)') {
+        return {
+          matches: true,
+          media: query,
+          addEventListener() {},
+          removeEventListener() {},
+          addListener() {},
+          removeListener() {}
+        };
+      }
+      return originalMatchMedia(query);
+    };
+  </script>
+  <script src="/site.js?v=20260318-9" defer></script>
+</head>
+<body>
+  <div class="site-brand"><img class="site-logo" src="/logo-mark.png"><span class="site-name">منصة الرحمة المهداه للوظائف</span></div>
+  <div id="result">pending</div>
+  <script>
+    window.addEventListener('load', () => {
+      const brand = document.querySelector('.site-brand');
+      const result = {
+        mobileLink: brand.dataset.mobileHomeLink || '',
+        role: brand.getAttribute('role') || '',
+        tabindex: brand.getAttribute('tabindex') || '',
+        cursor: getComputedStyle(brand).cursor
+      };
+      document.getElementById('result').textContent = JSON.stringify(result);
+    });
+  </script>
+</body>
+</html>

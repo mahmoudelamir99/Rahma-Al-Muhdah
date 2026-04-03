@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;family=Manrope:wght@400;600;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#abcae8",
+              "surface-container": "#edeeef",
+              "tertiary-fixed": "#ffdea1",
+              "secondary-fixed": "#cfe6f2",
+              "error-container": "#ffdad6",
+              "on-secondary-fixed": "#071e27",
+              "surface": "#f8f9fa",
+              "surface-tint": "#43617c",
+              "on-secondary-fixed-variant": "#354a53",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#2b4963",
+              "inverse-primary": "#abcae8",
+              "on-tertiary-container": "#fac965",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#5c4200",
+              "secondary-container": "#cfe6f2",
+              "primary": "#26445d",
+              "inverse-on-surface": "#f0f1f2",
+              "inverse-surface": "#2e3132",
+              "surface-dim": "#d9dadb",
+              "on-surface": "#191c1d",
+              "secondary": "#4c616c",
+              "on-surface-variant": "#42474d",
+              "on-secondary-container": "#526772",
+              "background": "#f8f9fa",
+              "surface-variant": "#e1e3e4",
+              "outline": "#73777d",
+              "secondary-fixed-dim": "#b4cad6",
+              "tertiary-fixed-dim": "#efc05c",
+              "surface-bright": "#f8f9fa",
+              "surface-container-highest": "#e1e3e4",
+              "on-error": "#ffffff",
+              "outline-variant": "#c3c7cd",
+              "on-error-container": "#93000a",
+              "primary-fixed": "#cce5ff",
+              "tertiary": "#563e00",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-fixed": "#261900",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#b5d4f2",
+              "tertiary-container": "#735400",
+              "on-primary-fixed": "#001d31",
+              "primary-container": "#3e5c76",
+              "error": "#ba1a1a",
+              "surface-container-high": "#e7e8e9",
+              "on-background": "#191c1d",
+              "surface-container-low": "#f3f4f5"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["IBM Plex Sans Arabic"],
+              "label": ["IBM Plex Sans Arabic"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c3c7cd; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-hidden">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 border-l-0 fixed right-0 top-0 z-40 bg-slate-50 flex flex-col h-full overflow-y-auto font-['IBM_Plex_Sans_Arabic'] text-sm antialiased">
+<div class="p-6 mb-4">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-[#26445d]">المعماري الرحيم</h1>
+<p class="text-[10px] text-secondary opacity-70">نظام إدارة التوظيف</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#26445d] hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>لوحة القيادة</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#26445d] hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="work">work</span>
+<span>الوظائف</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#26445d] font-semibold border-r-4 border-[#26445d] bg-white" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span>الشركات</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#26445d] hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>الطلبات</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#26445d] hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>المستخدمين</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#26445d] hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="article">article</span>
+<span>المحتوى</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#26445d] hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span>التنبيهات</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#26445d] hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>التقارير</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#26445d] hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>الإعدادات</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-[#26445d] hover:bg-slate-100 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+<span>الأدوار</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200/50">
+<div class="flex items-center gap-3 px-4 py-2">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtafqU88FvTJDqSGEkmeFZrAuJiQIf3G3T6PTYeU-kHYH--HtEmPfrAosZdFk8V7ZuTw0Xa2DaedHZfT5pyGlDRWQxf2_sFggDMyGdEOtsupYMdlOgPxbTmGFd778Hq1seynp3_maSNSAkS_bYntHQ_qDsIDIP0BOFDoWkezlaYQwDjzh6OIGrlMI7Z7Sg19WuZKYgzgyieegTvQVomvLu_9Q-xjbqqQLA4HG0jyzn1hvnm_Sw5FQLZF3XSIuQ7b1Pm68xUJzqFv0"/>
+</div>
+<div class="overflow-hidden">
+<p class="text-xs font-bold truncate">أحمد المحمدي</p>
+<p class="text-[10px] text-slate-400">مدير النظام</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar Component -->
+<header class="fixed top-0 left-0 right-64 h-16 z-30 bg-white/80 backdrop-blur-md flex items-center justify-between px-8 w-full border-b border-slate-200/50 shadow-sm font-['IBM_Plex_Sans_Arabic'] font-medium">
+<div class="flex items-center gap-4">
+<h2 class="text-lg font-black text-[#26445d]">إدارة الشركات</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 group-focus-within:text-primary transition-colors">search</span>
+<input class="pr-10 pl-4 py-1.5 bg-surface-container-low border-none rounded-lg text-sm focus:ring-2 focus:ring-primary/20 w-64 transition-all" placeholder="البحث عن شركة..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="h-6 w-[1px] bg-slate-200"></div>
+<button class="flex items-center gap-2 text-sm text-slate-600 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+<span>العربية</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="mr-64 pt-16 h-screen overflow-y-auto bg-surface-container-low/30 px-8 py-8">
+<!-- Dashboard Header / Primary Action -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<nav class="flex text-xs text-on-surface-variant mb-2 gap-2">
+<span class="opacity-60">الرئيسية</span>
+<span class="opacity-60">/</span>
+<span class="font-medium text-primary">دليل الشركات</span>
+</nav>
+<h3 class="text-3xl font-bold text-on-surface font-headline tracking-tight">الدليل المؤسسي</h3>
+<p class="text-on-surface-variant mt-1">إدارة وتحليل أداء الشركات المسجلة في المنصة</p>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-white px-6 py-2.5 rounded shadow-lg hover:opacity-90 transition-all flex items-center gap-2 font-medium">
+<span class="material-symbols-outlined text-lg" data-icon="add_business">add_business</span>
+                إضافة شركة جديدة
+            </button>
+</div>
+<!-- Layout Grid -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Filter Bar & Main Table -->
+<div class="col-span-12 lg:col-span-9 space-y-6">
+<!-- Filter Bar -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm border border-outline-variant/10 flex flex-wrap items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="filter_list">filter_list</span>
+<span class="text-sm font-semibold text-on-surface">تصفية النتائج:</span>
+</div>
+<div class="flex flex-1 flex-wrap gap-4">
+<div class="relative">
+<select class="appearance-none bg-surface-container-low border-none rounded-lg text-xs pr-4 pl-10 py-2 focus:ring-1 focus:ring-primary w-40 text-on-surface-variant">
+<option>كافة القطاعات</option>
+<option>تقنية المعلومات</option>
+<option>الهندسة</option>
+<option>المقاولات</option>
+</select>
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-xs pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low border-none rounded-lg text-xs pr-4 pl-10 py-2 focus:ring-1 focus:ring-primary w-40 text-on-surface-variant">
+<option>حالة التوثيق</option>
+<option>موثق</option>
+<option>قيد المراجعة</option>
+<option>غير موثق</option>
+</select>
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-xs pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-low border-none rounded-lg text-xs pr-4 pl-10 py-2 focus:ring-1 focus:ring-primary w-40 text-on-surface-variant">
+<option>نوع الاشتراك</option>
+<option>بريميوم (مميز)</option>
+<option>مجاني</option>
+</select>
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-xs pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+<div class="relative">
+<input class="bg-surface-container-low border-none rounded-lg text-xs pr-4 pl-4 py-2 focus:ring-1 focus:ring-primary text-on-surface-variant" type="date"/>
+</div>
+</div>
+<button class="text-primary hover:bg-primary/5 px-4 py-2 rounded text-xs font-semibold transition-colors">إعادة ضبط</button>
+</div>
+<!-- Table Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden border border-outline-variant/10">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant text-[11px] uppercase tracking-wider font-bold">
+<th class="px-6 py-4">الشركة والقطاع</th>
+<th class="px-6 py-4">حالة التوثيق</th>
+<th class="px-6 py-4 text-center">الوظائف النشطة</th>
+<th class="px-6 py-4 text-center">إجمالي الطلبات</th>
+<th class="px-6 py-4">الاشتراك</th>
+<th class="px-6 py-4">تاريخ التسجيل</th>
+<th class="px-6 py-4 text-left">الإجراءات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="Corporate abstract technology logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADOr9XI7gEAsG1oIQyWSdwimX1PFWKGOI8oePqNbjBKVKwor_f8sGyzuc1QNFEAvXjhllKeIH1Axgky3vigf5mmHVb5nrZl6kp3QWKCAfD9d6nEnYRgsH_BpHhSOmNqGPGQgSe7mb7Z8bvUI9MELPL4d1kjMt89OemcCqx5e44z8WkWqe9Aqe3_h2JWdRRVaaCsZ5IKzlADtRh9QzGaYrZD4lgg3kMdd6R6m2Sr8v_fj2KVir4bSa5Yoc8wE3iBAr2G6rT5WwKE2I"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">تيك كوانتوم للحلول</p>
+<p class="text-[10px] text-on-surface-variant">تقنية المعلومات</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-surface-container-low text-on-primary-fixed-variant text-[10px] font-bold border border-primary/10">
+<span class="material-symbols-outlined text-xs" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                        موثق
+                                    </span>
+</td>
+<td class="px-6 py-5 text-center font-headline text-sm font-semibold">12</td>
+<td class="px-6 py-5 text-center font-headline text-sm font-semibold">842</td>
+<td class="px-6 py-5">
+<span class="text-[10px] font-bold text-tertiary-fixed-dim bg-tertiary/10 px-2 py-0.5 rounded border border-tertiary/20">PREMIUM</span>
+</td>
+<td class="px-6 py-5 text-[11px] text-on-surface-variant">24 مايو 2023</td>
+<td class="px-6 py-5 text-left">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 hover:bg-primary/10 text-primary rounded transition-all" title="مراجعة الملف">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+<button class="p-1.5 hover:bg-error-container text-error rounded transition-all" title="تعليق">
+<span class="material-symbols-outlined text-lg" data-icon="block">block</span>
+</button>
+<button class="p-1.5 hover:bg-slate-200 text-slate-500 rounded transition-all" title="أرشفة">
+<span class="material-symbols-outlined text-lg" data-icon="archive">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="Building architecture company logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7ocxD1VME80hUYSr8LY7CAw0m2MUSZbt4NJa3EYpCMk4_p8shcACgg3is8PSySG9EYcKF0s1ImSn95S8qA8_jxDCTaRfiQNAEXX0sUL5yySMti0WpBn5Nn1HhBMHjH-Zf9HN585pLYQ9GX9obSy2Ykni7F95ENKVGV4xVzUvEVUTRpDq-SBwhQ7ii5LkL8CC2fp_Fc_r3nRuZxjIPZ2IiTyQMR0Z_fD4SfNXU1KBLTSZTLikLDNPJ_d4jY3bYlWsWBoyhVwOGPW8"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">عمران للمقاولات</p>
+<p class="text-[10px] text-on-surface-variant">الهندسة والبناء</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-bold">
+<span class="material-symbols-outlined text-xs" data-icon="pending">pending</span>
+                                        قيد المراجعة
+                                    </span>
+</td>
+<td class="px-6 py-5 text-center font-headline text-sm font-semibold">05</td>
+<td class="px-6 py-5 text-center font-headline text-sm font-semibold">120</td>
+<td class="px-6 py-5">
+<span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">FREE</span>
+</td>
+<td class="px-6 py-5 text-[11px] text-on-surface-variant">10 يونيو 2023</td>
+<td class="px-6 py-5 text-left">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 hover:bg-primary/10 text-primary rounded transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="p-1.5 hover:bg-error-container text-error rounded transition-all"><span class="material-symbols-outlined text-lg" data-icon="block">block</span></button>
+<button class="p-1.5 hover:bg-slate-200 text-slate-500 rounded transition-all"><span class="material-symbols-outlined text-lg" data-icon="archive">archive</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="Modern healthcare medical logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJu7U7vWVxffFjmN4NbZAlW58D1ghOqUC9hwh05KmHAv3ggvFB-ifcSC7G3Jafnu01Bs4DDgpWl-TAaCQ4NtnppIctjyzDfpwetrt3-0IPlb65KJ4eivELSP8e7kwdkVf6kxm-nZ3TdKdSlisvprza0An6DrnC_5bE2i-fELIEQaooVKOPFzidG6xX63eJmTTXTcv1AaEEmUOSwskqnngBVy9NlqWzXFC4g769S9vJ2gIa2LQuZZYdffFH0lnzd9URNJBqBqWdOn4"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">مستشفى الشفاء</p>
+<p class="text-[10px] text-on-surface-variant">الرعاية الصحية</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-error-container text-on-error-container text-[10px] font-bold">
+<span class="material-symbols-outlined text-xs" data-icon="cancel">cancel</span>
+                                        غير موثق
+                                    </span>
+</td>
+<td class="px-6 py-5 text-center font-headline text-sm font-semibold">02</td>
+<td class="px-6 py-5 text-center font-headline text-sm font-semibold">14</td>
+<td class="px-6 py-5">
+<span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">FREE</span>
+</td>
+<td class="px-6 py-5 text-[11px] text-on-surface-variant">02 يوليو 2023</td>
+<td class="px-6 py-5 text-left">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 hover:bg-primary/10 text-primary rounded transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="p-1.5 hover:bg-error-container text-error rounded transition-all"><span class="material-symbols-outlined text-lg" data-icon="block">block</span></button>
+<button class="p-1.5 hover:bg-slate-200 text-slate-500 rounded transition-all"><span class="material-symbols-outlined text-lg" data-icon="archive">archive</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="Legal consultancy agency logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx_-LTDLo3k6Jvx1Y90Exc2qGIX98-E45KblrG7eFADIBpFR2BM9xkhTdDQlgeeovkeVElbz9WxSFG64kcFfk2eCrVcj56DjSQ9UEio7I4MjJefHXSzYr8qQWlKx2RYFPLFuaPol_FcbyKc8e2IwU2Lvs4f5GnXsen-0ygIJ64nqLOqPNVtocMvGHwSGvCUdZ8xvs_2ruCuZKfCTHN0-2LO7hgx2lZS70t7WcVfa4ZK7Wsea8xoQPAkHmKUEZIzXPGwzKe1TEVfmw"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">مجموعة الرائد القانونية</p>
+<p class="text-[10px] text-on-surface-variant">الاستشارات</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-surface-container-low text-on-primary-fixed-variant text-[10px] font-bold border border-primary/10">
+<span class="material-symbols-outlined text-xs" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+                                        موثق
+                                    </span>
+</td>
+<td class="px-6 py-5 text-center font-headline text-sm font-semibold">28</td>
+<td class="px-6 py-5 text-center font-headline text-sm font-semibold">1,250</td>
+<td class="px-6 py-5">
+<span class="text-[10px] font-bold text-tertiary-fixed-dim bg-tertiary/10 px-2 py-0.5 rounded border border-tertiary/20">PREMIUM</span>
+</td>
+<td class="px-6 py-5 text-[11px] text-on-surface-variant">15 أغسطس 2023</td>
+<td class="px-6 py-5 text-left">
+<div class="flex items-center justify-end gap-1">
+<button class="p-1.5 hover:bg-primary/10 text-primary rounded transition-all"><span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span></button>
+<button class="p-1.5 hover:bg-error-container text-error rounded transition-all"><span class="material-symbols-outlined text-lg" data-icon="block">block</span></button>
+<button class="p-1.5 hover:bg-slate-200 text-slate-500 rounded transition-all"><span class="material-symbols-outlined text-lg" data-icon="archive">archive</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+<span class="text-[11px] text-on-surface-variant font-medium">عرض 1-4 من أصل 128 شركة</span>
+<div class="flex gap-1">
+<button class="w-8 h-8 rounded border border-outline-variant/30 flex items-center justify-center hover:bg-white text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded border border-primary/20 bg-primary text-white text-xs font-bold">1</button>
+<button class="w-8 h-8 rounded border border-outline-variant/30 flex items-center justify-center hover:bg-white text-xs text-on-surface-variant">2</button>
+<button class="w-8 h-8 rounded border border-outline-variant/30 flex items-center justify-center hover:bg-white text-xs text-on-surface-variant">3</button>
+<button class="w-8 h-8 rounded border border-outline-variant/30 flex items-center justify-center hover:bg-white text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Widgets -->
+<div class="col-span-12 lg:col-span-3 space-y-8">
+<!-- Review Queue Widget -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/10 overflow-hidden">
+<div class="p-4 bg-primary text-white flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="assignment_late">assignment_late</span>
+<span class="text-sm font-bold">طلبات المراجعة</span>
+</div>
+<span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">3 معلق</span>
+</div>
+<div class="divide-y divide-surface-container">
+<!-- Pending 1 -->
+<div class="p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<p class="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">مؤسسة الأفق للخدمات</p>
+<span class="text-[9px] text-on-surface-variant">منذ ساعتين</span>
+</div>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">بانتظار التحقق من السجل التجاري والشهادة الضريبية المرفقة.</p>
+<div class="mt-3 flex gap-2">
+<button class="flex-1 bg-primary/5 text-primary text-[10px] py-1.5 rounded font-bold hover:bg-primary/10">مراجعة</button>
+<button class="px-2 bg-slate-100 text-slate-500 py-1.5 rounded hover:bg-slate-200">
+<span class="material-symbols-outlined text-xs" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<!-- Pending 2 -->
+<div class="p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<p class="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">شركة الوصل اللوجستية</p>
+<span class="text-[9px] text-on-surface-variant">منذ 5 ساعات</span>
+</div>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">طلب تحديث نوع الاشتراك من باقة مجانية إلى بريميوم.</p>
+<div class="mt-3 flex gap-2">
+<button class="flex-1 bg-primary/5 text-primary text-[10px] py-1.5 rounded font-bold hover:bg-primary/10">مراجعة</button>
+<button class="px-2 bg-slate-100 text-slate-500 py-1.5 rounded hover:bg-slate-200">
+<span class="material-symbols-outlined text-xs" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<!-- Pending 3 -->
+<div class="p-4 hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<p class="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">عقارات الفهد</p>
+<span class="text-[9px] text-on-surface-variant">منذ يوم</span>
+</div>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">شركة جديدة مسجلة - تتطلب مراجعة أولية لملف التعريف.</p>
+<div class="mt-3 flex gap-2">
+<button class="flex-1 bg-primary/5 text-primary text-[10px] py-1.5 rounded font-bold hover:bg-primary/10">مراجعة</button>
+<button class="px-2 bg-slate-100 text-slate-500 py-1.5 rounded hover:bg-slate-200">
+<span class="material-symbols-outlined text-xs" data-icon="close">close</span>
+</button>
+</div>
+</div>
+</div>
+<button class="w-full py-3 text-[10px] font-bold text-primary hover:bg-primary/5 transition-colors border-t border-surface-container">عرض كافة الطلبات</button>
+</div>
+<!-- Stats Summary -->
+<div class="bg-gradient-to-br from-[#26445d] to-[#3e5c76] rounded-xl p-5 text-white shadow-xl relative overflow-hidden">
+<div class="relative z-10">
+<p class="text-[10px] uppercase tracking-widest opacity-70 mb-1">نمو الشبكة</p>
+<h4 class="text-2xl font-bold font-headline mb-4">1,420+ <span class="text-sm font-body opacity-80">شركة</span></h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-[10px]">
+<span class="opacity-70">الشركات الموثقة</span>
+<span class="font-bold">88%</span>
+</div>
+<div class="w-full bg-white/10 h-1.5 rounded-full">
+<div class="bg-tertiary-fixed w-[88%] h-full rounded-full"></div>
+</div>
+</div>
+<div class="mt-6 flex items-center gap-3 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+<span class="material-symbols-outlined text-tertiary-fixed" data-icon="trending_up">trending_up</span>
+<p class="text-[10px] leading-tight">زيادة بنسبة <span class="text-tertiary-fixed font-bold">12%</span> في تسجيل الشركات هذا الشهر.</p>
+</div>
+</div>
+<!-- Abstract Background Decorative Shape -->
+<div class="absolute -bottom-10 -left-10 w-32 h-32 bg-white/5 rounded-full"></div>
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full"></div>
+</div>
+<!-- Quick Tips -->
+<div class="p-5 border border-primary/10 rounded-xl bg-primary/5">
+<h5 class="text-xs font-bold text-primary mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="lightbulb">lightbulb</span>
+                        تلميحات النظام
+                    </h5>
+<p class="text-[10px] text-on-surface-variant leading-relaxed">
+                        يُفضل مراجعة ملفات الشركات التي مضى على تسجيلها أكثر من 48 ساعة ولم يتم توثيقها بعد لضمان سرعة تفعيل الوظائف.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+</body></html>

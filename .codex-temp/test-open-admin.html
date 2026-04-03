@@ -1,0 +1,17 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head><meta charset="utf-8"><title>Admin Open Harness</title></head>
+<body>
+<script>
+  sessionStorage.setItem('rahmaAuthSession', JSON.stringify({
+    loggedIn: true,
+    role: 'admin',
+    email: 'admin@alrahma.com',
+    name: 'إدارة المنصة',
+    loggedInAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString()
+  }));
+  location.replace('/admin-panel.html');
+</script>
+</body>
+</html>

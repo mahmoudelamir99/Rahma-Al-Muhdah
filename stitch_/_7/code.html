@@ -1,0 +1,292 @@
+﻿<!DOCTYPE html>
+
+<html dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/tailwind-site.css?v=20260320-1"/>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+<!-- Side Navigation -->
+<aside class="w-72 bg-white dark:bg-background-dark border-l border-slate-200 dark:border-slate-800 flex flex-col transition-all duration-300">
+<div class="p-6 flex items-center gap-3">
+<div class="bg-primary rounded-xl p-2 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl">handshake</span>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-none">الرحمة المهداه</h1>
+<p class="text-xs text-slate-500 mt-1">منصة التوظيف الأولى</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">لوحة القيادة</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="font-medium">الوظائف</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-medium">المتقدمين</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">chat</span>
+<span class="font-medium">الرسائل</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">business</span>
+<span class="font-medium">ملف الشركة</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium">الإعدادات</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-900 rounded-xl">
+<div class="size-10 rounded-full bg-slate-300 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Company Logo Placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-ga9HwXM1n0a0DUWYyyKiUg0lnKIHWdnDZBvIk2u3qQ8dKNachppuWzUbxOytQd_fH4VgltUCywILthRohhvJ2Q1ylecFILPzBvaHIv31OfCGcZEqxtByaBF2AKhL68TLPOOCD3VCnzBoJcGnych2s2eekyQKpBeF2j6ni4FDo2s9VmhHY3ePYUOgT8pI71CYwZfLCfgbfkuR12jIjICVnjXJAYlx57bo32FbWS2VqBTmubauBVCCns8WH6ZaOpMoLYmNEFXQV8o"/>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold truncate">شركة التقنية المتقدمة</p>
+<p class="text-xs text-slate-500 truncate">مشرف النظام</p>
+</div>
+<button class="text-slate-400 hover:text-red-500">
+<span class="material-symbols-outlined text-xl">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-w-0">
+<!-- Header -->
+<header class="h-16 bg-white dark:bg-background-dark border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pr-10 pl-4 py-2 rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary" placeholder="بحث في المتقدمين أو الوظائف..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="size-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 left-2 size-2 bg-primary rounded-full ring-2 ring-white"></span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800 mx-2"></div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-medium">العربية</span>
+<span class="material-symbols-outlined text-slate-400">language</span>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-8 max-w-5xl mx-auto w-full">
+<div class="mb-8">
+<h1 class="text-3xl font-black tracking-tight mb-2">إعدادات الشركة</h1>
+<p class="text-slate-500">إدارة معلومات شركتك، بيانات الاتصال، وإعدادات الأمان الخاصة بك</p>
+</div>
+<!-- Tabs -->
+<div class="flex gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl mb-8 w-fit">
+<button class="px-6 py-2 rounded-lg bg-white dark:bg-background-dark shadow-sm text-primary font-bold">الملف التعريفي</button>
+<button class="px-6 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary font-medium">بيانات الاتصال</button>
+<button class="px-6 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary font-medium">الروابط الاجتماعية</button>
+<button class="px-6 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:text-primary font-medium">الأمان</button>
+</div>
+<div class="space-y-8">
+<!-- Section: Public Profile -->
+<section class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<h2 class="text-xl font-bold">الملف التعريفي العام</h2>
+<p class="text-sm text-slate-500">هذه المعلومات ستظهر للمتقدمين على الوظائف</p>
+</div>
+<div class="p-6 space-y-6">
+<div class="flex items-center gap-6">
+<div class="relative group">
+<div class="size-24 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-700 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Company Logo Preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAceLTDGZz6VW3-A4Mt3RC7ptDA8BmCK8M2TXI8YUm5TonA4apMnrM3JuarzhItVZcZEpjjijNR0GsfuScx0PCOBDt06uVzjwjFdInYoAJGSHSS92O-vmFL0mBZT1KTWnoJEVon27dBPdiMqBU_aAiGhoKSJBWJpWMuXJskuennbE2eFK4dPQy87R7l2rghkUt9heW5w3X2MGiX0ZtzCKeiOPQ9pPXbhUpOH7cwaLwgqYy5NQB5dovvoBDPycUGWFXSagXKVtKW5X8"/>
+</div>
+<button class="absolute -bottom-2 -right-2 size-8 bg-primary text-white rounded-lg flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+</div>
+<div>
+<h3 class="font-bold mb-1">شعار الشركة</h3>
+<p class="text-sm text-slate-500 mb-2">تنسيق PNG أو JPG، بحد أقصى 2 ميجابايت</p>
+<div class="flex gap-2">
+<button class="px-4 py-1.5 text-xs bg-primary text-white rounded-lg font-bold">تغيير الشعار</button>
+<button class="px-4 py-1.5 text-xs bg-slate-100 dark:bg-slate-800 rounded-lg">حذف</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-bold">اسم الشركة</label>
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5" type="text" value="شركة التقنية المتقدمة"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold">الموقع الإلكتروني</label>
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5" placeholder="https://example.com" type="url"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold">مجال العمل</label>
+<select class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5">
+<option>تقنية المعلومات</option>
+<option>التسويق والإعلانات</option>
+<option>الهندسة والإنشاءات</option>
+<option>التجارة الإلكترونية</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold">حجم الشركة</label>
+<select class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5">
+<option>1-10 موظف</option>
+<option>11-50 موظف</option>
+<option selected="">51-200 موظف</option>
+<option>+200 موظف</option>
+</select>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold">وصف الشركة</label>
+<textarea class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5" placeholder="أدخل نبذة عن الشركة وتاريخها وأهدافها..." rows="4"></textarea>
+</div>
+</div>
+<div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3">
+<button class="px-8 py-2.5 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">حفظ التغييرات</button>
+</div>
+</section>
+<!-- Section: Contact Info -->
+<section class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<h2 class="text-xl font-bold">معلومات الاتصال</h2>
+<p class="text-sm text-slate-500">تفاصيل التواصل الرسمية للشركة</p>
+</div>
+<div class="p-6 space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-bold">البريد الإلكتروني للتوظيف</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">mail</span>
+<input class="w-full pr-10 rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5" type="email" value="hr@advtech.com"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold">رقم الهاتف</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">call</span>
+<input class="w-full pr-10 text-right rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5" dir="ltr" type="tel" value="+966 50 000 0000"/>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold">العنوان الفعلي</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">location_on</span>
+<input class="w-full pr-10 rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5" placeholder="الرياض، حي الملقا، طريق الملك فهد" type="text"/>
+</div>
+</div>
+</div>
+<div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+<button class="px-8 py-2.5 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">حفظ التغييرات</button>
+</div>
+</section>
+<!-- Section: Social Links -->
+<section class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<h2 class="text-xl font-bold">الروابط الاجتماعية</h2>
+<p class="text-sm text-slate-500">اربط حسابات التواصل الاجتماعي الخاصة بالشركة</p>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-lg bg-[#0077b5]/10 text-[#0077b5] flex items-center justify-center">
+<span class="material-symbols-outlined">link</span>
+</div>
+<div class="flex-1">
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-[#0077b5] focus:border-[#0077b5] py-2.5" placeholder="رابط LinkedIn" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-lg bg-[#1da1f2]/10 text-[#1da1f2] flex items-center justify-center">
+<span class="material-symbols-outlined">link</span>
+</div>
+<div class="flex-1">
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-[#1da1f2] focus:border-[#1da1f2] py-2.5" placeholder="رابط Twitter (X)" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="size-10 rounded-lg bg-[#1877f2]/10 text-[#1877f2] flex items-center justify-center">
+<span class="material-symbols-outlined">link</span>
+</div>
+<div class="flex-1">
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-[#1877f2] focus:border-[#1877f2] py-2.5" placeholder="رابط Facebook" type="text"/>
+</div>
+</div>
+</div>
+<div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+<button class="px-8 py-2.5 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">حفظ الروابط</button>
+</div>
+</section>
+<!-- Section: Security -->
+<section class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800">
+<h2 class="text-xl font-bold">الأمان والخصوصية</h2>
+<p class="text-sm text-slate-500">تحديث كلمة المرور وإعدادات الدخول</p>
+</div>
+<div class="p-6 space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-bold">كلمة المرور الحالية</label>
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5" type="password"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold">كلمة المرور الجديدة</label>
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 focus:ring-primary focus:border-primary py-2.5" type="password"/>
+</div>
+</div>
+<div class="p-4 bg-primary/5 rounded-xl border border-primary/20 flex gap-4">
+<span class="material-symbols-outlined text-primary">info</span>
+<p class="text-sm text-slate-600 dark:text-slate-400">كلمة المرور يجب أن لا تقل عن 8 أحرف وتحتوي على رموز وأرقام لضمان حماية حساب الشركة.</p>
+</div>
+</div>
+<div class="p-6 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+<button class="px-8 py-2.5 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">تغيير كلمة المرور</button>
+</div>
+</section>
+<div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-bold text-red-500">حذف حساب الشركة</h3>
+<p class="text-sm text-slate-500">سيؤدي هذا الإجراء إلى حذف جميع بيانات التوظيف نهائياً</p>
+</div>
+<button class="px-6 py-2 text-red-500 border border-red-500 hover:bg-red-50 rounded-xl text-sm font-bold transition-colors">تعطيل الحساب</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="mt-auto p-8 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center text-slate-500 text-sm">
+<p>© 2024 الرحمة المهداه للتوظيف. جميع الحقوق محفوظة.</p>
+<div class="flex gap-4">
+<a class="hover:text-primary" href="#">الشروط والأحكام</a>
+<a class="hover:text-primary" href="#">سياسة الخصوصية</a>
+</div>
+</footer>
+</main>
+</div>
+</body></html>

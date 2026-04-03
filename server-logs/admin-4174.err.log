@@ -1,0 +1,780 @@
+[2m١:٠٧:٠٣ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Identifier 'existingUserNotes' has already been declared. (1830:8)
+
+[0m [90m 1828 |[31m
+ [90m 1829 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+[31m[1m>[22m[31m[90m 1830 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m
+ [90m      |[31m         [31m[1m^[22m[31m
+ [90m 1831 |[31m   nextState[33m.[31musers [33m=[31m mergedUsers[33m.[31mmap((user) [33m=>[31m ({
+ [90m 1832 |[31m     [33m...[31muser[33m,[31m
+ [90m 1833 |[31m     notes[33m:[31m existingUserNotes[33m.[31m[36mget[31m(user[33m.[31mid) [33m||[31m [][33m,[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1830:8
+[33m  1828|  
+  1829|    const mergedUsers = buildUsers(profile, nextState.applications);
+  1830|    const existingUserNotes = new Map(nextState.users.map((user) => [user.id, user.notes]));
+     |          ^
+  1831|    nextState.users = mergedUsers.map((user) => ({
+  1832|      ...user,[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptScopeHandler.checkRedeclarationInScope (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:1619:19)
+      at TypeScriptScopeHandler.declareName (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:1585:12)
+      at TypeScriptScopeHandler.declareName (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4880:11)
+      at TypeScriptParserMixin.declareNameFromIdentifier (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:7567:16)
+      at TypeScriptParserMixin.checkIdentifier (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:7563:12)
+      at TypeScriptParserMixin.checkLVal (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:7500:12)
+      at TypeScriptParserMixin.parseVarId (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13412:10)
+      at TypeScriptParserMixin.parseVarId (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9752:11)
+      at TypeScriptParserMixin.parseVar (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13383:12)
+      at TypeScriptParserMixin.parseVarStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13230:10)
+      at TypeScriptParserMixin.parseVarStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9408:31)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12851:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9172:18)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13445:12
+      at TypeScriptParserMixin.withSmartMixTopicForbiddingContext (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12403:14)
+      at TypeScriptParserMixin.parseFunction (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13444:10)
+      at TypeScriptParserMixin.parseFunctionStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13125:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12791:21)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:261:32)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:189:28
+[2m١:٠٧:٠٣ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Identifier 'existingUserNotes' has already been declared. (1830:8)
+
+[0m [90m 1828 |[31m
+ [90m 1829 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+[31m[1m>[22m[31m[90m 1830 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m
+ [90m      |[31m         [31m[1m^[22m[31m
+ [90m 1831 |[31m   nextState[33m.[31musers [33m=[31m mergedUsers[33m.[31mmap((user) [33m=>[31m ({
+ [90m 1832 |[31m     [33m...[31muser[33m,[31m
+ [90m 1833 |[31m     notes[33m:[31m existingUserNotes[33m.[31m[36mget[31m(user[33m.[31mid) [33m||[31m [][33m,[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1830:8
+[33m  1828|  
+  1829|    const mergedUsers = buildUsers(profile, nextState.applications);
+  1830|    const existingUserNotes = new Map(nextState.users.map((user) => [user.id, user.notes]));
+     |          ^
+  1831|    nextState.users = mergedUsers.map((user) => ({
+  1832|      ...user,[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptScopeHandler.checkRedeclarationInScope (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:1619:19)
+      at TypeScriptScopeHandler.declareName (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:1585:12)
+      at TypeScriptScopeHandler.declareName (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4880:11)
+      at TypeScriptParserMixin.declareNameFromIdentifier (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:7567:16)
+      at TypeScriptParserMixin.checkIdentifier (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:7563:12)
+      at TypeScriptParserMixin.checkLVal (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:7500:12)
+      at TypeScriptParserMixin.parseVarId (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13412:10)
+      at TypeScriptParserMixin.parseVarId (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9752:11)
+      at TypeScriptParserMixin.parseVar (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13383:12)
+      at TypeScriptParserMixin.parseVarStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13230:10)
+      at TypeScriptParserMixin.parseVarStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9408:31)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12851:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9172:18)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13445:12
+      at TypeScriptParserMixin.withSmartMixTopicForbiddingContext (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12403:14)
+      at TypeScriptParserMixin.parseFunction (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13444:10)
+      at TypeScriptParserMixin.parseFunctionStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13125:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12791:21)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:261:32)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:189:28
+[2m١:٠٧:٥٦ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1826:3)
+
+[0m [90m 1824 |[31m       ][33m;[31m
+ [90m 1825 |[31m     }
+[31m[1m>[22m[31m[90m 1826 |[31m   })[33m;[31m
+ [90m      |[31m    [31m[1m^[22m[31m
+ [90m 1827 |[31m
+ [90m 1828 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+ [90m 1829 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1826:3
+[33m  1824|        ];
+  1825|      }
+  1826|    });
+     |     ^
+  1827|  
+  1828|    const mergedUsers = buildUsers(profile, nextState.applications);[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10784:23)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:261:32)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:189:28
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:113:33
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:287:14)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+[2m١:٠٧:٥٦ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1826:3)
+
+[0m [90m 1824 |[31m       ][33m;[31m
+ [90m 1825 |[31m     }
+[31m[1m>[22m[31m[90m 1826 |[31m   })[33m;[31m
+ [90m      |[31m    [31m[1m^[22m[31m
+ [90m 1827 |[31m
+ [90m 1828 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+ [90m 1829 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1826:3
+[33m  1824|        ];
+  1825|      }
+  1826|    });
+     |     ^
+  1827|  
+  1828|    const mergedUsers = buildUsers(profile, nextState.applications);[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10784:23)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:261:32)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:189:28
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:113:33
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:287:14)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+[2m١:٠٩:٠٣ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1825:2)
+
+[0m [90m 1823 |[31m       ][33m;[31m
+ [90m 1824 |[31m     }
+[31m[1m>[22m[31m[90m 1825 |[31m   })[33m;[31m
+ [90m      |[31m   [31m[1m^[22m[31m
+ [90m 1826 |[31m
+ [90m 1827 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+ [90m 1828 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1825:2
+[33m  1823|        ];
+  1824|      }
+  1825|    });
+     |    ^
+  1826|  
+  1827|    const mergedUsers = buildUsers(profile, nextState.applications);[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10784:23)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:261:32)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:189:28
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:113:33
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:287:14)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+[2m١:٠٩:٠٣ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1825:2)
+
+[0m [90m 1823 |[31m       ][33m;[31m
+ [90m 1824 |[31m     }
+[31m[1m>[22m[31m[90m 1825 |[31m   })[33m;[31m
+ [90m      |[31m   [31m[1m^[22m[31m
+ [90m 1826 |[31m
+ [90m 1827 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+ [90m 1828 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1825:2
+[33m  1823|        ];
+  1824|      }
+  1825|    });
+     |    ^
+  1826|  
+  1827|    const mergedUsers = buildUsers(profile, nextState.applications);[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10784:23)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:261:32)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:189:28
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:113:33
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:287:14)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+[2m١:٠٩:٠٦ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1824:2)
+
+[0m [90m 1822 |[31m       ][33m;[31m
+ [90m 1823 |[31m     }
+[31m[1m>[22m[31m[90m 1824 |[31m   })[33m;[31m
+ [90m      |[31m   [31m[1m^[22m[31m
+ [90m 1825 |[31m
+ [90m 1826 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+ [90m 1827 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1824:2
+[33m  1822|        ];
+  1823|      }
+  1824|    });
+     |    ^
+  1825|  
+  1826|    const mergedUsers = buildUsers(profile, nextState.applications);[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10784:23)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:261:32)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:189:28
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:113:33
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:287:14)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+[2m١:٠٩:٠٦ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1824:2)
+
+[0m [90m 1822 |[31m       ][33m;[31m
+ [90m 1823 |[31m     }
+[31m[1m>[22m[31m[90m 1824 |[31m   })[33m;[31m
+ [90m      |[31m   [31m[1m^[22m[31m
+ [90m 1825 |[31m
+ [90m 1826 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+ [90m 1827 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1824:2
+[33m  1822|        ];
+  1823|      }
+  1824|    });
+     |    ^
+  1825|  
+  1826|    const mergedUsers = buildUsers(profile, nextState.applications);[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10784:23)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:261:32)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:189:28
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:113:33
+      at step (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:287:14)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\gensync\index.js:223:11)
+[2m١:٠٩:٠٨ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1820:8)
+
+[0m [90m 1818 |[31m
+ [90m 1819 |[31m         createAdminAudit([32m'ط·آ§ط¸â€‍ط¸â€ ط¸ط§ظ…'[31m[33m,[31m [32m'ط¸â€¦ط·آ²ط·آ§ط¸â€¦ط¸â€ ط© ط·ظ„ط¨ ط¬ط¯ظٹط¯'[31m[33m,[31m [32m'application'[31m[33m,[31m application[33m.[31mjobTitle[33m,[31m [32m`طھظ… ط§ط³طھظٹط±ط§ط¯ ط·ظ„ط¨ ط¬ط¯ظٹط¯ ظ…ظ‚ط¯ظ… ط¥ظ„ظ‰ ${application.companyName}.`[31m[33m,[31m [32m'info'[31m)[33m,[31m
+[31m[1m>[22m[31m[90m 1820 |[31m         [33m...[31mnextState[33m.[31mauditLogs[33m,[31m
+ [90m      |[31m         [31m[1m^[22m[31m
+ [90m 1821 |[31m       ][33m;[31m
+ [90m 1822 |[31m     }
+ [90m 1823 |[31m   })[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1820:8
+[33m  1818|  
+  1819|          createAdminAudit('ط·آ§ط¸â€‍ط¸â€ ط¸ط§ظ…', 'ط¸â€¦ط·آ²ط·آ§ط¸â€¦ط¸â€ ط© ط·ظ„ط¨ ط¬ط¯ظٹط¯', 'application', application.jobTitle, `طھظ… ط§ط³طھظٹط±ط§ط¯ ط·ظ„ط¨ ط¬ط¯ظٹط¯ ظ…ظ‚ط¯ظ… ط¥ظ„ظ‰ ${application.companyName}.`, 'info'),
+  1820|          ...nextState.auditLogs,
+     |          ^
+  1821|        ];
+  1822|      }[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10789:36)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9172:18)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13445:12
+      at TypeScriptParserMixin.withSmartMixTopicForbiddingContext (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12403:14)
+      at TypeScriptParserMixin.parseFunction (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13444:10)
+      at TypeScriptParserMixin.parseFunctionStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13125:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12791:21)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+[2m١:٠٩:٠٩ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1820:8)
+
+[0m [90m 1818 |[31m
+ [90m 1819 |[31m         createAdminAudit([32m'ط·آ§ط¸â€‍ط¸â€ ط¸ط§ظ…'[31m[33m,[31m [32m'ط¸â€¦ط·آ²ط·آ§ط¸â€¦ط¸â€ ط© ط·ظ„ط¨ ط¬ط¯ظٹط¯'[31m[33m,[31m [32m'application'[31m[33m,[31m application[33m.[31mjobTitle[33m,[31m [32m`طھظ… ط§ط³طھظٹط±ط§ط¯ ط·ظ„ط¨ ط¬ط¯ظٹط¯ ظ…ظ‚ط¯ظ… ط¥ظ„ظ‰ ${application.companyName}.`[31m[33m,[31m [32m'info'[31m)[33m,[31m
+[31m[1m>[22m[31m[90m 1820 |[31m         [33m...[31mnextState[33m.[31mauditLogs[33m,[31m
+ [90m      |[31m         [31m[1m^[22m[31m
+ [90m 1821 |[31m       ][33m;[31m
+ [90m 1822 |[31m     }
+ [90m 1823 |[31m   })[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1820:8
+[33m  1818|  
+  1819|          createAdminAudit('ط·آ§ط¸â€‍ط¸â€ ط¸ط§ظ…', 'ط¸â€¦ط·آ²ط·آ§ط¸â€¦ط¸â€ ط© ط·ظ„ط¨ ط¬ط¯ظٹط¯', 'application', application.jobTitle, `طھظ… ط§ط³طھظٹط±ط§ط¯ ط·ظ„ط¨ ط¬ط¯ظٹط¯ ظ…ظ‚ط¯ظ… ط¥ظ„ظ‰ ${application.companyName}.`, 'info'),
+  1820|          ...nextState.auditLogs,
+     |          ^
+  1821|        ];
+  1822|      }[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10789:36)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9172:18)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13445:12
+      at TypeScriptParserMixin.withSmartMixTopicForbiddingContext (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12403:14)
+      at TypeScriptParserMixin.parseFunction (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13444:10)
+      at TypeScriptParserMixin.parseFunctionStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13125:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12791:21)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+[2m١:٠٩:٢٠ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1821:2)
+
+[0m [90m 1819 |[31m         createAdminAudit([32m'ط·آ§ط¸â€‍ط¸â€ ط¸ط§ظ…'[31m[33m,[31m [32m'ط¸â€¦ط·آ²ط·آ§ط¸â€¦ط¸â€ ط© ط·ظ„ط¨ ط¬ط¯ظٹط¯'[31m[33m,[31m [32m'application'[31m[33m,[31m application[33m.[31mjobTitle[33m,[31m [32m`طھظ… ط§ط³طھظٹط±ط§ط¯ ط·ظ„ط¨ ط¬ط¯ظٹط¯ ظ…ظ‚ط¯ظ… ط¥ظ„ظ‰ ${application.companyName}.`[31m[33m,[31m [32m'info'[31m)[33m,[31m
+ [90m 1820 |[31m
+[31m[1m>[22m[31m[90m 1821 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+ [90m      |[31m   [31m[1m^[22m[31m
+ [90m 1822 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m
+ [90m 1823 |[31m   nextState[33m.[31musers [33m=[31m mergedUsers[33m.[31mmap((user) [33m=>[31m ({
+ [90m 1824 |[31m     [33m...[31muser[33m,[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1821:2
+[33m  1819|          createAdminAudit('ط·آ§ط¸â€‍ط¸â€ ط¸ط§ظ…', 'ط¸â€¦ط·آ²ط·آ§ط¸â€¦ط¸â€ ط© ط·ظ„ط¨ ط¬ط¯ظٹط¯', 'application', application.jobTitle, `طھظ… ط§ط³طھظٹط±ط§ط¯ ط·ظ„ط¨ ط¬ط¯ظٹط¯ ظ…ظ‚ط¯ظ… ط¥ظ„ظ‰ ${application.companyName}.`, 'info'),
+  1820|  
+  1821|    const mergedUsers = buildUsers(profile, nextState.applications);
+     |    ^
+  1822|    const existingUserNotes = new Map(nextState.users.map((user) => [user.id, user.notes]));
+  1823|    nextState.users = mergedUsers.map((user) => ({[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10789:36)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9172:18)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13445:12
+      at TypeScriptParserMixin.withSmartMixTopicForbiddingContext (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12403:14)
+      at TypeScriptParserMixin.parseFunction (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13444:10)
+      at TypeScriptParserMixin.parseFunctionStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13125:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12791:21)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)
+[2m١:٠٩:٢٠ ص[22m [31m[1m[vite][22m[39m [31mInternal server error: K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\src\lib\admin-store.tsx: Unexpected token (1821:2)
+
+[0m [90m 1819 |[31m         createAdminAudit([32m'ط·آ§ط¸â€‍ط¸â€ ط¸ط§ظ…'[31m[33m,[31m [32m'ط¸â€¦ط·آ²ط·آ§ط¸â€¦ط¸â€ ط© ط·ظ„ط¨ ط¬ط¯ظٹط¯'[31m[33m,[31m [32m'application'[31m[33m,[31m application[33m.[31mjobTitle[33m,[31m [32m`طھظ… ط§ط³طھظٹط±ط§ط¯ ط·ظ„ط¨ ط¬ط¯ظٹط¯ ظ…ظ‚ط¯ظ… ط¥ظ„ظ‰ ${application.companyName}.`[31m[33m,[31m [32m'info'[31m)[33m,[31m
+ [90m 1820 |[31m
+[31m[1m>[22m[31m[90m 1821 |[31m   [36mconst[31m mergedUsers [33m=[31m buildUsers(profile[33m,[31m nextState[33m.[31mapplications)[33m;[31m
+ [90m      |[31m   [31m[1m^[22m[31m
+ [90m 1822 |[31m   [36mconst[31m existingUserNotes [33m=[31m [36mnew[31m [33mMap[31m(nextState[33m.[31musers[33m.[31mmap((user) [33m=>[31m [user[33m.[31mid[33m,[31m user[33m.[31mnotes]))[33m;[31m
+ [90m 1823 |[31m   nextState[33m.[31musers [33m=[31m mergedUsers[33m.[31mmap((user) [33m=>[31m ({
+ [90m 1824 |[31m     [33m...[31muser[33m,[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mK:/التعديلات الجديدة/Rahma Al Muhdah/al-rahma-recruitment-admin/src/lib/admin-store.tsx[39m:1821:2
+[33m  1819|          createAdminAudit('ط·آ§ط¸â€‍ط¸â€ ط¸ط§ظ…', 'ط¸â€¦ط·آ²ط·آ§ط¸â€¦ط¸â€ ط© ط·ظ„ط¨ ط¬ط¯ظٹط¯', 'application', application.jobTitle, `طھظ… ط§ط³طھظٹط±ط§ط¯ ط·ظ„ط¨ ط¬ط¯ظٹط¯ ظ…ظ‚ط¯ظ… ط¥ظ„ظ‰ ${application.companyName}.`, 'info'),
+  1820|  
+  1821|    const mergedUsers = buildUsers(profile, nextState.applications);
+     |    ^
+  1822|    const existingUserNotes = new Map(nextState.users.map((user) => [user.id, user.notes]));
+  1823|    nextState.users = mergedUsers.map((user) => ({[39m
+      at constructor (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.unexpected (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:6619:16)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11442:22)
+      at TypeScriptParserMixin.parseExprAtom (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseExpressionBase (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10789:36)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:39
+      at TypeScriptParserMixin.allowInAnd (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12421:16)
+      at TypeScriptParserMixin.parseExpression (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10780:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12895:23)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseStatementListItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12747:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:61)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseBlock (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13297:10)
+      at TypeScriptParserMixin.parseFunctionBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12100:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12086:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9172:18)
+      at K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13445:12
+      at TypeScriptParserMixin.withSmartMixTopicForbiddingContext (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12403:14)
+      at TypeScriptParserMixin.parseFunction (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13444:10)
+      at TypeScriptParserMixin.parseFunctionStatement (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13125:17)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12791:21)
+      at TypeScriptParserMixin.parseStatementContent (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:9508:18)
+      at TypeScriptParserMixin.parseStatementLike (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12767:17)
+      at TypeScriptParserMixin.parseModuleItem (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12744:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13316:36)
+      at TypeScriptParserMixin.parseBlockBody (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:13309:10)
+      at TypeScriptParserMixin.parseProgram (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12622:10)
+      at TypeScriptParserMixin.parseTopLevel (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:12612:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14488:25)
+      at TypeScriptParserMixin.parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:10126:18)
+      at parse (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\parser\lib\index.js:14522:38)
+      at parser (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+      at normalizeFile.next (<anonymous>)
+      at run (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (K:\التعديلات الجديدة\Rahma Al Muhdah\al-rahma-recruitment-admin\node_modules\@babel\core\lib\transform.js:22:33)

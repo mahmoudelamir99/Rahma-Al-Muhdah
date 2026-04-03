@@ -1,0 +1,34 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8">
+  <title>Admin Login Harness</title>
+  <script>
+    sessionStorage.clear();
+    localStorage.clear();
+  </script>
+  <script src="/site.js?v=20260318-9" defer></script>
+</head>
+<body>
+  <div id="result">pending</div>
+  <form id="admin-form" data-demo-form="true" data-auth-form="admin-login" novalidate>
+    <input name="identifier" value="admin">
+    <input name="password" value="Admin@12345">
+    <button type="submit">submit</button>
+  </form>
+  <script>
+    window.addEventListener('load', () => {
+      document.getElementById('admin-form').requestSubmit();
+      setTimeout(() => {
+        const session = JSON.parse(sessionStorage.getItem('rahmaAuthSession') || 'null');
+        document.getElementById('result').textContent = JSON.stringify({
+          role: session && session.role,
+          email: session && session.email,
+          name: session && session.name,
+          loggedIn: session && session.loggedIn
+        });
+      }, 250);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+----------------------------------------
+Exception occurred during processing of request from ('192.168.1.2', 59843)
+Exception in thread Thread-491 (process_request_thread):
+Traceback (most recent call last):
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\socketserver.py", line 691, in process_request_thread
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\socketserver.py", line 361, in finish_request
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\socketserver.py", line 755, in __init__
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\http\server.py", line 436, in handle
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\http\server.py", line 424, in handle_one_request
+  File "K:\«· ⁄œÌ·«  «·ÃœÌœ…\Rahma Al Muhdah\serve-dir.py", line 325, in do_GET
+    file_path = self._resolve_path(self.path)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "K:\«· ⁄œÌ·«  «·ÃœÌœ…\Rahma Al Muhdah\serve-dir.py", line 280, in _send_file
+    if self.command != "HEAD":
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\socketserver.py", line 834, in write
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 1045, in _bootstrap_inner
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 982, in run
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\socketserver.py", line 693, in process_request_thread
+  File "C:\Users\accma\AppData\Local\Programs\Python\Python311\Lib\socketserver.py", line 380, in handle_error
+ModuleNotFoundError: No module named 'traceback'

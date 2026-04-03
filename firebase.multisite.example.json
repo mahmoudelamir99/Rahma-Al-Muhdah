@@ -1,0 +1,32 @@
+{
+  "hosting": [
+    {
+      "target": "public",
+      "public": ".",
+      "cleanUrls": false,
+      "ignore": [
+        "firebase.json",
+        ".firebaserc",
+        "**/.*",
+        "**/node_modules/**",
+        "portal/**",
+        "admin-login.html",
+        "admin-panel.html",
+        "al-rahma-recruitment-admin/**"
+      ]
+    },
+    {
+      "target": "admin",
+      "public": "al-rahma-recruitment-admin/dist",
+      "ignore": [
+        "**/.*"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}

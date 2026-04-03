@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="ar"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>الرحمة المهداه للتوظيف - إدارة الوظائف</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;family=Manrope:wght@400;600;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#abcae8",
+              "surface-container": "#edeeef",
+              "tertiary-fixed": "#ffdea1",
+              "secondary-fixed": "#cfe6f2",
+              "error-container": "#ffdad6",
+              "on-secondary-fixed": "#071e27",
+              "surface": "#f8f9fa",
+              "surface-tint": "#43617c",
+              "on-secondary-fixed-variant": "#354a53",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#2b4963",
+              "inverse-primary": "#abcae8",
+              "on-tertiary-container": "#fac965",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#5c4200",
+              "secondary-container": "#cfe6f2",
+              "primary": "#26445d",
+              "inverse-on-surface": "#f0f1f2",
+              "inverse-surface": "#2e3132",
+              "surface-dim": "#d9dadb",
+              "on-surface": "#191c1d",
+              "secondary": "#4c616c",
+              "on-surface-variant": "#42474d",
+              "on-secondary-container": "#526772",
+              "background": "#f8f9fa",
+              "surface-variant": "#e1e3e4",
+              "outline": "#73777d",
+              "secondary-fixed-dim": "#b4cad6",
+              "tertiary-fixed-dim": "#efc05c",
+              "surface-bright": "#f8f9fa",
+              "surface-container-highest": "#e1e3e4",
+              "on-error": "#ffffff",
+              "outline-variant": "#c3c7cd",
+              "on-error-container": "#93000a",
+              "primary-fixed": "#cce5ff",
+              "tertiary": "#563e00",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-fixed": "#261900",
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#b5d4f2",
+              "tertiary-container": "#735400",
+              "on-primary-fixed": "#001d31",
+              "primary-container": "#3e5c76",
+              "error": "#ba1a1a",
+              "surface-container-high": "#e7e8e9",
+              "on-background": "#191c1d",
+              "surface-container-low": "#f3f4f5"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"],
+              "arabic": ["IBM Plex Sans Arabic"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden">
+<!-- Side Navigation Bar -->
+<aside class="h-screen w-64 border-l-0 fixed right-0 top-0 z-40 bg-slate-50 dark:bg-slate-900 font-['IBM_Plex_Sans_Arabic'] text-sm antialiased flex flex-col overflow-y-auto">
+<div class="p-6 mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-2xl" data-icon="domain">domain</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-[#26445d] dark:text-white leading-tight">المعماري الرحيم</h1>
+<p class="text-[10px] text-on-surface-variant opacity-70">نظام إدارة التوظيف</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#26445d] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>لوحة القيادة</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#26445d] dark:text-blue-300 font-semibold border-r-4 border-[#26445d] bg-white dark:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="work">work</span>
+<span>الوظائف</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#26445d] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>الطلبات</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#26445d] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span>الشركات</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#26445d] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>المستخدمين</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#26445d] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="article">article</span>
+<span>المحتوى</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#26445d] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span>التنبيهات</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#26445d] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>التقارير</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-[#26445d] hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>الإعدادات</span>
+</a>
+</nav>
+<div class="mt-auto p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3 px-2 py-2">
+<div class="w-8 h-8 rounded-full bg-slate-200">
+<img alt="User Profile" class="w-full h-full object-cover rounded-full" data-alt="User profile avatar circle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmX8pDMaHoibnrhTl0VoFmF0kwIZPHKzF9HsyVNodndjPJ3uYbRlrFjUSs08tx9p1doh53Qc9tgoV6Y02Q3wh3rqvSWSJi6k6wJaQV6nvR0PwgF_keMZUMHnv-a-WoR6j8TxRUT1xSrqaHDmPibRY2kPoxe-6CXOVgE7MCxsk8JT2wGkZcmrxgQ5ATnW9NZ9DaIO7rjnAi0woykF9AXn9m2uw-Ba_0wltpaI0tgOxePZaBMEAXJ3yHy3Okbxk2kXQsC9uvR-6LqZI"/>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold text-[#26445d] truncate">أحمد العلي</p>
+<p class="text-[10px] text-on-surface-variant truncate">مدير النظام</p>
+</div>
+<span class="material-symbols-outlined text-slate-400" data-icon="logout">logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="mr-64 min-h-screen relative flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-0 right-64 h-16 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm dark:shadow-none flex items-center justify-between px-8 w-full font-['IBM_Plex_Sans_Arabic'] font-medium">
+<div class="flex items-center gap-6">
+<h2 class="text-lg font-black text-[#26445d] dark:text-white">لوحة التحكم</h2>
+<div class="h-6 w-px bg-slate-200"></div>
+<nav class="flex gap-6 text-sm">
+<a class="text-[#26445d] dark:text-white border-b-2 border-[#26445d] pb-1" href="#">الوظائف النشطة</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-[#3e5c76] transition-colors" href="#">قيد المراجعة</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded px-10 py-1.5 text-sm w-64 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="بحث عن وظيفة..." type="text"/>
+</div>
+<button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="flex items-center gap-2 px-2 py-1 hover:bg-slate-100 rounded cursor-pointer transition-colors">
+<span class="text-xs font-semibold text-[#26445d]">العربية</span>
+<span class="material-symbols-outlined text-sm" data-icon="language">language</span>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="mt-16 p-8 flex gap-8">
+<!-- Left: Table and Filters -->
+<div class="flex-1 space-y-6">
+<!-- Page Header with Primary Action -->
+<div class="flex justify-between items-end">
+<div>
+<h1 class="text-3xl font-bold text-[#26445d] tracking-tight mb-1">إدارة الوظائف</h1>
+<p class="text-on-surface-variant text-sm">إدارة وتعديل الوظائف المنشورة عبر المنصة.</p>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-white px-6 py-2.5 rounded-lg flex items-center gap-2 shadow-lg shadow-primary/10 hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span class="font-bold">إضافة وظيفة</span>
+</button>
+</div>
+<!-- Advanced Filter Bar -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15 flex flex-wrap items-center gap-6">
+<div class="flex-1 min-w-[150px]">
+<label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">الحالة</label>
+<select class="w-full bg-surface border-none text-sm rounded-md py-2 focus:ring-1 focus:ring-primary">
+<option>كل الحالات</option>
+<option>نشط</option>
+<option>مخفي</option>
+<option>مؤرشف</option>
+</select>
+</div>
+<div class="flex-1 min-w-[150px]">
+<label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">الشركة</label>
+<select class="w-full bg-surface border-none text-sm rounded-md py-2 focus:ring-1 focus:ring-primary">
+<option>جميع الشركات</option>
+<option>شركة سابك</option>
+<option>أرامكو السعودية</option>
+<option>مصرف الراجحي</option>
+</select>
+</div>
+<div class="flex-1 min-w-[150px]">
+<label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">المدينة</label>
+<select class="w-full bg-surface border-none text-sm rounded-md py-2 focus:ring-1 focus:ring-primary">
+<option>كل المدن</option>
+<option>الرياض</option>
+<option>جدة</option>
+<option>الدمام</option>
+</select>
+</div>
+<div class="flex-1 min-w-[150px]">
+<label class="block text-[11px] font-bold text-on-surface-variant mb-1 uppercase tracking-wider">نطاق التاريخ</label>
+<div class="relative">
+<span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-sm" data-icon="calendar_today">calendar_today</span>
+<input class="w-full bg-surface border-none text-sm rounded-md py-2 pr-10 focus:ring-1 focus:ring-primary" placeholder="اختر التاريخ" type="text"/>
+</div>
+</div>
+<button class="bg-surface-container-high text-primary px-4 py-2 self-end rounded-md hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+<!-- Bulk Action Bar (Hidden by default, shown on selection) -->
+<div class="bg-primary text-white p-4 rounded-xl flex items-center justify-between shadow-xl hidden animate-in slide-in-from-top duration-300">
+<div class="flex items-center gap-4">
+<span class="text-sm font-semibold">تم تحديد 3 وظائف</span>
+<div class="h-4 w-px bg-white/20"></div>
+<div class="flex gap-2">
+<button class="bg-white/10 hover:bg-white/20 px-3 py-1 text-xs rounded-md flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="archive">archive</span>
+                                أرشفة
+                            </button>
+<button class="bg-white/10 hover:bg-white/20 px-3 py-1 text-xs rounded-md flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="visibility_off">visibility_off</span>
+                                إخفاء
+                            </button>
+<button class="bg-error-container text-on-error-container hover:opacity-90 px-3 py-1 text-xs rounded-md flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+                                حذف نهائي
+                            </button>
+</div>
+</div>
+<button class="text-white/70 hover:text-white">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Jobs Table -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/15">
+<table class="w-full border-collapse text-right">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant border-b border-outline-variant/10">
+<th class="p-4 w-12"><input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/></th>
+<th class="p-4 text-[12px] font-bold">المسمى الوظيفي والشركة</th>
+<th class="p-4 text-[12px] font-bold">المدينة</th>
+<th class="p-4 text-[12px] font-bold">الحالة</th>
+<th class="p-4 text-[12px] font-bold">عدد المتقدمين</th>
+<th class="p-4 text-[12px] font-bold">تاريخ النشر</th>
+<th class="p-4 text-[12px] font-bold text-left">الإجراءات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="p-4"><input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/></td>
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-primary mb-0.5">مهندس برمجيات أول</span>
+<span class="text-[11px] text-on-surface-variant">حلول التقنية المتقدمة</span>
+</div>
+</td>
+<td class="p-4 text-sm">الرياض</td>
+<td class="p-4">
+<span class="px-2.5 py-1 text-[10px] font-bold rounded bg-surface-container-low text-on-primary-fixed-variant border border-primary/10">نشط</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-sm">142</span>
+<div class="w-16 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 70%"></div>
+</div>
+</div>
+</td>
+<td class="p-4 text-sm font-headline">2023-11-15</td>
+<td class="p-4 text-left">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant hover:text-primary transition-colors" title="تعديل"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant hover:text-primary transition-colors" title="إخفاء"><span class="material-symbols-outlined text-lg" data-icon="visibility_off">visibility_off</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant hover:text-primary transition-colors" title="أرشفة"><span class="material-symbols-outlined text-lg" data-icon="archive">archive</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant hover:text-primary transition-colors" title="تكرار"><span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="p-4"><input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/></td>
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-primary mb-0.5">مدير حسابات عملاء</span>
+<span class="text-[11px] text-on-surface-variant">البنك العربي المتحد</span>
+</div>
+</td>
+<td class="p-4 text-sm">جدة</td>
+<td class="p-4">
+<span class="px-2.5 py-1 text-[10px] font-bold rounded bg-tertiary-fixed text-on-tertiary-fixed border border-tertiary/10">مخفي</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-sm">85</span>
+<div class="w-16 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-tertiary-container h-full" style="width: 40%"></div>
+</div>
+</div>
+</td>
+<td class="p-4 text-sm font-headline">2023-11-12</td>
+<td class="p-4 text-left">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="تعديل"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="إخفاء"><span class="material-symbols-outlined text-lg" data-icon="visibility_off">visibility_off</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="أرشفة"><span class="material-symbols-outlined text-lg" data-icon="archive">archive</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="تكرار"><span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="p-4"><input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/></td>
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-primary mb-0.5">مصمم واجهات وتجربة مستخدم</span>
+<span class="text-[11px] text-on-surface-variant">شركة التصميم الرقمي</span>
+</div>
+</td>
+<td class="p-4 text-sm">الدمام</td>
+<td class="p-4">
+<span class="px-2.5 py-1 text-[10px] font-bold rounded bg-error-container text-on-error-container border border-error/10">مؤرشف</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-sm">210</span>
+<div class="w-16 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-error h-full" style="width: 90%"></div>
+</div>
+</div>
+</td>
+<td class="p-4 text-sm font-headline">2023-11-05</td>
+<td class="p-4 text-left">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="تعديل"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="إخفاء"><span class="material-symbols-outlined text-lg" data-icon="visibility_off">visibility_off</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="أرشفة"><span class="material-symbols-outlined text-lg" data-icon="archive">archive</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="تكرار"><span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="p-4"><input class="rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/></td>
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-sm font-bold text-primary mb-0.5">محلل بيانات أول</span>
+<span class="text-[11px] text-on-surface-variant">مؤسسة النقد العربي</span>
+</div>
+</td>
+<td class="p-4 text-sm">الرياض</td>
+<td class="p-4">
+<span class="px-2.5 py-1 text-[10px] font-bold rounded bg-surface-container-low text-on-primary-fixed-variant border border-primary/10">نشط</span>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="font-headline font-bold text-sm">56</span>
+<div class="w-16 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 30%"></div>
+</div>
+</div>
+</td>
+<td class="p-4 text-sm font-headline">2023-11-18</td>
+<td class="p-4 text-left">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="تعديل"><span class="material-symbols-outlined text-lg" data-icon="edit">edit</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="إخفاء"><span class="material-symbols-outlined text-lg" data-icon="visibility_off">visibility_off</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="أرشفة"><span class="material-symbols-outlined text-lg" data-icon="archive">archive</span></button>
+<button class="p-1.5 hover:bg-white rounded text-on-surface-variant" title="تكرار"><span class="material-symbols-outlined text-lg" data-icon="content_copy">content_copy</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination Footer -->
+<div class="p-4 bg-surface-container-low border-t border-outline-variant/10 flex items-center justify-between">
+<span class="text-xs text-on-surface-variant font-medium">إظهار 1 إلى 10 من أصل 124 وظيفة</span>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant/30 hover:bg-white transition-colors"><span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-white font-headline font-bold text-xs">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-white border border-transparent hover:border-outline-variant/30 font-headline text-xs transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-white border border-transparent hover:border-outline-variant/30 font-headline text-xs transition-colors">3</button>
+<span class="px-1 text-xs text-on-surface-variant">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-white border border-transparent hover:border-outline-variant/30 font-headline text-xs transition-colors">12</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant/30 hover:bg-white transition-colors"><span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Job Statistics Sidebar -->
+<aside class="w-80 space-y-6">
+<!-- Most Viewed Jobs Widget -->
+<section class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/15">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-[#26445d] flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="trending_up">trending_up</span>
+                            الأكثر مشاهدة
+                        </h3>
+<span class="material-symbols-outlined text-on-surface-variant/50 cursor-pointer" data-icon="more_vert">more_vert</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-3 group cursor-pointer">
+<div class="w-10 h-10 rounded bg-secondary-fixed flex items-center justify-center text-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold text-on-surface truncate group-hover:text-primary transition-colors">مطور تطبيقات جوال</p>
+<p class="text-[10px] text-on-surface-variant">12,450 مشاهدة</p>
+</div>
+</div>
+<div class="flex items-center gap-3 group cursor-pointer">
+<div class="w-10 h-10 rounded bg-secondary-fixed flex items-center justify-center text-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold text-on-surface truncate group-hover:text-primary transition-colors">محاسب تكاليف</p>
+<p class="text-[10px] text-on-surface-variant">8,210 مشاهدة</p>
+</div>
+</div>
+<div class="flex items-center gap-3 group cursor-pointer">
+<div class="w-10 h-10 rounded bg-secondary-fixed flex items-center justify-center text-primary-container shrink-0">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-bold text-on-surface truncate group-hover:text-primary transition-colors">مدير تسويق رقمي</p>
+<p class="text-[10px] text-on-surface-variant">7,540 مشاهدة</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Jobs with Most Applications -->
+<section class="bg-gradient-to-br from-primary to-primary-container p-6 rounded-xl text-white shadow-xl">
+<h3 class="font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed-dim" data-icon="quick_reference_all">quick_reference_all</span>
+                        الأعلى طلباً
+                    </h3>
+<div class="space-y-5">
+<div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
+<div class="flex justify-between items-start mb-2">
+<p class="text-xs font-medium text-white/80">مهندس مدني</p>
+<span class="text-xl font-headline font-extrabold">342</span>
+</div>
+<div class="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+<div class="bg-white h-full" style="width: 85%"></div>
+</div>
+<p class="text-[9px] mt-2 text-white/60">تم التقديم خلال الـ 24 ساعة الماضية</p>
+</div>
+<div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
+<div class="flex justify-between items-start mb-2">
+<p class="text-xs font-medium text-white/80">خدمة عملاء</p>
+<span class="text-xl font-headline font-extrabold">289</span>
+</div>
+<div class="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+<div class="bg-white h-full" style="width: 72%"></div>
+</div>
+<p class="text-[9px] mt-2 text-white/60">آخر تحديث قبل 3 ساعات</p>
+</div>
+</div>
+</section>
+<!-- Quick Tips Card -->
+<section class="bg-tertiary-fixed/30 p-5 rounded-xl border border-tertiary-fixed">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-tertiary-container text-xl" data-icon="tips_and_updates">tips_and_updates</span>
+<div>
+<p class="text-xs font-bold text-on-tertiary-fixed mb-1">نصيحة سريعة</p>
+<p class="text-[11px] leading-relaxed text-on-tertiary-fixed-variant">تحديث الوظائف القديمة دورياً يساعد في ظهورها بشكل أفضل في نتائج البحث للمتقدمين.</p>
+</div>
+</div>
+</section>
+</aside>
+</div>
+</main>
+<!-- Floating Action Button (FAB) - Suppression Logic: Shown only for core context -->
+<!-- Not needed on list screen when we have a clear primary button, but kept if mobile-specific view was needed -->
+<div class="fixed bottom-8 left-8 md:hidden z-50">
+<button class="w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+</body></html>

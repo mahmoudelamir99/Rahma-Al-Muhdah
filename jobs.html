@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>وظائف في مصر | فرص عمل منشورة وتقديم مباشر | الرحمة المهداه للتوظيف</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
+  <link rel="icon" type="image/png" href="logo-mark.png"/>
+  <link rel="stylesheet" href="site.css?v=20260403-4"/>
+  <script src="firebase-site-config.js" defer></script>
+  <script src="site.js?v=20260403-4" defer></script>
+  <!-- RAHMA SEO START -->
+  <meta name="description" content="استعرض وظائف في مصر وفرص عمل منشورة فعليًا مع فلترة سريعة وتقديم مباشر ورقم طلب واضح للمتابعة من نفس المنصة.">
+  <meta name="keywords" content="وظائف في مصر, فرص عمل, وظائف شاغرة, تقديم وظائف, توظيف شركات, وظائف القاهرة, وظائف العاشر من رمضان">
+  <meta name="robots" content="index,follow">
+  <meta property="og:site_name" content="الرحمة المهداه للتوظيف">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="وظائف في مصر | فرص عمل منشورة وتقديم مباشر | الرحمة المهداه للتوظيف">
+  <meta property="og:description" content="استعرض وظائف في مصر وفرص عمل منشورة فعليًا مع فلترة سريعة وتقديم مباشر ورقم طلب واضح للمتابعة من نفس المنصة.">
+  <meta property="og:url" content="/jobs.html">
+  <meta property="og:image" content="/logo-mark.png">
+  <meta property="og:locale" content="ar_EG">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="وظائف في مصر | فرص عمل منشورة وتقديم مباشر | الرحمة المهداه للتوظيف">
+  <meta name="twitter:description" content="استعرض وظائف في مصر وفرص عمل منشورة فعليًا مع فلترة سريعة وتقديم مباشر ورقم طلب واضح للمتابعة من نفس المنصة.">
+  <meta name="twitter:image" content="/logo-mark.png">
+  <link rel="canonical" href="/jobs.html">
+<!-- RAHMA SEO END -->
+</head>
+<body class="page-compact antialiased">
+  <header class="glass-nav site-topbar fixed top-0 w-full z-50">
+    <div class="container mx-auto px-5 lg:px-6">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html" aria-label="الرحمة المهداه للتوظيف">
+          <span class="site-brand__mark">
+            <img alt="شعار الرحمة المهداه للتوظيف" class="site-logo" src="logo-mark.png"/>
+          </span>
+          <span class="site-brand__copy">
+            <strong class="site-name">الرحمة المهداه للتوظيف</strong>
+          </span>
+        </a>
+
+        <nav class="site-nav hidden lg:flex" aria-label="التنقل الرئيسي">
+          <a class="site-nav__link" href="index.html">الرئيسية</a>
+          <a class="site-nav__link is-active" href="jobs.html">الوظائف</a>
+          <a class="site-nav__link" href="companies.html">الشركات</a>
+          <a class="site-nav__link" href="about.html">من نحن</a>
+        </nav>
+
+        <div class="site-header__actions">
+          <a class="site-action site-action--ghost" href="track-application.html">متابعة الطلب</a>
+          <a class="site-action site-action--ghost" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
+          <a class="site-action site-action--primary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="product-shell">
+    <section class="page-section page-section--hero">
+      <div class="container mx-auto px-5 lg:px-6">
+        <div class="page-card hero-card hero-card--light">
+          <span class="section-eyebrow">الوظائف الحالية</span>
+          <h1>ابحث وفلتر ثم قدّم مباشرة</h1>
+          <p class="hero-card__copy">
+            الصفحة تعرض الوظائف المنشورة فعليًا فقط. لو مفيش بيانات معتمدة حاليًا، هتظهر لك رسالة واضحة بدل أي محتوى وهمي.
+          </p>
+
+          <div class="jobs-search-panel jobs-search-panel--light">
+            <label class="jobs-search-panel__field">
+              <span><i class="fa-solid fa-magnifying-glass"></i></span>
+              <input data-jobs-keyword placeholder="المسمى الوظيفي أو الشركة أو المهارة" type="text"/>
+            </label>
+
+            <label class="jobs-search-panel__field">
+              <span><i class="fa-solid fa-globe"></i></span>
+              <select data-jobs-country></select>
+            </label>
+
+            <label class="jobs-search-panel__field hidden" data-jobs-governorate-wrap hidden>
+              <span><i class="fa-solid fa-location-dot"></i></span>
+              <select data-jobs-governorate></select>
+            </label>
+
+            <button data-search-action="jobs" type="button">عرض النتائج</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="jobs-chip-bar">
+      <div class="container mx-auto px-5 lg:px-6">
+        <div class="jobs-chip-bar__inner">
+          <button class="jobs-filter-chip jobs-filter-chip--active" data-link="jobs.html">كل التخصصات</button>
+          <button class="jobs-filter-chip" data-link="jobs.html?q=تقنية المعلومات">تقنية المعلومات</button>
+          <button class="jobs-filter-chip" data-link="jobs.html?q=تسويق">التسويق</button>
+          <button class="jobs-filter-chip" data-link="jobs.html?q=موارد بشرية">الموارد البشرية</button>
+          <button class="jobs-filter-chip" data-link="jobs.html?q=مبيعات">المبيعات</button>
+          <button class="jobs-filter-chip" data-link="jobs.html?q=خدمة العملاء">خدمة العملاء</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section page-section--tight">
+      <div class="container mx-auto px-5 lg:px-6">
+        <div class="section-head section-head--inline jobs-results__head">
+          <div>
+            <span class="section-eyebrow">النتائج</span>
+            <h2 class="section-title">الوظائف المتاحة</h2>
+            <p class="section-copy">كل بطاقة تعرض أهم التفاصيل مع زر للتقديم وزر للتفاصيل.</p>
+          </div>
+          <div class="jobs-results__badge" data-jobs-count>0 وظائف متاحة</div>
+        </div>
+
+        <div class="jobs-results__grid" data-jobs-grid></div>
+
+        <div class="jobs-empty-state" data-jobs-empty>
+          لا توجد وظائف منشورة حاليًا. أول وظيفة معتمدة من لوحة التحكم ستظهر هنا مباشرة.
+        </div>
+
+        <div class="mt-12 flex items-center justify-center gap-3" data-jobs-pagination>
+          <button aria-label="الصفحة السابقة" class="w-10 h-10 rounded-full border border-gray-200 text-gray-600 hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40" data-page-prev type="button"><i class="fa-solid fa-angle-right"></i></button>
+          <div class="flex items-center justify-center gap-3" data-pagination-pages></div>
+          <button aria-label="الصفحة التالية" class="w-10 h-10 rounded-full border border-gray-200 text-gray-600 hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40" data-page-next type="button"><i class="fa-solid fa-angle-left"></i></button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="public-footer">
+    <div class="container mx-auto px-5 lg:px-6">
+      <div class="public-footer__grid">
+        <div class="public-footer__brand">
+          <div class="site-brand">
+            <span class="site-brand__mark">
+              <img alt="شعار الرحمة المهداه للتوظيف" class="site-logo" src="logo-mark.png"/>
+            </span>
+            <span class="site-brand__copy">
+              <strong class="site-name">الرحمة المهداه للتوظيف</strong>
+            </span>
+          </div>
+          <p>صفحة الوظائف تعرض الفرص الحالية فقط، مع التقديم المباشر ومتابعة الطلب بعد الإرسال.</p>
+        </div>
+
+        <div class="public-footer__links">
+          <h3>الروابط</h3>
+          <a href="index.html">الرئيسية</a>
+          <a href="companies.html">الشركات</a>
+          <a href="track-application.html">متابعة الطلب</a>
+          <a href="contact.html">تواصل معنا</a>
+        </div>
+
+        <div class="public-footer__links">
+          <h3>للشركات</h3>
+          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">تسجيل شركة</a>
+          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
+        </div>
+      </div>
+
+      <div class="public-footer__bottom">
+        <p><span dir="ltr">© 2026</span> الرحمة المهداه للتوظيف</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

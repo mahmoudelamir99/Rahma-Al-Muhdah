@@ -1,0 +1,37 @@
+@import "./al-rahma-recruitment-admin/node_modules/tailwindcss/index.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-cairo: "Cairo", sans-serif;
+  --font-display: "El Messiri", "Cairo", sans-serif;
+
+  --color-primary: #4d8fff;
+  --color-accent: #36d7aa;
+  --color-accent-blue: #0ea5e9;
+  --color-background-light: #f4f7fc;
+  --color-background-dark: #0f172a;
+
+  --color-brand-blue: #2563eb;
+  --color-brand-darkBlue: #0f2f6a;
+  --color-brand-accent: #2ed3a7;
+  --color-brand-purple: #7c5cff;
+  --color-brand-light: #f6f8fd;
+  --color-brand-soft: #eef4ff;
+  --color-brand-ink: #0f172a;
+}
+
+@utility animate-float {
+  animation: float 7s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-16px);
+  }
+}
