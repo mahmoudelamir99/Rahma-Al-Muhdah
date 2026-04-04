@@ -1,0 +1,9 @@
+{
+  "name": "rahma-admin-vercel-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "install:admin": "npm --prefix al-rahma-recruitment-admin ci",
+    "build": "npm --prefix al-rahma-recruitment-admin run build"
+  }
+}
