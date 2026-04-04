@@ -3489,6 +3489,175 @@
     return true;
   };
 
+  const deleteCompanyAccountPermanently = async (profile = {}, session = null) => {
+    const activeSession = session || getSession() || {};
+    const companyIdentity = getCompanyIdentity(profile, activeSession);
+    const runtimeCompanies = getAdminRuntimeCompanies();
+    const matchedRuntimeCompany =
+      runtimeCompanies.find(
+        (company) =>
+          normalize(company?.id) === normalize(activeSession?.companyId || profile?.companyId || '') ||
+          normalize(company?.email) === normalize(profile?.email || activeSession?.email || '') ||
+          normalize(company?.name) === normalize(companyIdentity.name),
+      ) || {};
+
+    const companyId = String(activeSession?.companyId || profile?.companyId || matchedRuntimeCompany?.id || '').trim();
+    const companyName = String(companyIdentity.name || matchedRuntimeCompany?.name || '').trim();
+    const companyEmail = normalize(profile?.email || activeSession?.email || matchedRuntimeCompany?.email || '');
+
+    if (!companyId && !companyName && !companyEmail) return false;
+
+    const matchesCompany = (company = {}) => {
+      const recordId = String(company?.id || '').trim();
+      const recordName = normalize(company?.name || '');
+      const recordEmail = normalize(company?.email || '');
+      return (companyId && recordId === companyId) || (companyEmail && recordEmail === companyEmail) || (companyName && recordName === normalize(companyName));
+    };
+
+    const matchesJob = (job = {}) => {
+      const recordCompanyId = String(job?.companyId || '').trim();
+      const recordCompanyName = normalize(job?.companyName || job?.jobCompany || '');
+      return (companyId && recordCompanyId === companyId) || (companyName && recordCompanyName === normalize(companyName));
+    };
+
+    const matchesApplication = (application = {}) => {
+      const recordCompanyId = String(application?.companyId || '').trim();
+      const recordCompanyName = normalize(
+        application?.companyName || application?.company?.name || application?.job?.jobCompany || application?.jobCompany || '',
+      );
+      const recordCompanyEmail = normalize(application?.company?.email || '');
+      return (
+        (companyId && recordCompanyId === companyId) ||
+        (companyName && recordCompanyName === normalize(companyName)) ||
+        (companyEmail && recordCompanyEmail === companyEmail)
+      );
+    };
+
+    const nextApplications = getStoredApplications().filter((application) => !matchesApplication(application));
+    saveLocalStoredApplications(nextApplications);
+
+    const currentRuntime = sanitizeAdminRuntime(safeReadJSON(ADMIN_RUNTIME_KEY, {})).runtime;
+    const nextRuntime = {
+      ...currentRuntime,
+      companies: Array.isArray(currentRuntime?.companies) ? currentRuntime.companies.filter((company) => !matchesCompany(company)) : [],
+      jobs: Array.isArray(currentRuntime?.jobs) ? currentRuntime.jobs.filter((job) => !matchesJob(job)) : [],
+      applications: Array.isArray(currentRuntime?.applications)
+        ? currentRuntime.applications.filter((application) => !matchesApplication(application))
+        : [],
+    };
+    saveJSON(ADMIN_RUNTIME_KEY, nextRuntime);
+    void syncSharedAdminRuntimeFile(nextRuntime);
+
+    if (hasFirebaseSiteConfig()) {
+      const services = await getFirebaseSiteServices();
+      if (services) {
+        try {
+          const { db, firestoreModule, auth, authModule } = services;
+          const refsToDelete = new Map();
+          const rememberRef = (ref) => {
+            if (ref?.path) refsToDelete.set(ref.path, ref);
+          };
+
+          if (companyId) {
+            rememberRef(firestoreModule.doc(db, 'companies', companyId));
+          }
+
+          const companyQueries = [];
+          const jobQueries = [];
+          const applicationQueries = [];
+
+          if (companyEmail) {
+            companyQueries.push(
+              firestoreModule.getDocs(
+                firestoreModule.query(firestoreModule.collection(db, 'companies'), firestoreModule.where('email', '==', companyEmail)),
+              ),
+            );
+          }
+          if (companyName) {
+            companyQueries.push(
+              firestoreModule.getDocs(
+                firestoreModule.query(firestoreModule.collection(db, 'companies'), firestoreModule.where('name', '==', companyName)),
+              ),
+            );
+            jobQueries.push(
+              firestoreModule.getDocs(
+                firestoreModule.query(firestoreModule.collection(db, 'jobs'), firestoreModule.where('companyName', '==', companyName)),
+              ),
+            );
+            applicationQueries.push(
+              firestoreModule.getDocs(
+                firestoreModule.query(
+                  firestoreModule.collection(db, 'applications'),
+                  firestoreModule.where('companyName', '==', companyName),
+                ),
+              ),
+            );
+          }
+          if (companyId) {
+            jobQueries.push(
+              firestoreModule.getDocs(
+                firestoreModule.query(firestoreModule.collection(db, 'jobs'), firestoreModule.where('companyId', '==', companyId)),
+              ),
+            );
+            applicationQueries.push(
+              firestoreModule.getDocs(
+                firestoreModule.query(
+                  firestoreModule.collection(db, 'applications'),
+                  firestoreModule.where('companyId', '==', companyId),
+                ),
+              ),
+            );
+          }
+
+          const [companySnapshots, jobSnapshots, applicationSnapshots] = await Promise.all([
+            Promise.all(companyQueries),
+            Promise.all(jobQueries),
+            Promise.all(applicationQueries),
+          ]);
+
+          companySnapshots.forEach((snapshot) => snapshot.docs.forEach((docSnapshot) => rememberRef(docSnapshot.ref)));
+          jobSnapshots.forEach((snapshot) => snapshot.docs.forEach((docSnapshot) => rememberRef(docSnapshot.ref)));
+          applicationSnapshots.forEach((snapshot) => snapshot.docs.forEach((docSnapshot) => rememberRef(docSnapshot.ref)));
+
+          if (refsToDelete.size) {
+            const batch = firestoreModule.writeBatch(db);
+            refsToDelete.forEach((ref) => batch.delete(ref));
+            await batch.commit();
+          }
+
+          try {
+            const authState = await waitForFirebaseAuthUser();
+            const currentUser = authState?.user || auth?.currentUser || null;
+            const matchesCurrentUser =
+              currentUser &&
+              ((companyEmail && normalize(currentUser.email || '') === companyEmail) ||
+                (activeSession?.uid && String(currentUser.uid || '').trim() === String(activeSession.uid || '').trim()));
+
+            if (matchesCurrentUser && typeof authModule?.deleteUser === 'function') {
+              await authModule.deleteUser(currentUser);
+            }
+          } catch (error) {
+            console.warn('Unable to remove Firebase auth user after company deletion', error);
+          }
+        } catch (error) {
+          console.warn('Unable to permanently delete company account from Firebase', error);
+          return false;
+        }
+      }
+    }
+
+    firebaseApplicationsCache = [];
+    firebaseApplicationsCacheHydrated = false;
+    if (companyId) {
+      firebaseCompanyStateFingerprints.delete(companyId);
+    }
+    window.localStorage.removeItem(STORAGE_KEYS.applicationProfile);
+    window.sessionStorage.removeItem(STORAGE_KEYS.applicationProfile);
+    clearSocialDraft();
+    await signOutCompanySession();
+    return true;
+  };
+
   const migrateLegacyCompanyDraftJobs = (profile = {}, session = null) => {
     return profile;
   };
@@ -4221,6 +4390,45 @@
       });
 
       refreshPreview();
+
+      const deleteCompanyButton = document.querySelector('[data-company-account-delete="true"]');
+      if (deleteCompanyButton instanceof HTMLButtonElement && deleteCompanyButton.dataset.boundCompanyDelete !== 'true') {
+        deleteCompanyButton.dataset.boundCompanyDelete = 'true';
+        deleteCompanyButton.addEventListener('click', async () => {
+          const latestProfile = migrateLegacyCompanyDraftJobs(getStoredProfile(), activeSession);
+          const latestSession = refreshCompanySession(latestProfile, activeSession);
+          const latestIdentity = getCompanyIdentity(latestProfile, latestSession);
+          const companyLabel = String(latestIdentity.name || 'هذه الشركة').trim();
+          const confirmed = window.prompt(
+            `لحذف ${companyLabel} نهائيًا اكتب كلمة حذف في الخانة التالية. سيتم حذف الوظائف والطلبات التابعة أيضًا.`,
+            '',
+          );
+
+          if (confirmed === null) return;
+          if (String(confirmed).trim() !== 'حذف') {
+            setProfileFeedback('لم يتم تنفيذ الحذف لأن كلمة التأكيد غير صحيحة.', 'error');
+            return;
+          }
+
+          deleteCompanyButton.disabled = true;
+          const originalLabel = deleteCompanyButton.textContent;
+          deleteCompanyButton.textContent = 'جارٍ حذف الشركة...';
+          const deleted = await deleteCompanyAccountPermanently(latestProfile, latestSession);
+          deleteCompanyButton.disabled = false;
+          deleteCompanyButton.textContent = originalLabel || 'حذف الشركة نهائيًا';
+
+          if (!deleted) {
+            setProfileFeedback('تعذر حذف حساب الشركة نهائيًا. حاول مرة أخرى أو راجع إعدادات الربط.', 'error');
+            return;
+          }
+
+          setProfileFeedback('تم حذف حساب الشركة وكل الوظائف والطلبات التابعة له نهائيًا.', 'success');
+          showToast('تم حذف الشركة نهائيًا.');
+          window.setTimeout(() => {
+            navigateToInternal('index.html', 'index.html');
+          }, 900);
+        });
+      }
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();

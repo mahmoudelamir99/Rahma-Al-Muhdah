@@ -4091,6 +4091,37 @@ body.page-seeker-dashboard {
   min-width: 9rem;
 }
 
+.dashboard-company-danger-zone {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  margin-top: 0.8rem;
+  padding: 1rem 1.05rem;
+  border: 1px solid rgba(244, 63, 94, 0.16);
+  border-radius: 1.15rem;
+  background: linear-gradient(180deg, rgba(255, 245, 247, 0.96), rgba(255, 255, 255, 0.98));
+}
+
+.dashboard-company-danger-zone__copy {
+  display: grid;
+  gap: 0.28rem;
+  min-width: min(100%, 18rem);
+}
+
+.dashboard-company-danger-zone__copy strong {
+  color: #9f1239;
+  font-size: 0.92rem;
+}
+
+.dashboard-company-danger-zone__copy p {
+  margin: 0;
+  color: #7f4255;
+  font-size: 0.82rem;
+  line-height: 1.8;
+}
+
 .dashboard-actions-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4583,6 +4614,10 @@ body.page-seeker-dashboard {
     display: grid;
   }
 
+  .dashboard-company-danger-zone {
+    align-items: stretch;
+  }
+
   .dashboard-actions-strip {
     grid-template-columns: 1fr;
   }
@@ -4596,6 +4631,7 @@ body.page-seeker-dashboard {
   }
 
   .dashboard-company-profile__actions .site-action,
+  .dashboard-company-danger-zone .site-action,
   .dashboard-action-tile,
   .dashboard-support-actions .site-action,
   .dashboard-applicant-card__actions .site-action {
