@@ -11,7 +11,6 @@ import {
   Phone,
   Plus,
   RefreshCcw,
-  RotateCcw,
   Search,
   ShieldCheck,
   Trash2,
@@ -158,7 +157,7 @@ function getFormState(company?: CompanyRecord | null): CompanyFormState {
 
 export default function Companies() {
   const navigate = useNavigate();
-  const { state, saveCompany, updateCompanyStatus, toggleCompanyVerified, softDeleteCompany, restoreCompany, addNote, refreshFromSite } =
+  const { state, saveCompany, updateCompanyStatus, toggleCompanyVerified, softDeleteCompany, addNote, refreshFromSite } =
     useAdmin();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState('');
@@ -488,7 +487,7 @@ export default function Companies() {
           <AdminStatCard label="نشطة" value={formatNumber(state.companies.filter((item) => !item.deletedAt && item.status === 'approved').length)} helper="ظاهرة على الموقع" icon={Building2} tone="primary" />
           <AdminStatCard label="مراجعة" value={formatNumber(state.companies.filter((item) => !item.deletedAt && item.status === 'pending').length)} helper="بانتظار الاعتماد" icon={ShieldCheck} tone="secondary" />
           <AdminStatCard label="موقوفة" value={formatNumber(state.companies.filter((item) => !item.deletedAt && item.status === 'restricted').length)} helper="محجوبة من الظهور والدخول" icon={ShieldCheck} tone="accent" />
-          <AdminStatCard label="محذوفة" value={formatNumber(state.companies.filter((item) => item.deletedAt).length)} helper="محذوفة بقرار نهائي مع إمكانية الاستعادة" icon={Trash2} tone="accent" />
+          <AdminStatCard label="محذوفة" value={formatNumber(state.companies.filter((item) => item.deletedAt).length)} helper="سجلات قديمة قبل تفعيل الحذف النهائي" icon={Trash2} tone="accent" />
           <AdminStatCard label="واجهة فقط" value={formatNumber(state.companies.filter((item) => !item.deletedAt && item.siteMode === 'landing').length)} helper="ملف تعريفي بدون وظائف عامة" icon={Globe} tone="success" />
         </div>
 
@@ -608,19 +607,14 @@ export default function Companies() {
                         تعديل
                       </AdminButton>
                       <AdminButton
-                        variant={company.deletedAt ? 'secondary' : 'danger'}
+                        variant="danger"
                         onClick={() => {
-                          if (company.deletedAt) {
-                            restoreCompany(company.id);
-                            setFeedback({ tone: 'success', text: 'تمت استعادة الشركة.' });
-                            return;
-                          }
                           softDeleteCompany(company.id);
-                          setFeedback({ tone: 'success', text: 'تم حذف الشركة وإخفاء وظائفها.' });
+                          setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا.' });
                         }}
                       >
-                        {company.deletedAt ? <RotateCcw size={15} /> : <Trash2 size={15} />}
-                        {company.deletedAt ? 'استعادة' : 'حذف'}
+                        <Trash2 size={15} />
+                        حذف نهائي
                       </AdminButton>
                     </div>
                   </motion.article>
@@ -870,17 +864,12 @@ export default function Companies() {
                 <ShieldCheck size={15} />
                 {selectedCompany.status === 'restricted' ? 'إعادة تفعيل الشركة' : 'إيقاف الشركة'}
               </AdminButton>
-              <AdminButton variant={selectedCompany.deletedAt ? 'secondary' : 'danger'} onClick={() => {
-                if (selectedCompany.deletedAt) {
-                  restoreCompany(selectedCompany.id);
-                  setFeedback({ tone: 'success', text: 'تمت استعادة الشركة.' });
-                } else {
+              <AdminButton variant="danger" onClick={() => {
                   softDeleteCompany(selectedCompany.id);
-                  setFeedback({ tone: 'success', text: 'تم حذف الشركة وإخفاء وظائفها.' });
-                }
+                  setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا.' });
               }}>
-                {selectedCompany.deletedAt ? <RotateCcw size={15} /> : <Trash2 size={15} />}
-                {selectedCompany.deletedAt ? 'استعادة الشركة' : 'حذف الشركة'}
+                <Trash2 size={15} />
+                حذف الشركة نهائيًا
               </AdminButton>
               <AdminButton
                 variant="soft"

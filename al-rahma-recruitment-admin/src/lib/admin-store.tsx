@@ -3811,36 +3811,82 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const softDeleteCompany = (companyId: string) => {
+    const targetCompany = state.companies.find((company) => company.id === companyId) || null;
+    if (!targetCompany) return;
+
+    const normalizedCompanyName = normalize(targetCompany.name);
+    const relatedJobs = state.jobs.filter((job) => normalize(job.companyName) === normalizedCompanyName);
+    const relatedApplications = state.applications.filter(
+      (application) =>
+        normalize(application.companyName) === normalizedCompanyName ||
+        relatedJobs.some(
+          (job) =>
+            normalize(job.title) === normalize(application.jobTitle) &&
+            normalize(job.companyName) === normalize(application.companyName),
+        ),
+    );
+
     updateState((current) => ({
       ...current,
-      companies: current.companies.map((company) =>
-        company.id === companyId
-          ? {
-              ...company,
-              deletedAt: new Date().toISOString(),
-              deletedBy: 'admin',
-              deletedStatusSnapshot: company.status,
-            }
-          : company,
+      companies: current.companies.filter((company) => company.id !== companyId),
+      jobs: current.jobs.filter((job) => normalize(job.companyName) !== normalizedCompanyName),
+      applications: current.applications.filter(
+        (application) =>
+          normalize(application.companyName) !== normalizedCompanyName &&
+          !relatedJobs.some(
+            (job) =>
+              normalize(job.title) === normalize(application.jobTitle) &&
+              normalize(job.companyName) === normalize(application.companyName),
+          ),
       ),
-      jobs: current.jobs.map((job) => {
-        const company = current.companies.find((item) => item.id === companyId);
-        if (!company) return job;
-        return normalize(job.companyName) === normalize(company.name)
-          ? {
-              ...job,
-              deletedAt: new Date().toISOString(),
-              deletedBy: 'admin',
-              deletedStatusSnapshot: job.status,
-              restoredByAdminAt: null,
-            }
-          : job;
-      }),
       auditLogs: [
-        createAdminAudit(actorName, 'حذف شركة', 'companies', companyId, 'تم حذف الشركة من العرض العام مع إخفاء الوظائف المرتبطة بها من الواجهة.', 'warning'),
+        createAdminAudit(
+          actorName,
+          'حذف شركة نهائي',
+          'companies',
+          companyId,
+          'تم حذف الشركة نهائيًا مع إزالة الوظائف والطلبات المرتبطة بها من النظام.',
+          'warning',
+        ),
         ...current.auditLogs,
       ],
     }));
+
+    if (!hasFirebaseConfig()) return;
+
+    void (async () => {
+      try {
+        const services = await getFirebaseServices();
+        if (!services) return;
+
+        const { db, firestoreModule } = services;
+        const batch = firestoreModule.writeBatch(db);
+
+        batch.delete(firestoreModule.doc(db, 'companies', companyId));
+
+        relatedJobs.forEach((job) => {
+          batch.delete(firestoreModule.doc(db, 'jobs', job.id));
+        });
+
+        relatedApplications.forEach((application) => {
+          const requestId = String(application.requestId || application.id || '').trim();
+          if (!requestId) return;
+          batch.delete(firestoreModule.doc(db, 'applications', requestId));
+          batch.delete(firestoreModule.doc(db, 'applicationTracking', requestId));
+        });
+
+        await batch.commit();
+      } catch {
+        writeAudit(
+          actorName,
+          'فشل حذف شركة نهائي',
+          'companies',
+          companyId,
+          'تم حذف الشركة محليًا لكن تعذر حذفها من Firebase في هذه اللحظة.',
+          'danger',
+        );
+      }
+    })();
   };
 
   const restoreCompany = (companyId: string) => {
@@ -4043,24 +4089,69 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const softDeleteJob = (jobId: string) => {
+    const targetJob = state.jobs.find((job) => job.id === jobId) || null;
+    if (!targetJob) return;
+
+    const relatedApplications = state.applications.filter(
+      (application) =>
+        normalize(application.jobTitle) === normalize(targetJob.title) &&
+        normalize(application.companyName) === normalize(targetJob.companyName),
+    );
+
     updateState((current) => ({
       ...current,
-      jobs: current.jobs.map((job) =>
-        job.id === jobId
-          ? {
-              ...job,
-              deletedAt: new Date().toISOString(),
-              deletedBy: 'admin',
-              deletedStatusSnapshot: job.status,
-              restoredByAdminAt: null,
-            }
-          : job,
+      jobs: current.jobs.filter((job) => job.id !== jobId),
+      applications: current.applications.filter(
+        (application) =>
+          !(
+            normalize(application.jobTitle) === normalize(targetJob.title) &&
+            normalize(application.companyName) === normalize(targetJob.companyName)
+          ),
       ),
       auditLogs: [
-        createAdminAudit(actorName, 'حذف وظيفة', 'jobs', jobId, 'تم حذف الوظيفة من العرض العام مع الاحتفاظ بسجلها داخل اللوحة.', 'warning'),
+        createAdminAudit(
+          actorName,
+          'حذف وظيفة نهائي',
+          'jobs',
+          jobId,
+          'تم حذف الوظيفة نهائيًا مع إزالة الطلبات المرتبطة بها من النظام.',
+          'warning',
+        ),
         ...current.auditLogs,
       ],
     }));
+
+    if (!hasFirebaseConfig()) return;
+
+    void (async () => {
+      try {
+        const services = await getFirebaseServices();
+        if (!services) return;
+
+        const { db, firestoreModule } = services;
+        const batch = firestoreModule.writeBatch(db);
+
+        batch.delete(firestoreModule.doc(db, 'jobs', jobId));
+
+        relatedApplications.forEach((application) => {
+          const requestId = String(application.requestId || application.id || '').trim();
+          if (!requestId) return;
+          batch.delete(firestoreModule.doc(db, 'applications', requestId));
+          batch.delete(firestoreModule.doc(db, 'applicationTracking', requestId));
+        });
+
+        await batch.commit();
+      } catch {
+        writeAudit(
+          actorName,
+          'فشل حذف وظيفة نهائي',
+          'jobs',
+          jobId,
+          'تم حذف الوظيفة محليًا لكن تعذر حذفها من Firebase في هذه اللحظة.',
+          'danger',
+        );
+      }
+    })();
   };
 
   const restoreJob = (jobId: string) => {
