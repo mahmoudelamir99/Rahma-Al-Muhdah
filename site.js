@@ -1314,6 +1314,11 @@
       respondedAt: normalizeFirebaseTimestamp(entry.respondedAt) || '',
       rejectionReason: String(entry.rejectionReason || '').trim(),
       status: String(entry.status || 'review').trim(),
+      companyTag: normalizeCompanyCandidateTag(entry.companyTag || ''),
+      interviewScheduledAt: normalizeFirebaseTimestamp(entry.interviewScheduledAt) || '',
+      interviewMode: normalizeInterviewMode(entry.interviewMode || ''),
+      interviewLocation: String(entry.interviewLocation || '').trim(),
+      notes: sanitizeApplicationNotes(entry.notes),
     };
   };
   const refreshPublicPagesFromFirebaseCache = () => {
@@ -1655,10 +1660,14 @@
         cvFileName: String(applicantRecord?.cvFileMeta?.name || '').trim(),
         cvFileType: String(applicantRecord?.cvFileMeta?.type || '').trim(),
         forwardedTo: String(applicationRecord?.forwardedTo || '').trim(),
-        notes: Array.isArray(applicationRecord?.notes) ? applicationRecord.notes : [],
+        notes: sanitizeApplicationNotes(applicationRecord?.notes),
         deletedAt: applicationRecord?.deletedAt || null,
         submittedAt: applicationRecord.submittedAt || new Date().toISOString(),
         respondedAt: applicationRecord.respondedAt || null,
+        companyTag: normalizeCompanyCandidateTag(applicationRecord?.companyTag || ''),
+        interviewScheduledAt: String(applicationRecord?.interviewScheduledAt || '').trim() || null,
+        interviewMode: normalizeInterviewMode(applicationRecord?.interviewMode || ''),
+        interviewLocation: String(applicationRecord?.interviewLocation || '').trim(),
         updatedAt: new Date().toISOString(),
       };
       const existingSnapshot = await firestoreModule.getDoc(applicationDocRef);
@@ -1670,6 +1679,10 @@
           respondedAt: firebasePayload.respondedAt,
           forwardedTo: firebasePayload.forwardedTo,
           notes: firebasePayload.notes,
+          companyTag: firebasePayload.companyTag,
+          interviewScheduledAt: firebasePayload.interviewScheduledAt,
+          interviewMode: firebasePayload.interviewMode,
+          interviewLocation: firebasePayload.interviewLocation,
           updatedAt: firebasePayload.updatedAt,
         };
 
@@ -2907,6 +2920,88 @@
     return 'review';
   };
 
+  const COMPANY_CANDIDATE_TAG_LABELS = {
+    strong: 'مناسب',
+    contact: 'يحتاج تواصل',
+    reserve: 'احتياطي',
+    'not-fit': 'غير مناسب',
+  };
+
+  const INTERVIEW_MODE_LABELS = {
+    onsite: 'حضوري',
+    phone: 'هاتف',
+    online: 'أونلاين',
+  };
+
+  const normalizeCompanyCandidateTag = (value) => {
+    const normalizedValue = normalize(value);
+    if (normalizedValue.includes('strong') || normalizedValue.includes('مناسب')) return 'strong';
+    if (normalizedValue.includes('contact') || normalizedValue.includes('تواصل')) return 'contact';
+    if (normalizedValue.includes('reserve') || normalizedValue.includes('احتياط')) return 'reserve';
+    if (normalizedValue.includes('not-fit') || normalizedValue.includes('غير مناسب')) return 'not-fit';
+    return '';
+  };
+
+  const normalizeInterviewMode = (value) => {
+    const normalizedValue = normalize(value);
+    if (normalizedValue.includes('onsite') || normalizedValue.includes('حضوري')) return 'onsite';
+    if (normalizedValue.includes('phone') || normalizedValue.includes('هاتف')) return 'phone';
+    if (normalizedValue.includes('online') || normalizedValue.includes('اونلاين') || normalizedValue.includes('أونلاين')) return 'online';
+    return '';
+  };
+
+  const getCompanyCandidateTagLabel = (value) => COMPANY_CANDIDATE_TAG_LABELS[normalizeCompanyCandidateTag(value)] || '';
+  const getInterviewModeLabel = (value) => INTERVIEW_MODE_LABELS[normalizeInterviewMode(value)] || 'غير محدد';
+
+  const sanitizeApplicationNotes = (notes = []) =>
+    (Array.isArray(notes) ? notes : [])
+      .map((note) => ({
+        id: String(note?.id || createId('note')).trim(),
+        body: String(note?.body || note?.text || '').trim(),
+        createdAt: String(note?.createdAt || new Date().toISOString()).trim(),
+        authorName: String(note?.authorName || note?.author || 'إدارة الشركة').trim(),
+      }))
+      .filter((note) => note.body);
+
+  const appendApplicationNote = (notes = [], body = '', authorName = 'إدارة الشركة') => {
+    const trimmedBody = String(body || '').trim();
+    const existingNotes = sanitizeApplicationNotes(notes);
+    if (!trimmedBody) return existingNotes;
+
+    return [
+      {
+        id: createId('note'),
+        body: trimmedBody,
+        createdAt: new Date().toISOString(),
+        authorName: String(authorName || 'إدارة الشركة').trim() || 'إدارة الشركة',
+      },
+      ...existingNotes,
+    ];
+  };
+
+  const toDateTimeLocalValue = (value) => {
+    const date = value ? new Date(value) : null;
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+    const offsetMs = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16);
+  };
+
+  const fromDateTimeLocalValue = (value) => {
+    const trimmedValue = String(value || '').trim();
+    if (!trimmedValue) return '';
+    const parsedDate = new Date(trimmedValue);
+    return Number.isNaN(parsedDate.getTime()) ? '' : parsedDate.toISOString();
+  };
+
+  const getInterviewScheduleLabel = (application = {}) => {
+    const scheduledAt = String(application?.interviewScheduledAt || '').trim();
+    if (!scheduledAt) return '';
+    const scheduledText = formatLocalDateTime(scheduledAt) || scheduledAt;
+    const modeText = getInterviewModeLabel(application?.interviewMode);
+    const locationText = String(application?.interviewLocation || '').trim();
+    return [scheduledText, modeText !== 'غير محدد' ? modeText : '', locationText].filter(Boolean).join(' • ');
+  };
+
   const getApplicationRequestId = (application) =>
     String(application?.requestId || application?.id || '').trim();
 
@@ -3291,6 +3386,7 @@
     applicationId = '',
     status = 'approved',
     rejectionReason = '',
+    reviewOptions = {},
   ) => {
     const companyIdentity = getCompanyIdentity(profile, session);
     const companyName = String(companyIdentity.name || profile?.companyName || profile?.fullName || '').trim();
@@ -3310,7 +3406,7 @@
             : 'approved';
     const resolvedReason =
       nextStatus === 'rejected' ? String(rejectionReason || '').trim() || 'تم رفض الطلب من قبل الشركة.' : '';
-    const respondedAt = nextStatus === 'review' ? null : new Date().toISOString();
+    const reviewPatch = reviewOptions && typeof reviewOptions === 'object' ? reviewOptions : {};
 
     const applications = getStoredApplications();
     let changed = false;
@@ -3323,6 +3419,29 @@
       if (currentRequestId !== requestId || !matchesCompany) return application;
 
       changed = true;
+      const currentStatus = normalizeApplicationStatus(application?.status);
+      const nextTag =
+        normalizeCompanyCandidateTag(reviewPatch.companyTag || reviewPatch.tag || '') ||
+        normalizeCompanyCandidateTag(application?.companyTag || '');
+      const nextInterviewScheduledAt =
+        fromDateTimeLocalValue(reviewPatch.interviewScheduledAt) ||
+        String(reviewPatch.interviewScheduledAt || '').trim() ||
+        String(application?.interviewScheduledAt || '').trim();
+      const nextInterviewMode =
+        normalizeInterviewMode(reviewPatch.interviewMode || '') || normalizeInterviewMode(application?.interviewMode || '');
+      const nextInterviewLocation = String(reviewPatch.interviewLocation || application?.interviewLocation || '').trim();
+      const nextNotes = appendApplicationNote(
+        application?.notes,
+        reviewPatch.note || reviewPatch.applicationNote || '',
+        companyName,
+      );
+      const respondedAt =
+        nextStatus === currentStatus
+          ? application?.respondedAt || (nextStatus === 'review' ? null : new Date().toISOString())
+          : nextStatus === 'review'
+            ? null
+            : new Date().toISOString();
+
       return {
         ...application,
         id: requestId,
@@ -3330,6 +3449,11 @@
         status: nextStatus,
         rejectionReason: resolvedReason,
         respondedAt,
+        companyTag: nextTag,
+        interviewScheduledAt: nextInterviewScheduledAt,
+        interviewMode: nextInterviewMode,
+        interviewLocation: nextInterviewLocation,
+        notes: nextNotes,
         updatedAt: new Date().toISOString(),
       };
     });
@@ -4537,72 +4661,278 @@
       applicantsFeedback.removeAttribute('hidden');
     };
 
-    if (!companyApplications.length) {
-      applicantsRoot.innerHTML = `
-        <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-5 text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-          \u0644\u0627 \u062a\u0648\u062c\u062f \u0637\u0644\u0628\u0627\u062a \u062a\u0642\u062f\u064a\u0645 \u062d\u0642\u064a\u0642\u064a\u0629 \u0645\u0631\u062a\u0628\u0637\u0629 \u0628\u062d\u0633\u0627\u0628 \u0634\u0631\u0643\u062a\u0643 \u062d\u062a\u0649 \u0627\u0644\u0622\u0646.
-        </div>`;
-      if (applicantsFeedback instanceof HTMLElement) {
-        applicantsFeedback.className = 'application-status hidden';
-        applicantsFeedback.textContent = '';
+    const searchInput = document.querySelector('[data-company-dashboard-search]');
+    const statusFilterControl = document.querySelector('[data-company-applicants-status-filter]');
+    const jobFilterControl = document.querySelector('[data-company-applicants-job-filter]');
+    const reviewModal = document.querySelector('[data-company-review-modal]');
+    const reviewForm = reviewModal?.querySelector('[data-company-review-form="true"]');
+    const reviewFeedback = reviewModal?.querySelector('[data-company-review-feedback]');
+    const reviewCloseButtons = reviewModal?.querySelectorAll('[data-company-review-close]') || [];
+    let selectedReviewApplicationId = '';
+
+    const getApplicantStatusToneClass = (tone) =>
+      tone === 'success'
+        ? 'bg-emerald-100 text-emerald-700'
+        : tone === 'error'
+          ? 'bg-rose-100 text-rose-700'
+          : tone === 'info'
+            ? 'bg-sky-100 text-sky-700'
+            : 'bg-amber-100 text-amber-700';
+
+    const setReviewFeedback = (message, tone = 'info') => {
+      if (!(reviewFeedback instanceof HTMLElement)) return;
+      reviewFeedback.className = 'application-status';
+      reviewFeedback.classList.add(`application-status--${tone}`);
+      reviewFeedback.textContent = message;
+      reviewFeedback.classList.remove('hidden');
+      reviewFeedback.removeAttribute('hidden');
+    };
+
+    const closeReviewModal = () => {
+      if (!(reviewModal instanceof HTMLElement)) return;
+      reviewModal.classList.add('hidden');
+      reviewModal.setAttribute('aria-hidden', 'true');
+      selectedReviewApplicationId = '';
+      if (reviewFeedback instanceof HTMLElement) {
+        reviewFeedback.className = 'application-status hidden';
+        reviewFeedback.textContent = '';
       }
-      return;
+    };
+
+    const openReviewModal = (applicationId) => {
+      if (!(reviewModal instanceof HTMLElement) || !(reviewForm instanceof HTMLFormElement)) return;
+      const application =
+        companyApplications.find((entry) => getApplicationRequestId(entry) === String(applicationId || '').trim()) || null;
+      if (!application) {
+        setApplicationsFeedback('تعذر العثور على بيانات هذا المتقدم.', 'error');
+        return;
+      }
+
+      selectedReviewApplicationId = getApplicationRequestId(application);
+      reviewForm.elements.application_id.value = selectedReviewApplicationId;
+      reviewForm.elements.application_status.value = normalizeApplicationStatus(application?.status);
+      reviewForm.elements.application_tag.value = normalizeCompanyCandidateTag(application?.companyTag || '');
+      reviewForm.elements.interview_scheduled_at.value = toDateTimeLocalValue(application?.interviewScheduledAt || '');
+      reviewForm.elements.interview_mode.value = normalizeInterviewMode(application?.interviewMode || '');
+      reviewForm.elements.interview_location.value = String(application?.interviewLocation || '').trim();
+      reviewForm.elements.application_rejection_reason.value = String(application?.rejectionReason || '').trim();
+      reviewForm.elements.application_note.value = '';
+      reviewModal.classList.remove('hidden');
+      reviewModal.setAttribute('aria-hidden', 'false');
+    };
+
+    const syncJobFilterOptions = () => {
+      if (!(jobFilterControl instanceof HTMLSelectElement)) return;
+      const currentValue = jobFilterControl.value || 'all';
+      const jobOptions = Array.from(
+        new Set(
+          companyApplications
+            .map((application) => String(application?.job?.jobTitle || application?.job?.title || '').trim())
+            .filter(Boolean),
+        ),
+      ).sort((first, second) => first.localeCompare(second, 'ar'));
+
+      jobFilterControl.innerHTML = [
+        '<option value="all">كل الوظائف</option>',
+        ...jobOptions.map((jobTitle) => `<option value="${escapeHtml(jobTitle)}">${escapeHtml(jobTitle)}</option>`),
+      ].join('');
+
+      if (jobOptions.includes(currentValue)) {
+        jobFilterControl.value = currentValue;
+      }
+    };
+
+    const renderApplicants = () => {
+      syncJobFilterOptions();
+
+      const selectedStatus =
+        statusFilterControl instanceof HTMLSelectElement ? normalizeApplicationStatus(statusFilterControl.value || 'all') : 'all';
+      const selectedJob =
+        jobFilterControl instanceof HTMLSelectElement ? String(jobFilterControl.value || 'all').trim() : 'all';
+      const searchQuery = normalize(searchInput instanceof HTMLInputElement ? searchInput.value : '');
+
+      const visibleApplications = companyApplications.filter((application) => {
+        const applicationStatus = normalizeApplicationStatus(application?.status);
+        const jobTitle = String(application?.job?.jobTitle || application?.job?.title || '').trim();
+        const searchableText = normalize(
+          [
+            application?.applicant?.fullName,
+            application?.applicant?.phone,
+            application?.applicant?.city,
+            application?.applicant?.experience,
+            application?.rejectionReason,
+            application?.companyTag,
+            application?.interviewLocation,
+            jobTitle,
+          ]
+            .filter(Boolean)
+            .join(' '),
+        );
+
+        const matchesStatus = selectedStatus === 'all' ? true : applicationStatus === selectedStatus;
+        const matchesJob = selectedJob === 'all' ? true : jobTitle === selectedJob;
+        const matchesQuery = !searchQuery ? true : searchableText.includes(searchQuery);
+        return matchesStatus && matchesJob && matchesQuery;
+      });
+
+      if (!visibleApplications.length) {
+        applicantsRoot.innerHTML = `
+          <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-5 text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+            ${companyApplications.length ? 'لا توجد نتائج مطابقة للفلاتر الحالية.' : 'لا توجد طلبات تقديم حقيقية مرتبطة بحساب شركتك حتى الآن.'}
+          </div>`;
+        return;
+      }
+
+      applicantsRoot.innerHTML = visibleApplications
+        .map((application) => {
+          const applicationId = getApplicationRequestId(application);
+          const applicantName = escapeHtml(application?.applicant?.fullName || 'متقدم جديد');
+          const jobTitle = escapeHtml(application?.job?.jobTitle || application?.job?.title || 'وظيفة');
+          const status = getApplicationStatusPresentation(application);
+          const meta = [application?.applicant?.city, application?.applicant?.phone, application?.applicant?.experience]
+            .filter(Boolean)
+            .join(' • ');
+          const submittedAt = escapeHtml(formatLocalDate(application?.submittedAt) || 'حديثًا');
+          const rejectionReason = String(application?.rejectionReason || '').trim();
+          const tagLabel = getCompanyCandidateTagLabel(application?.companyTag || '');
+          const interviewLabel = getInterviewScheduleLabel(application);
+          const notes = sanitizeApplicationNotes(application?.notes).slice(0, 2);
+
+          return `
+            <article class="dashboard-applicant-card">
+              <div class="dashboard-applicant-card__head">
+                <div class="dashboard-applicant-card__avatar">
+                  <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="dashboard-applicant-card__copy">
+                  <div class="dashboard-applicant-card__title-row">
+                    <div class="dashboard-applicant-card__titles">
+                      <h4>${applicantName}</h4>
+                      <p>${jobTitle}</p>
+                    </div>
+                    <span class="dashboard-applicant-card__status ${getApplicantStatusToneClass(status.tone)}">${escapeHtml(status.label)}</span>
+                  </div>
+                  <p class="dashboard-applicant-card__meta">${escapeHtml(meta || submittedAt)}</p>
+                  <p class="dashboard-applicant-card__meta">رقم الطلب: ${escapeHtml(applicationId)} • تاريخ التقديم: ${submittedAt}</p>
+                  <div class="dashboard-applicant-card__meta-row">
+                    ${
+                      tagLabel
+                        ? `<span class="dashboard-applicant-card__pill dashboard-applicant-card__pill--tag">${escapeHtml(tagLabel)}</span>`
+                        : ''
+                    }
+                    ${
+                      interviewLabel
+                        ? `<span class="dashboard-applicant-card__pill dashboard-applicant-card__pill--schedule">${escapeHtml(interviewLabel)}</span>`
+                        : ''
+                    }
+                  </div>
+                  ${
+                    rejectionReason
+                      ? `<p class="dashboard-applicant-card__reason">سبب الرفض: ${escapeHtml(rejectionReason)}</p>`
+                      : ''
+                  }
+                  ${
+                    notes.length
+                      ? `<div class="dashboard-applicant-card__notes">${notes
+                          .map(
+                            (note) => `
+                            <div class="dashboard-applicant-card__note">
+                              <strong>${escapeHtml(note.authorName)}</strong>
+                              <p>${escapeHtml(note.body)}</p>
+                            </div>`,
+                          )
+                          .join('')}</div>`
+                      : ''
+                  }
+                </div>
+              </div>
+              <div class="dashboard-applicant-card__actions">
+                <button type="button" class="site-action site-action--ghost" data-company-application-action="review" data-company-application-id="${escapeHtml(applicationId)}">مراجعة</button>
+                <button type="button" class="site-action site-action--secondary" data-company-application-action="interview" data-company-application-id="${escapeHtml(applicationId)}">مقابلة</button>
+                <button type="button" class="site-action site-action--primary" data-company-application-action="approved" data-company-application-id="${escapeHtml(applicationId)}">قبول</button>
+                <button type="button" class="site-action site-action--danger" data-company-application-action="rejected" data-company-application-id="${escapeHtml(applicationId)}">رفض</button>
+                <button type="button" class="site-action site-action--ghost" data-company-application-manage="${escapeHtml(applicationId)}">إدارة المتقدم</button>
+              </div>
+            </article>`;
+        })
+        .join('');
+    };
+
+    if (statusFilterControl instanceof HTMLSelectElement && statusFilterControl.dataset.boundCompanyApplicantsFilter !== 'true') {
+      statusFilterControl.dataset.boundCompanyApplicantsFilter = 'true';
+      statusFilterControl.addEventListener('change', renderApplicants);
     }
 
-    applicantsRoot.innerHTML = companyApplications.map((application) => {
-      const applicationId = getApplicationRequestId(application);
-      const applicantName = escapeHtml(application?.applicant?.fullName || '\u0645\u062a\u0642\u062f\u0645 \u062c\u062f\u064a\u062f');
-      const jobTitle = escapeHtml(application?.job?.jobTitle || application?.job?.title || '\u0648\u0638\u064a\u0641\u0629');
-      const status = getApplicationStatusPresentation(application);
-      const meta = [application?.applicant?.city, application?.applicant?.phone, application?.applicant?.experience]
-        .filter(Boolean)
-        .join(' • ');
-      const submittedAt = escapeHtml(formatLocalDate(application?.submittedAt) || '\u062d\u062f\u064a\u062b\u0627\u064b');
-      const rejectionReason = String(application?.rejectionReason || '').trim();
-      const statusToneClass =
-        status.tone === 'success'
-          ? 'bg-emerald-100 text-emerald-700'
-          : status.tone === 'error'
-            ? 'bg-rose-100 text-rose-700'
-            : status.tone === 'info'
-              ? 'bg-sky-100 text-sky-700'
-              : 'bg-amber-100 text-amber-700';
+    if (jobFilterControl instanceof HTMLSelectElement && jobFilterControl.dataset.boundCompanyApplicantsFilter !== 'true') {
+      jobFilterControl.dataset.boundCompanyApplicantsFilter = 'true';
+      jobFilterControl.addEventListener('change', renderApplicants);
+    }
 
-      return `
-        <article class="dashboard-applicant-card">
-          <div class="dashboard-applicant-card__head">
-            <div class="dashboard-applicant-card__avatar">
-              <span class="material-symbols-outlined">person</span>
-            </div>
-            <div class="dashboard-applicant-card__copy">
-              <div class="dashboard-applicant-card__title-row">
-                <div class="dashboard-applicant-card__titles">
-                  <h4>${applicantName}</h4>
-                  <p>${jobTitle}</p>
-                </div>
-                <span class="dashboard-applicant-card__status ${statusToneClass}">${escapeHtml(status.label)}</span>
-              </div>
-              <p class="dashboard-applicant-card__meta">${escapeHtml(meta || submittedAt)}</p>
-              <p class="dashboard-applicant-card__meta">رقم الطلب: ${escapeHtml(applicationId)} • تاريخ التقديم: ${submittedAt}</p>
-              ${
-                rejectionReason
-                  ? `<p class="dashboard-applicant-card__reason">سبب الرفض: ${escapeHtml(rejectionReason)}</p>`
-                  : ''
-              }
-            </div>
-          </div>
-          <div class="dashboard-applicant-card__actions">
-            <button type="button" class="site-action site-action--ghost" data-company-application-action="review" data-company-application-id="${escapeHtml(applicationId)}">مراجعة</button>
-            <button type="button" class="site-action site-action--secondary" data-company-application-action="interview" data-company-application-id="${escapeHtml(applicationId)}">مقابلة</button>
-            <button type="button" class="site-action site-action--primary" data-company-application-action="approved" data-company-application-id="${escapeHtml(applicationId)}">قبول</button>
-            <button type="button" class="site-action site-action--danger" data-company-application-action="rejected" data-company-application-id="${escapeHtml(applicationId)}">رفض</button>
-          </div>
-        </article>`;
-    }).join('');
+    if (searchInput instanceof HTMLInputElement && searchInput.dataset.boundCompanyApplicantsSearch !== 'true') {
+      searchInput.dataset.boundCompanyApplicantsSearch = 'true';
+      searchInput.addEventListener('input', renderApplicants);
+      searchInput.addEventListener('search', renderApplicants);
+    }
+
+    if (reviewModal instanceof HTMLElement && reviewModal.dataset.boundCompanyReviewModal !== 'true') {
+      reviewModal.dataset.boundCompanyReviewModal = 'true';
+      reviewCloseButtons.forEach((button) => {
+        button.addEventListener('click', closeReviewModal);
+      });
+      reviewModal.addEventListener('click', (event) => {
+        if (event.target === reviewModal) {
+          closeReviewModal();
+        }
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !reviewModal.classList.contains('hidden')) {
+          closeReviewModal();
+        }
+      });
+    }
+
+    if (reviewForm instanceof HTMLFormElement && reviewForm.dataset.boundCompanyReviewForm !== 'true') {
+      reviewForm.dataset.boundCompanyReviewForm = 'true';
+      reviewForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const applicationId = String(reviewForm.elements.application_id.value || selectedReviewApplicationId || '').trim();
+        const nextStatus = String(reviewForm.elements.application_status.value || 'review').trim();
+        const nextReason = String(reviewForm.elements.application_rejection_reason.value || '').trim();
+        const updated = await updateCompanyApplicationStatus(profile, activeSession, applicationId, nextStatus, nextReason, {
+          companyTag: reviewForm.elements.application_tag.value,
+          interviewScheduledAt: reviewForm.elements.interview_scheduled_at.value,
+          interviewMode: reviewForm.elements.interview_mode.value,
+          interviewLocation: reviewForm.elements.interview_location.value,
+          note: reviewForm.elements.application_note.value,
+        });
+
+        if (!updated) {
+          setReviewFeedback('تعذر حفظ التحديث. تأكد أن الطلب تابع لشركتك.', 'error');
+          return;
+        }
+
+        firebaseApplicationsCache = [];
+        firebaseApplicationsCacheHydrated = false;
+        const successMessage = 'تم حفظ تحديث المتقدم وربطه بحساب شركتك بنجاح.';
+        setApplicationsFeedback(successMessage, 'success');
+        setReviewFeedback(successMessage, 'success');
+        showToast('تم حفظ تحديث المتقدم.');
+        closeReviewModal();
+        rerenderCompanyDashboardWithFeedback('[data-company-applications-feedback]', successMessage, 'success');
+      });
+    }
 
     if (applicantsRoot.dataset.boundCompanyApplicantActions !== 'true') {
       applicantsRoot.dataset.boundCompanyApplicantActions = 'true';
       applicantsRoot.addEventListener('click', async (event) => {
+        const manageButton = event.target.closest('[data-company-application-manage]');
+        if (manageButton instanceof HTMLElement) {
+          event.preventDefault();
+          openReviewModal(String(manageButton.dataset.companyApplicationManage || '').trim());
+          return;
+        }
+
         const actionButton = event.target.closest('[data-company-application-action]');
         if (!(actionButton instanceof HTMLElement)) return;
 
@@ -4661,6 +4991,13 @@
         rerenderCompanyDashboardWithFeedback('[data-company-applications-feedback]', successMessage, 'success');
       });
     }
+
+    if (applicantsFeedback instanceof HTMLElement) {
+      applicantsFeedback.className = 'application-status hidden';
+      applicantsFeedback.textContent = '';
+    }
+
+    renderApplicants();
 
   };
 
@@ -7373,6 +7710,11 @@
           respondedAt: '',
           rejectionReason: '',
           status: 'review',
+          companyTag: '',
+          interviewScheduledAt: '',
+          interviewMode: '',
+          interviewLocation: '',
+          notes: [],
         };
 
         setSubmitBusyState(true);
@@ -7695,6 +8037,11 @@
         respondedAt: '',
         rejectionReason: '',
         status: 'review',
+        companyTag: '',
+        interviewScheduledAt: '',
+        interviewMode: '',
+        interviewLocation: '',
+        notes: [],
       };
 
       const submitResult = await storeApplicationRecord(applicationRecord);

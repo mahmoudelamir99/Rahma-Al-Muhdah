@@ -321,6 +321,10 @@ export type ApplicationRecord = {
   companyName: string;
   status: 'pending' | 'review' | 'interview' | 'approved' | 'accepted' | 'rejected' | 'hired';
   rejectionReason: string;
+  companyTag: string;
+  interviewScheduledAt: string | null;
+  interviewMode: string;
+  interviewLocation: string;
   submittedAt: string;
   respondedAt: string | null;
   forwardedTo: string;
@@ -1081,6 +1085,10 @@ function normalizeApplicationRecordData(application: ApplicationRecord): Applica
     jobTitle: String(application.jobTitle || '').trim(),
     companyName: String(application.companyName || '').trim(),
     rejectionReason: String(application.rejectionReason || '').trim(),
+    companyTag: String(application.companyTag || '').trim(),
+    interviewScheduledAt: application.interviewScheduledAt ? String(application.interviewScheduledAt).trim() : null,
+    interviewMode: String(application.interviewMode || '').trim(),
+    interviewLocation: String(application.interviewLocation || '').trim(),
     submittedAt: String(application.submittedAt || new Date().toISOString()).trim(),
     respondedAt: application.respondedAt ? String(application.respondedAt).trim() : null,
     forwardedTo: String(application.forwardedTo || '').trim(),
@@ -1274,6 +1282,10 @@ function mergeApplicationRecords(current: ApplicationRecord, incoming: Applicati
     companyName: pickPreferredText(current.companyName, incoming.companyName),
     status: nextStatus || current.status || incoming.status,
     rejectionReason: pickPreferredText(current.rejectionReason, incoming.rejectionReason),
+    companyTag: pickPreferredText(current.companyTag, incoming.companyTag),
+    interviewScheduledAt: pickPreferredText(current.interviewScheduledAt || '', incoming.interviewScheduledAt || '') || null,
+    interviewMode: pickPreferredText(current.interviewMode, incoming.interviewMode),
+    interviewLocation: pickPreferredText(current.interviewLocation, incoming.interviewLocation),
     submittedAt: pickPreferredText(current.submittedAt, incoming.submittedAt) || new Date().toISOString(),
     respondedAt: pickPreferredText(current.respondedAt || '', incoming.respondedAt || '') || null,
     forwardedTo: pickPreferredText(current.forwardedTo, incoming.forwardedTo),
@@ -2268,6 +2280,10 @@ function buildApplications(): ApplicationRecord[] {
         companyName: String(job.jobCompany || application.companyName || '').trim(),
         status: mapApplicationStatus(String(application.status || 'pending')),
         rejectionReason: String(application.rejectionReason || '').trim(),
+        companyTag: String(application.companyTag || '').trim(),
+        interviewScheduledAt: application.interviewScheduledAt ? String(application.interviewScheduledAt) : null,
+        interviewMode: String(application.interviewMode || '').trim(),
+        interviewLocation: String(application.interviewLocation || '').trim(),
         submittedAt: String(application.submittedAt || new Date().toISOString()),
         respondedAt: application.respondedAt ? String(application.respondedAt) : null,
         forwardedTo: String(application.forwardedTo || '').trim(),
@@ -2594,6 +2610,10 @@ function mergeSharedRuntimeIntoState(currentState: AdminState, incomingRuntime: 
         companyName: String(job.jobCompany || application.companyName || '').trim(),
         status: mapApplicationStatus(String(application.status || 'pending')),
         rejectionReason: String(application.rejectionReason || '').trim(),
+        companyTag: String(application.companyTag || '').trim(),
+        interviewScheduledAt: application.interviewScheduledAt ? String(application.interviewScheduledAt) : null,
+        interviewMode: String(application.interviewMode || '').trim(),
+        interviewLocation: String(application.interviewLocation || '').trim(),
         submittedAt: String(application.submittedAt || new Date().toISOString()),
         respondedAt: application.respondedAt ? String(application.respondedAt) : null,
         forwardedTo: String(application.forwardedTo || '').trim(),
@@ -2889,6 +2909,10 @@ function mapFirebaseApplicationToAdmin(entry: Record<string, unknown>): Applicat
                 ? 'hired'
                 : 'review',
     rejectionReason: String(entry.rejectionReason || '').trim(),
+    companyTag: String(entry.companyTag || '').trim(),
+    interviewScheduledAt: normalizeFirestoreTimestamp(entry.interviewScheduledAt) || null,
+    interviewMode: String(entry.interviewMode || '').trim(),
+    interviewLocation: String(entry.interviewLocation || '').trim(),
     submittedAt: normalizeFirestoreTimestamp(entry.submittedAt) || new Date().toISOString(),
     respondedAt: normalizeFirestoreTimestamp(entry.respondedAt) || null,
     forwardedTo: String(entry.forwardedTo || '').trim(),
@@ -3388,6 +3412,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                 cvFileType: application.cvFileType,
                 status: application.status,
                 rejectionReason: application.rejectionReason,
+                companyTag: application.companyTag,
+                interviewScheduledAt: application.interviewScheduledAt,
+                interviewMode: application.interviewMode,
+                interviewLocation: application.interviewLocation,
                 submittedAt: application.submittedAt,
                 respondedAt: application.respondedAt,
                 forwardedTo: application.forwardedTo,
@@ -3442,6 +3470,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                 jobTitle: application.jobTitle,
                 status: application.status,
                 rejectionReason: application.rejectionReason,
+                companyTag: application.companyTag,
+                interviewScheduledAt: application.interviewScheduledAt,
+                interviewMode: application.interviewMode,
+                interviewLocation: application.interviewLocation,
                 submittedAt: application.submittedAt,
                 respondedAt: application.respondedAt,
                 applicantPhoneKey,

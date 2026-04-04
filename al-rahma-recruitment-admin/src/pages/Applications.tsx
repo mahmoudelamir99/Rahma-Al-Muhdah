@@ -42,6 +42,19 @@ const STATUS_OPTIONS: Array<{ value: ApplicationRecord['status']; label: string 
   { value: 'hired', label: 'تم التعيين' },
 ];
 
+const COMPANY_TAG_LABELS: Record<string, string> = {
+  strong: 'مناسب',
+  contact: 'يحتاج تواصل',
+  reserve: 'احتياطي',
+  'not-fit': 'غير مناسب',
+};
+
+const INTERVIEW_MODE_LABELS: Record<string, string> = {
+  onsite: 'حضوري',
+  phone: 'هاتف',
+  online: 'أونلاين',
+};
+
 type FeedbackState = {
   tone: 'success' | 'danger';
   text: string;
@@ -429,8 +442,43 @@ export default function Applications() {
                   <div className="text-xs font-bold text-[#7a8b9e]">{label}</div>
                   <div className="mt-2 text-sm font-black text-[#122341]">{cleanAdminText(value)}</div>
                 </div>
-              ))}
+                ))}
             </div>
+
+            {(selectedApplication.companyTag || selectedApplication.interviewScheduledAt || selectedApplication.interviewLocation) ? (
+              <section className="rounded-[1.2rem] border border-[rgba(24,37,63,0.08)] bg-white p-4">
+                <div className="mb-3">
+                  <h3 className="text-sm font-black text-[#10213d]">متابعة الشركة</h3>
+                  <p className="mt-1 text-xs leading-6 text-[#718399]">آخر تمييز أو تجهيز مقابلة أضافته الشركة على هذا المرشح.</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-[1.1rem] bg-[#f5f8fc] px-4 py-3">
+                    <div className="text-xs font-bold text-[#7a8b9e]">تمييز الشركة</div>
+                    <div className="mt-2 text-sm font-black text-[#122341]">
+                      {cleanAdminText(COMPANY_TAG_LABELS[selectedApplication.companyTag] || 'غير محدد')}
+                    </div>
+                  </div>
+                  <div className="rounded-[1.1rem] bg-[#f5f8fc] px-4 py-3">
+                    <div className="text-xs font-bold text-[#7a8b9e]">موعد المقابلة</div>
+                    <div className="mt-2 text-sm font-black text-[#122341]">
+                      {cleanAdminText(selectedApplication.interviewScheduledAt ? formatDateTime(selectedApplication.interviewScheduledAt) : 'غير محدد')}
+                    </div>
+                  </div>
+                  <div className="rounded-[1.1rem] bg-[#f5f8fc] px-4 py-3">
+                    <div className="text-xs font-bold text-[#7a8b9e]">نوع المقابلة</div>
+                    <div className="mt-2 text-sm font-black text-[#122341]">
+                      {cleanAdminText(INTERVIEW_MODE_LABELS[selectedApplication.interviewMode] || 'غير محدد')}
+                    </div>
+                  </div>
+                  <div className="rounded-[1.1rem] bg-[#f5f8fc] px-4 py-3">
+                    <div className="text-xs font-bold text-[#7a8b9e]">مكان أو رابط المقابلة</div>
+                    <div className="mt-2 text-sm font-black text-[#122341]">
+                      {cleanAdminText(selectedApplication.interviewLocation || 'غير محدد')}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            ) : null}
 
             <section className="rounded-[1.2rem] border border-[rgba(24,37,63,0.08)] bg-white p-4">
               <div className="mb-3 flex items-center justify-between gap-3">

@@ -4292,6 +4292,72 @@ body.page-seeker-dashboard {
   flex: 1 1 7.15rem;
 }
 
+.dashboard-applicant-card__meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.dashboard-applicant-card__pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.65rem;
+  padding: 0 0.7rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.05);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.dashboard-applicant-card__pill--tag {
+  background: rgba(22, 40, 76, 0.08);
+  color: #16284c;
+}
+
+.dashboard-applicant-card__pill--schedule {
+  background: rgba(14, 116, 144, 0.1);
+  color: #0f5f79;
+}
+
+.dashboard-applicant-card__notes {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.dashboard-applicant-card__note {
+  padding: 0.72rem 0.85rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.dashboard-applicant-card__note strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--text);
+  font-size: 0.76rem;
+}
+
+.dashboard-applicant-card__note p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+.dashboard-applicants-toolbar {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 1rem;
+}
+
+.company-review-modal {
+  width: min(46rem, calc(100vw - 2rem));
+}
+
 .site-action--danger {
   border-color: rgba(244, 63, 94, 0.18);
   background: rgba(255, 241, 242, 0.92);
@@ -4486,6 +4552,10 @@ body.page-seeker-dashboard {
   }
 
   .dashboard-job-form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-applicants-toolbar {
     grid-template-columns: 1fr;
   }
 
