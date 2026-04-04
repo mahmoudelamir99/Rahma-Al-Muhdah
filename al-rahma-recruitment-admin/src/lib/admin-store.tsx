@@ -2931,6 +2931,53 @@ function buildFirebaseSyncSlice(state: AdminState) {
   };
 }
 
+type FirebaseRemoteSlice = ReturnType<typeof buildFirebaseSyncSlice>;
+
+function normalizeFirebaseRemoteSlice(slice: FirebaseRemoteSlice): FirebaseRemoteSlice {
+  return {
+    companies: [...slice.companies].sort((first, second) => first.id.localeCompare(second.id)),
+    jobs: [...slice.jobs].sort((first, second) => first.id.localeCompare(second.id)),
+    applications: [...slice.applications].sort((first, second) => first.id.localeCompare(second.id)),
+    settings: { ...slice.settings },
+    content: { ...slice.content },
+  };
+}
+
+async function fetchFirebaseRemoteSlice(
+  services: NonNullable<Awaited<ReturnType<typeof getFirebaseServices>>>,
+  fallback: FirebaseRemoteSlice,
+): Promise<FirebaseRemoteSlice> {
+  const { db, firestoreModule } = services;
+  const [companiesSnapshot, jobsSnapshot, applicationsSnapshot, siteConfigSnapshot] = await Promise.all([
+    firestoreModule.getDocs(firestoreModule.collection(db, 'companies')),
+    firestoreModule.getDocs(firestoreModule.collection(db, 'jobs')),
+    firestoreModule.getDocs(firestoreModule.collection(db, 'applications')),
+    firestoreModule.getDoc(firestoreModule.doc(db, FIREBASE_SITE_CONFIG_DOC.collection, FIREBASE_SITE_CONFIG_DOC.id)),
+  ]);
+
+  const payload = siteConfigSnapshot.exists() ? (siteConfigSnapshot.data() as Record<string, unknown>) : {};
+
+  return normalizeFirebaseRemoteSlice({
+    companies: companiesSnapshot.docs.map((docSnapshot) =>
+      mapFirebaseCompanyToAdmin({ ...(docSnapshot.data() as Record<string, unknown>), id: docSnapshot.id }),
+    ),
+    jobs: jobsSnapshot.docs.map((docSnapshot) =>
+      mapFirebaseJobToAdmin({ ...(docSnapshot.data() as Record<string, unknown>), id: docSnapshot.id }),
+    ),
+    applications: applicationsSnapshot.docs.map((docSnapshot) =>
+      mapFirebaseApplicationToAdmin({ ...(docSnapshot.data() as Record<string, unknown>), id: docSnapshot.id }),
+    ),
+    settings:
+      payload.settings && typeof payload.settings === 'object'
+        ? ({ ...fallback.settings, ...(payload.settings as SystemSettings) } as SystemSettings)
+        : { ...fallback.settings },
+    content:
+      payload.content && typeof payload.content === 'object'
+        ? normalizeContentState({ ...fallback.content, ...(payload.content as Partial<ContentState>) })
+        : { ...fallback.content },
+  });
+}
+
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AdminState>(() => {
     const hydrated = hydrateState(safeReadJson<Partial<AdminState> | null>(STORAGE_KEYS.state, null));
@@ -2960,6 +3007,38 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const currentRole = currentAdmin ? state.roles.find((role) => role.id === currentAdmin.roleId) || null : null;
   const isSetupRequired = !hasFirebaseConfig() && !state.admins.some((admin) => admin.status === 'active');
   const actorName = currentAdmin?.displayName || 'إدارة المنصة';
+
+  const applyFirebaseRemoteSlice = (slice: FirebaseRemoteSlice) => {
+    const normalizedSlice = normalizeFirebaseRemoteSlice(slice);
+    firebaseRemoteSliceRef.current = normalizedSlice;
+
+    const fingerprint = JSON.stringify(normalizedSlice);
+    firebaseSyncMetaRef.current.hydrating = true;
+    firebaseSyncMetaRef.current.lastRemoteFingerprint = fingerprint;
+
+    startTransition(() => {
+      setState((current) =>
+        enrichState({
+          ...current,
+          companies: normalizedSlice.companies,
+          jobs: normalizedSlice.jobs,
+          applications: normalizedSlice.applications,
+          settings: {
+            ...current.settings,
+            ...normalizedSlice.settings,
+          },
+          content: {
+            ...current.content,
+            ...normalizedSlice.content,
+          },
+        }),
+      );
+    });
+
+    window.setTimeout(() => {
+      firebaseSyncMetaRef.current.hydrating = false;
+    }, 0);
+  };
 
   const applyFirebaseAdminSession = (input: {
     uid: string;
@@ -3165,98 +3244,75 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
     let cancelled = false;
     const unsubscribeHandlers: Array<() => void> = [];
-    const remoteSlice = firebaseRemoteSliceRef.current;
-
-    const applyRemoteSlice = () => {
-      if (cancelled) return;
-
-      const normalizedSlice = {
-        companies: [...remoteSlice.companies].sort((first, second) => first.id.localeCompare(second.id)),
-        jobs: [...remoteSlice.jobs].sort((first, second) => first.id.localeCompare(second.id)),
-        applications: [...remoteSlice.applications].sort((first, second) => first.id.localeCompare(second.id)),
-        settings: { ...remoteSlice.settings },
-        content: { ...remoteSlice.content },
-      };
-      const fingerprint = JSON.stringify(normalizedSlice);
-      firebaseSyncMetaRef.current.hydrating = true;
-      firebaseSyncMetaRef.current.lastRemoteFingerprint = fingerprint;
-
-      startTransition(() => {
-        setState((current) =>
-          enrichState({
-            ...current,
-            companies: normalizedSlice.companies,
-            jobs: normalizedSlice.jobs,
-            applications: normalizedSlice.applications,
-            settings: {
-              ...current.settings,
-              ...normalizedSlice.settings,
-            },
-            content: {
-              ...current.content,
-              ...normalizedSlice.content,
-            },
-          }),
-        );
-      });
-
-      window.setTimeout(() => {
-        firebaseSyncMetaRef.current.hydrating = false;
-      }, 0);
-    };
+    firebaseSyncMetaRef.current.ready = false;
 
     void (async () => {
       const services = await getFirebaseServices();
       if (!services || cancelled) return;
 
       const { db, firestoreModule } = services;
+      const reloadRemoteSlice = async () => {
+        try {
+          const nextRemoteSlice = await fetchFirebaseRemoteSlice(services, firebaseRemoteSliceRef.current);
+          if (cancelled) return;
+          applyFirebaseRemoteSlice(nextRemoteSlice);
+          firebaseSyncMetaRef.current.ready = true;
+        } catch {
+          if (!cancelled) {
+            firebaseSyncMetaRef.current.ready = false;
+          }
+        }
+      };
+
+      await reloadRemoteSlice();
 
       unsubscribeHandlers.push(
-        firestoreModule.onSnapshot(firestoreModule.collection(db, 'companies'), (snapshot) => {
-          remoteSlice.companies = snapshot.docs.map((docSnapshot) =>
-            mapFirebaseCompanyToAdmin({ ...(docSnapshot.data() as Record<string, unknown>), id: docSnapshot.id }),
-          );
-          applyRemoteSlice();
-        }),
+        firestoreModule.onSnapshot(
+          firestoreModule.collection(db, 'companies'),
+          () => {
+            void reloadRemoteSlice();
+          },
+          () => {
+            void reloadRemoteSlice();
+          },
+        ),
       );
 
       unsubscribeHandlers.push(
-        firestoreModule.onSnapshot(firestoreModule.collection(db, 'jobs'), (snapshot) => {
-          remoteSlice.jobs = snapshot.docs.map((docSnapshot) =>
-            mapFirebaseJobToAdmin({ ...(docSnapshot.data() as Record<string, unknown>), id: docSnapshot.id }),
-          );
-          applyRemoteSlice();
-        }),
+        firestoreModule.onSnapshot(
+          firestoreModule.collection(db, 'jobs'),
+          () => {
+            void reloadRemoteSlice();
+          },
+          () => {
+            void reloadRemoteSlice();
+          },
+        ),
       );
 
       unsubscribeHandlers.push(
-        firestoreModule.onSnapshot(firestoreModule.collection(db, 'applications'), (snapshot) => {
-          remoteSlice.applications = snapshot.docs.map((docSnapshot) =>
-            mapFirebaseApplicationToAdmin({ ...(docSnapshot.data() as Record<string, unknown>), id: docSnapshot.id }),
-          );
-          applyRemoteSlice();
-        }),
+        firestoreModule.onSnapshot(
+          firestoreModule.collection(db, 'applications'),
+          () => {
+            void reloadRemoteSlice();
+          },
+          () => {
+            void reloadRemoteSlice();
+          },
+        ),
       );
 
       unsubscribeHandlers.push(
         firestoreModule.onSnapshot(
           firestoreModule.doc(db, FIREBASE_SITE_CONFIG_DOC.collection, FIREBASE_SITE_CONFIG_DOC.id),
-          (snapshot) => {
-            const payload = snapshot.exists() ? (snapshot.data() as Record<string, unknown>) : {};
-            remoteSlice.settings =
-              payload.settings && typeof payload.settings === 'object'
-                ? (payload.settings as SystemSettings)
-                : remoteSlice.settings;
-            remoteSlice.content =
-              payload.content && typeof payload.content === 'object'
-                ? normalizeContentState(payload.content as Partial<ContentState>)
-                : remoteSlice.content;
-            applyRemoteSlice();
+          () => {
+            void reloadRemoteSlice();
+          },
+          () => {
+            void reloadRemoteSlice();
           },
         ),
       );
-
-      firebaseSyncMetaRef.current.ready = true;
     })();
 
     return () => {
@@ -3455,28 +3511,6 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                   name: application.companyName,
                   email: '',
                 },
-                updatedAt: new Date().toISOString(),
-              },
-              { merge: true },
-            ),
-            firestoreModule.setDoc(
-              firestoreModule.doc(db, 'applicationTracking', requestId),
-              {
-                id: requestId,
-                requestId,
-                companyId: company?.id || '',
-                companyName: application.companyName,
-                jobId: linkedJob?.id || '',
-                jobTitle: application.jobTitle,
-                status: application.status,
-                rejectionReason: application.rejectionReason,
-                companyTag: application.companyTag,
-                interviewScheduledAt: application.interviewScheduledAt,
-                interviewMode: application.interviewMode,
-                interviewLocation: application.interviewLocation,
-                submittedAt: application.submittedAt,
-                respondedAt: application.respondedAt,
-                applicantPhoneKey,
                 updatedAt: new Date().toISOString(),
               },
               { merge: true },
@@ -3904,7 +3938,6 @@ export function AdminProvider({ children }: { children: ReactNode }) {
           const requestId = String(application.requestId || application.id || '').trim();
           if (!requestId) return;
           batch.delete(firestoreModule.doc(db, 'applications', requestId));
-          batch.delete(firestoreModule.doc(db, 'applicationTracking', requestId));
         });
 
         await batch.commit();
@@ -4169,7 +4202,6 @@ export function AdminProvider({ children }: { children: ReactNode }) {
           const requestId = String(application.requestId || application.id || '').trim();
           if (!requestId) return;
           batch.delete(firestoreModule.doc(db, 'applications', requestId));
-          batch.delete(firestoreModule.doc(db, 'applicationTracking', requestId));
         });
 
         await batch.commit();
@@ -4808,7 +4840,26 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshFromSite = () => {
-    updateState((current) => syncExternalData(current));
+    if (!hasFirebaseConfig()) {
+      updateState((current) => syncExternalData(current));
+      return;
+    }
+
+    void (async () => {
+      try {
+        const services = await getFirebaseServices();
+        if (!services) {
+          updateState((current) => syncExternalData(current));
+          return;
+        }
+
+        const nextRemoteSlice = await fetchFirebaseRemoteSlice(services, firebaseRemoteSliceRef.current);
+        applyFirebaseRemoteSlice(nextRemoteSlice);
+        firebaseSyncMetaRef.current.ready = true;
+      } catch {
+        updateState((current) => syncExternalData(current));
+      }
+    })();
   };
 
   const searchEverywhere: AdminContextValue['searchEverywhere'] = (query) => {
