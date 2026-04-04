@@ -427,6 +427,20 @@
                   <option value="all">كل الوظائف</option>
                 </select>
               </label>
+              <label class="dashboard-job-field">
+                <span>فلترة حسب التمييز</span>
+                <select data-company-applicants-tag-filter>
+                  <option value="all">كل التمييزات</option>
+                  <option value="strong">مناسب</option>
+                  <option value="contact">يحتاج تواصل</option>
+                  <option value="reserve">احتياطي</option>
+                  <option value="not-fit">غير مناسب</option>
+                </select>
+              </label>
+              <div class="dashboard-applicants-toolbar__actions">
+                <button class="site-action site-action--ghost" data-company-applicants-export type="button">تصدير CSV</button>
+                <span class="dashboard-applicants-toolbar__summary" data-company-applicants-count>0 طلب ظاهر</span>
+              </div>
             </div>
             <div class="dashboard-list" data-company-applicants>
               <div class="dashboard-empty-card">

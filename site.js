@@ -2952,6 +2952,24 @@
 
   const getCompanyCandidateTagLabel = (value) => COMPANY_CANDIDATE_TAG_LABELS[normalizeCompanyCandidateTag(value)] || '';
   const getInterviewModeLabel = (value) => INTERVIEW_MODE_LABELS[normalizeInterviewMode(value)] || 'غير محدد';
+  const downloadCsvFile = (filename, rows) => {
+    const csvContent = rows
+      .map((row) =>
+        row
+          .map((cell) => `"${String(cell ?? '').replace(/"/g, '""')}"`)
+          .join(','),
+      )
+      .join('\n');
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 500);
+  };
 
   const sanitizeApplicationNotes = (notes = []) =>
     (Array.isArray(notes) ? notes : [])
@@ -4664,6 +4682,9 @@
     const searchInput = document.querySelector('[data-company-dashboard-search]');
     const statusFilterControl = document.querySelector('[data-company-applicants-status-filter]');
     const jobFilterControl = document.querySelector('[data-company-applicants-job-filter]');
+    const tagFilterControl = document.querySelector('[data-company-applicants-tag-filter]');
+    const exportApplicantsButton = document.querySelector('[data-company-applicants-export]');
+    const applicantsCountLabel = document.querySelector('[data-company-applicants-count]');
     const reviewModal = document.querySelector('[data-company-review-modal]');
     const reviewForm = reviewModal?.querySelector('[data-company-review-form="true"]');
     const reviewFeedback = reviewModal?.querySelector('[data-company-review-feedback]');
@@ -4742,18 +4763,19 @@
       }
     };
 
-    const renderApplicants = () => {
-      syncJobFilterOptions();
-
+    const getVisibleCompanyApplications = () => {
       const selectedStatus =
         statusFilterControl instanceof HTMLSelectElement ? normalizeApplicationStatus(statusFilterControl.value || 'all') : 'all';
       const selectedJob =
         jobFilterControl instanceof HTMLSelectElement ? String(jobFilterControl.value || 'all').trim() : 'all';
+      const selectedTag =
+        tagFilterControl instanceof HTMLSelectElement ? normalizeCompanyCandidateTag(tagFilterControl.value || 'all') : 'all';
       const searchQuery = normalize(searchInput instanceof HTMLInputElement ? searchInput.value : '');
 
-      const visibleApplications = companyApplications.filter((application) => {
+      return companyApplications.filter((application) => {
         const applicationStatus = normalizeApplicationStatus(application?.status);
         const jobTitle = String(application?.job?.jobTitle || application?.job?.title || '').trim();
+        const applicationTag = normalizeCompanyCandidateTag(application?.companyTag || '');
         const searchableText = normalize(
           [
             application?.applicant?.fullName,
@@ -4771,9 +4793,19 @@
 
         const matchesStatus = selectedStatus === 'all' ? true : applicationStatus === selectedStatus;
         const matchesJob = selectedJob === 'all' ? true : jobTitle === selectedJob;
+        const matchesTag = selectedTag === 'all' ? true : applicationTag === selectedTag;
         const matchesQuery = !searchQuery ? true : searchableText.includes(searchQuery);
-        return matchesStatus && matchesJob && matchesQuery;
+        return matchesStatus && matchesJob && matchesTag && matchesQuery;
       });
+    };
+
+    const renderApplicants = () => {
+      syncJobFilterOptions();
+      const visibleApplications = getVisibleCompanyApplications();
+
+      if (applicantsCountLabel instanceof HTMLElement) {
+        applicantsCountLabel.textContent = `${visibleApplications.length} طلب ظاهر`;
+      }
 
       if (!visibleApplications.length) {
         applicantsRoot.innerHTML = `
@@ -4868,10 +4900,48 @@
       jobFilterControl.addEventListener('change', renderApplicants);
     }
 
+    if (tagFilterControl instanceof HTMLSelectElement && tagFilterControl.dataset.boundCompanyApplicantsFilter !== 'true') {
+      tagFilterControl.dataset.boundCompanyApplicantsFilter = 'true';
+      tagFilterControl.addEventListener('change', renderApplicants);
+    }
+
     if (searchInput instanceof HTMLInputElement && searchInput.dataset.boundCompanyApplicantsSearch !== 'true') {
       searchInput.dataset.boundCompanyApplicantsSearch = 'true';
       searchInput.addEventListener('input', renderApplicants);
       searchInput.addEventListener('search', renderApplicants);
+    }
+
+    if (exportApplicantsButton instanceof HTMLButtonElement && exportApplicantsButton.dataset.boundCompanyApplicantsExport !== 'true') {
+      exportApplicantsButton.dataset.boundCompanyApplicantsExport = 'true';
+      exportApplicantsButton.addEventListener('click', () => {
+        const visibleApplications = getVisibleCompanyApplications();
+        if (!visibleApplications.length) {
+          setApplicationsFeedback('لا توجد طلبات ظاهرة لتصديرها الآن.', 'error');
+          return;
+        }
+
+        downloadCsvFile(
+          'rahma-company-applicants.csv',
+          [
+            ['رقم الطلب', 'الاسم', 'الهاتف', 'البريد', 'المدينة', 'الخبرة', 'الوظيفة', 'الحالة', 'التمييز', 'موعد المقابلة', 'سبب الرفض'],
+            ...visibleApplications.map((application) => [
+              getApplicationRequestId(application),
+              application?.applicant?.fullName || '',
+              application?.applicant?.phone || '',
+              application?.applicant?.email || '',
+              application?.applicant?.city || '',
+              application?.applicant?.experience || '',
+              application?.job?.jobTitle || application?.job?.title || '',
+              getApplicationStatusPresentation(application).label,
+              getCompanyCandidateTagLabel(application?.companyTag || ''),
+              getInterviewScheduleLabel(application),
+              application?.rejectionReason || '',
+            ]),
+          ],
+        );
+
+        setApplicationsFeedback('تم تصدير الطلبات الظاهرة بنجاح.', 'success');
+      });
     }
 
     if (reviewModal instanceof HTMLElement && reviewModal.dataset.boundCompanyReviewModal !== 'true') {
