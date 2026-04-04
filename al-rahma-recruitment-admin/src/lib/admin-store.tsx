@@ -2937,6 +2937,54 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const isSetupRequired = !hasFirebaseConfig() && !state.admins.some((admin) => admin.status === 'active');
   const actorName = currentAdmin?.displayName || 'إدارة المنصة';
 
+  const applyFirebaseAdminSession = (input: {
+    uid: string;
+    email: string;
+    displayName: string;
+    roleId: string;
+    remember: boolean;
+  }) => {
+    const nextSession: AdminSession = {
+      adminId: `firebase-admin-${input.uid}`,
+      displayName: input.displayName,
+      identifier: input.email,
+      roleId: input.roleId,
+      provider: 'firebase',
+      firebaseUid: input.uid,
+      expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString(),
+      remember: input.remember,
+    };
+
+    setFirebaseAuthUid(input.uid);
+    setFirebaseAuthResolved(true);
+    setState((current) => {
+      const existingAccount =
+        current.admins.find(
+          (admin) =>
+            admin.id === nextSession.adminId ||
+            admin.firebaseUid === input.uid ||
+            normalize(admin.email) === normalize(input.email),
+        ) || null;
+
+      return enrichState({
+        ...current,
+        admins: upsertAdminAccount(
+          current.admins,
+          buildFirebaseMirrorAccount({
+            existingAccount,
+            uid: input.uid,
+            email: input.email,
+            displayName: input.displayName,
+            roleId: input.roleId,
+          }),
+        ),
+      });
+    });
+    saveSession(nextSession);
+    setSessionState(nextSession);
+    return nextSession;
+  };
+
   useEffect(() => {
     if (!hasFirebaseConfig()) {
       setFirebaseAuthResolved(true);
@@ -2993,46 +3041,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
               email.split('@')[0],
               'مدير المنصة',
             );
-
-            const nextSession: AdminSession = {
-              adminId: `firebase-admin-${firebaseUser.uid}`,
+            applyFirebaseAdminSession({
+              uid: firebaseUser.uid,
+              email,
               displayName,
-              identifier: email,
               roleId,
-              provider: 'firebase',
-              firebaseUid: firebaseUser.uid,
-              expiresAt: new Date(Date.now() + SESSION_TTL_MS).toISOString(),
-              remember: true,
-            };
-
-            setFirebaseAuthUid(firebaseUser.uid);
-            setFirebaseAuthResolved(true);
-            saveSession(nextSession);
-            setSessionState(nextSession);
-            startTransition(() => {
-              setState((current) => {
-                const existingAccount =
-                  current.admins.find(
-                    (admin) =>
-                      admin.id === nextSession.adminId ||
-                      admin.firebaseUid === firebaseUser.uid ||
-                      normalize(admin.email) === normalize(email),
-                  ) || null;
-
-                return enrichState({
-                  ...current,
-                  admins: upsertAdminAccount(
-                    current.admins,
-                    buildFirebaseMirrorAccount({
-                      existingAccount,
-                      uid: firebaseUser.uid,
-                      email,
-                      displayName,
-                      roleId,
-                    }),
-                  ),
-                });
-              });
+              remember: session?.remember ?? true,
             });
           } catch {
             setFirebaseAuthUid('');
@@ -3467,11 +3481,17 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (session && !currentAdmin) {
-      saveSession(null);
-      setSessionState(null);
+    if (!session || currentAdmin) return;
+
+    if (session.provider === 'firebase' && hasFirebaseConfig()) {
+      if (!firebaseAuthResolved) return;
+      if (!firebaseAuthUid) return;
+      if (session.firebaseUid && firebaseAuthUid === session.firebaseUid) return;
     }
-  }, [currentAdmin, session]);
+
+    saveSession(null);
+    setSessionState(null);
+  }, [currentAdmin, firebaseAuthResolved, firebaseAuthUid, session]);
 
   const updateState = (updater: (current: AdminState) => AdminState) => {
     setState((current) => enrichState(updater(current)));
@@ -3528,6 +3548,22 @@ export function AdminProvider({ children }: { children: ReactNode }) {
             message: 'الحساب الحالي لا يملك صلاحية دخول لوحة الأدمن. فعّل صلاحية Super Admin أو Admin أولًا.',
           };
         }
+
+        const email = String(credential.user.email || normalizedIdentifier).trim().toLowerCase();
+        const roleId = resolveFirebaseRoleId(claims, state.roles);
+        const displayName = pickPreferredText(
+          String(credential.user.displayName || '').trim(),
+          email.split('@')[0],
+          'مدير المنصة',
+        );
+
+        applyFirebaseAdminSession({
+          uid: credential.user.uid,
+          email,
+          displayName,
+          roleId,
+          remember,
+        });
 
         resetFailedLoginAttempts();
         return { ok: true };

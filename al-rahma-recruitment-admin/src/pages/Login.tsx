@@ -42,8 +42,6 @@ export default function Login() {
       setError(cleanAdminText(result.message));
       return;
     }
-
-    navigate('/dashboard', { replace: true });
   };
 
   return (
