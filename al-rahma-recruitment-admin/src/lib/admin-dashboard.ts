@@ -144,6 +144,92 @@ function parseDateLike(value: unknown) {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
+function hasMeaningfulValue(value: unknown) {
+  return Boolean(normalize(value));
+}
+
+function hasMeaningfulSocialLinks(value: unknown) {
+  if (!value || typeof value !== 'object') return false;
+  return Object.values(value as Record<string, unknown>).some((entry) => hasMeaningfulValue(entry));
+}
+
+function isRealCompanyRecord(company: CompanyRecord) {
+  if (company.deletedAt || !hasMeaningfulValue(company.name)) return false;
+
+  return (
+    hasMeaningfulValue(company.email) ||
+    hasMeaningfulValue(company.phone) ||
+    hasMeaningfulValue(company.address) ||
+    hasMeaningfulValue(company.location) ||
+    hasMeaningfulValue(company.sector) ||
+    hasMeaningfulValue(company.summary) ||
+    hasMeaningfulValue(company.website) ||
+    hasMeaningfulValue(company.imageUrl) ||
+    hasMeaningfulSocialLinks(company.socialLinks) ||
+    Number(company.openings || 0) > 0 ||
+    (Array.isArray(company.notes) && company.notes.length > 0)
+  );
+}
+
+function isRealJobRecord(job: JobRecord, validCompanyNames: Set<string>) {
+  if (job.deletedAt || !hasMeaningfulValue(job.title) || !hasMeaningfulValue(job.companyName)) return false;
+
+  const linkedToRealCompany = validCompanyNames.has(normalize(job.companyName));
+  const hasStructuredData =
+    hasMeaningfulValue(job.location) ||
+    hasMeaningfulValue(job.type) ||
+    hasMeaningfulValue(job.summary) ||
+    hasMeaningfulValue(job.salary) ||
+    hasMeaningfulValue(job.sector) ||
+    Number(job.applicantsCount || 0) > 0 ||
+    (Array.isArray(job.notes) && job.notes.length > 0);
+
+  return linkedToRealCompany || hasStructuredData;
+}
+
+function buildJobIdentity(jobTitle: unknown, companyName: unknown) {
+  return `${normalize(jobTitle)}::${normalize(companyName)}`;
+}
+
+function isRealApplicationRecord(
+  application: ApplicationRecord,
+  validCompanyNames: Set<string>,
+  validJobKeys: Set<string>,
+) {
+  if (application.deletedAt || !hasMeaningfulValue(application.requestId || application.id)) return false;
+
+  const hasApplicantIdentity =
+    hasMeaningfulValue(application.applicantName) ||
+    hasMeaningfulValue(application.applicantEmail) ||
+    hasMeaningfulValue(application.applicantPhone);
+  const hasLinkedEntity =
+    validCompanyNames.has(normalize(application.companyName)) ||
+    validJobKeys.has(buildJobIdentity(application.jobTitle, application.companyName));
+
+  return hasApplicantIdentity && hasLinkedEntity;
+}
+
+function getRealCollections(state: AdminState) {
+  const companies = state.companies.filter((company) => isRealCompanyRecord(company));
+  const validCompanyNames = new Set(companies.map((company) => normalize(company.name)));
+  const jobs = state.jobs.filter((job) => isRealJobRecord(job, validCompanyNames));
+  const validJobKeys = new Set(jobs.map((job) => buildJobIdentity(job.title, job.companyName)));
+  const applications = state.applications.filter((application) =>
+    isRealApplicationRecord(application, validCompanyNames, validJobKeys),
+  );
+
+  return { companies, jobs, applications, validCompanyNames, validJobKeys };
+}
+
+export function getRealRecordCounts(state: AdminState) {
+  const { companies, jobs, applications } = getRealCollections(state);
+  return {
+    companies: companies.length,
+    jobs: jobs.length,
+    applications: applications.length,
+  };
+}
+
 function formatMonthLabel(date: Date) {
   return new Intl.DateTimeFormat('ar-EG', { month: 'long' }).format(date);
 }
@@ -305,9 +391,7 @@ export function formatAverageResponse(applications: ApplicationRecord[]) {
 }
 
 export function getDashboardMetrics(state: AdminState) {
-  const companies = state.companies.filter((company) => !company.deletedAt);
-  const jobs = state.jobs.filter((job) => !job.deletedAt);
-  const applications = state.applications.filter((application) => !application.deletedAt);
+  const { companies, jobs, applications } = getRealCollections(state);
   const recentThreshold = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
   const newApplications = applications.filter((application) => {
@@ -329,6 +413,7 @@ export function getDashboardMetrics(state: AdminState) {
 }
 
 export function getTrendsSeries(state: AdminState) {
+  const { jobs, applications } = getRealCollections(state);
   const now = new Date();
   const months = Array.from({ length: 6 }, (_, index) => {
     const date = new Date(now.getFullYear(), now.getMonth() - (5 - index), 1);
@@ -342,9 +427,7 @@ export function getTrendsSeries(state: AdminState) {
 
   const monthIndex = new Map(months.map((month, index) => [month.key, index]));
 
-  state.jobs
-    .filter((job) => !job.deletedAt)
-    .forEach((job) => {
+  jobs.forEach((job) => {
       const postedAt = parseDateLike(job.postedLabel);
       if (!postedAt) return;
       const key = `${postedAt.getFullYear()}-${postedAt.getMonth()}`;
@@ -353,9 +436,7 @@ export function getTrendsSeries(state: AdminState) {
       months[index].jobs += 1;
     });
 
-  state.applications
-    .filter((application) => !application.deletedAt)
-    .forEach((application) => {
+  applications.forEach((application) => {
       const submittedAt = parseDateLike(application.submittedAt);
       if (!submittedAt) return;
       const key = `${submittedAt.getFullYear()}-${submittedAt.getMonth()}`;
@@ -368,7 +449,7 @@ export function getTrendsSeries(state: AdminState) {
 }
 
 export function getApplicationStatusSeries(state: AdminState) {
-  const applications = state.applications.filter((application) => !application.deletedAt);
+  const { applications } = getRealCollections(state);
   const statuses: Array<{ key: ApplicationRecord['status']; label: string; color: string }> = [
     { key: 'pending', label: 'جديد', color: '#d9b25f' },
     { key: 'review', label: 'تحت المراجعة', color: '#4d8bb7' },
@@ -386,7 +467,7 @@ export function getApplicationStatusSeries(state: AdminState) {
 }
 
 export function getCompaniesStatusSeries(state: AdminState) {
-  const companies = state.companies.filter((company) => !company.deletedAt);
+  const { companies } = getRealCollections(state);
   const statuses: Array<{ key: CompanyRecord['status']; label: string; color: string }> = [
     { key: 'approved', label: 'نشطة', color: '#2f9a63' },
     { key: 'pending', label: 'قيد المراجعة', color: '#d9b25f' },
@@ -435,8 +516,9 @@ export function getActivityFeed(state: AdminState) {
 
   if (auditLogs.length) return auditLogs;
 
-  const fallbacks = state.applications
-    .filter((application) => !application.deletedAt)
+  const { applications } = getRealCollections(state);
+
+  const fallbacks = applications
     .slice()
     .sort((first, second) => {
       const firstDate = parseDateLike(first.submittedAt)?.getTime() ?? 0;
@@ -456,11 +538,10 @@ export function getActivityFeed(state: AdminState) {
 }
 
 export function getNotificationSummary(state: AdminState) {
-  const reviewApplications = state.applications.filter(
-    (application) => !application.deletedAt && ['pending', 'review', 'interview'].includes(application.status),
-  );
-  const pendingCompanies = state.companies.filter((company) => !company.deletedAt && company.status === 'pending');
-  const pendingJobs = state.jobs.filter((job) => !job.deletedAt && job.status === 'pending');
+  const { companies, jobs, applications } = getRealCollections(state);
+  const reviewApplications = applications.filter((application) => ['pending', 'review', 'interview'].includes(application.status));
+  const pendingCompanies = companies.filter((company) => company.status === 'pending');
+  const pendingJobs = jobs.filter((job) => job.status === 'pending');
   const openThreads = state.messages.filter((thread) => thread.status !== 'closed');
   const firstReviewApplication = reviewApplications[0];
   const firstPendingCompany = pendingCompanies[0];
@@ -505,17 +586,43 @@ export function getNotificationSummary(state: AdminState) {
 }
 
 export function getTopCompanies(state: AdminState) {
-  return state.companies
-    .filter((company) => !company.deletedAt)
-    .slice()
+  const { companies, jobs } = getRealCollections(state);
+
+  return companies
+    .map((company) => {
+      const companyName = normalize(company.name);
+      const liveJobsCount = jobs.filter(
+        (job) => normalize(job.companyName) === companyName && job.status === 'approved' && !job.deletedAt,
+      ).length;
+
+      return {
+        ...company,
+        openings: liveJobsCount,
+      };
+    })
+    .filter((company) => company.openings > 0)
     .sort((first, second) => second.openings - first.openings)
     .slice(0, 5);
 }
 
 export function getTopJobs(state: AdminState) {
-  return state.jobs
-    .filter((job) => !job.deletedAt)
-    .slice()
+  const { jobs, applications } = getRealCollections(state);
+
+  return jobs
+    .map((job) => {
+      const liveApplicantsCount = applications.filter(
+        (application) =>
+          normalize(application.jobTitle) === normalize(job.title) &&
+          normalize(application.companyName) === normalize(job.companyName) &&
+          !application.deletedAt,
+      ).length;
+
+      return {
+        ...job,
+        applicantsCount: liveApplicantsCount,
+      };
+    })
+    .filter((job) => job.applicantsCount > 0)
     .sort((first, second) => second.applicantsCount - first.applicantsCount)
     .slice(0, 5);
 }

@@ -322,6 +322,9 @@ export type ApplicationRecord = {
   status: 'pending' | 'review' | 'interview' | 'approved' | 'accepted' | 'rejected' | 'hired';
   rejectionReason: string;
   companyTag: string;
+  adminTag: string;
+  adminRating: number;
+  shortlisted: boolean;
   interviewScheduledAt: string | null;
   interviewMode: string;
   interviewLocation: string;
@@ -488,6 +491,14 @@ type AdminContextValue = {
   restoreJob: (jobId: string) => void;
   saveJob: (draft: JobDraft, jobId?: string | null) => string | null;
   updateApplicationStatus: (applicationId: string, status: ApplicationRecord['status'], rejectionReason?: string) => void;
+  updateApplicationReview: (
+    applicationId: string,
+    patch: {
+      adminTag?: string;
+      adminRating?: number;
+      shortlisted?: boolean;
+    },
+  ) => void;
   forwardApplication: (applicationId: string, companyName: string) => void;
   addNote: (entityType: 'users' | 'companies' | 'jobs' | 'applications' | 'messages', entityId: string, body: string) => void;
   updateSettings: (patch: Partial<SystemSettings>) => void;
@@ -1086,6 +1097,9 @@ function normalizeApplicationRecordData(application: ApplicationRecord): Applica
     companyName: String(application.companyName || '').trim(),
     rejectionReason: String(application.rejectionReason || '').trim(),
     companyTag: String(application.companyTag || '').trim(),
+    adminTag: String(application.adminTag || '').trim(),
+    adminRating: Number.isFinite(Number(application.adminRating)) ? Math.max(0, Math.min(5, Number(application.adminRating))) : 0,
+    shortlisted: Boolean(application.shortlisted),
     interviewScheduledAt: application.interviewScheduledAt ? String(application.interviewScheduledAt).trim() : null,
     interviewMode: String(application.interviewMode || '').trim(),
     interviewLocation: String(application.interviewLocation || '').trim(),
@@ -1283,6 +1297,9 @@ function mergeApplicationRecords(current: ApplicationRecord, incoming: Applicati
     status: nextStatus || current.status || incoming.status,
     rejectionReason: pickPreferredText(current.rejectionReason, incoming.rejectionReason),
     companyTag: pickPreferredText(current.companyTag, incoming.companyTag),
+    adminTag: pickPreferredText(current.adminTag, incoming.adminTag),
+    adminRating: Math.max(Number(current.adminRating || 0), Number(incoming.adminRating || 0), 0),
+    shortlisted: Boolean(current.shortlisted || incoming.shortlisted),
     interviewScheduledAt: pickPreferredText(current.interviewScheduledAt || '', incoming.interviewScheduledAt || '') || null,
     interviewMode: pickPreferredText(current.interviewMode, incoming.interviewMode),
     interviewLocation: pickPreferredText(current.interviewLocation, incoming.interviewLocation),
@@ -2281,6 +2298,9 @@ function buildApplications(): ApplicationRecord[] {
         status: mapApplicationStatus(String(application.status || 'pending')),
         rejectionReason: String(application.rejectionReason || '').trim(),
         companyTag: String(application.companyTag || '').trim(),
+        adminTag: String(application.adminTag || '').trim(),
+        adminRating: Number.isFinite(Number(application.adminRating)) ? Math.max(0, Math.min(5, Number(application.adminRating))) : 0,
+        shortlisted: Boolean(application.shortlisted),
         interviewScheduledAt: application.interviewScheduledAt ? String(application.interviewScheduledAt) : null,
         interviewMode: String(application.interviewMode || '').trim(),
         interviewLocation: String(application.interviewLocation || '').trim(),
@@ -2611,6 +2631,9 @@ function mergeSharedRuntimeIntoState(currentState: AdminState, incomingRuntime: 
         status: mapApplicationStatus(String(application.status || 'pending')),
         rejectionReason: String(application.rejectionReason || '').trim(),
         companyTag: String(application.companyTag || '').trim(),
+        adminTag: String(application.adminTag || '').trim(),
+        adminRating: Number.isFinite(Number(application.adminRating)) ? Math.max(0, Math.min(5, Number(application.adminRating))) : 0,
+        shortlisted: Boolean(application.shortlisted),
         interviewScheduledAt: application.interviewScheduledAt ? String(application.interviewScheduledAt) : null,
         interviewMode: String(application.interviewMode || '').trim(),
         interviewLocation: String(application.interviewLocation || '').trim(),
@@ -2896,20 +2919,12 @@ function mapFirebaseApplicationToAdmin(entry: Record<string, unknown>): Applicat
     cvFileType: String(entry.cvFileType || nestedApplicant.cvFileType || nestedCvMeta.type || '').trim(),
     jobTitle: String(entry.jobTitle || nestedJob.jobTitle || nestedJob.title || '').trim(),
     companyName: String(entry.companyName || nestedJob.jobCompany || nestedJob.companyName || '').trim(),
-    status:
-      String(entry.status || 'review').trim() === 'pending'
-        ? 'pending'
-        : String(entry.status || 'review').trim() === 'approved'
-          ? 'approved'
-          : String(entry.status || 'review').trim() === 'accepted'
-            ? 'accepted'
-            : String(entry.status || 'review').trim() === 'rejected'
-              ? 'rejected'
-              : String(entry.status || 'review').trim() === 'hired'
-                ? 'hired'
-                : 'review',
+    status: mapApplicationStatus(String(entry.status || 'review').trim()),
     rejectionReason: String(entry.rejectionReason || '').trim(),
     companyTag: String(entry.companyTag || '').trim(),
+    adminTag: String(entry.adminTag || '').trim(),
+    adminRating: Number.isFinite(Number(entry.adminRating)) ? Math.max(0, Math.min(5, Number(entry.adminRating))) : 0,
+    shortlisted: Boolean(entry.shortlisted),
     interviewScheduledAt: normalizeFirestoreTimestamp(entry.interviewScheduledAt) || null,
     interviewMode: String(entry.interviewMode || '').trim(),
     interviewLocation: String(entry.interviewLocation || '').trim(),
@@ -3469,6 +3484,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                 status: application.status,
                 rejectionReason: application.rejectionReason,
                 companyTag: application.companyTag,
+                adminTag: application.adminTag,
+                adminRating: application.adminRating,
+                shortlisted: application.shortlisted,
                 interviewScheduledAt: application.interviewScheduledAt,
                 interviewMode: application.interviewMode,
                 interviewLocation: application.interviewLocation,
@@ -4350,6 +4368,39 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  const updateApplicationReview: AdminContextValue['updateApplicationReview'] = (applicationId, patch) => {
+    const nextAdminTag = String(patch.adminTag || '').trim();
+    const nextAdminRating = Number.isFinite(Number(patch.adminRating))
+      ? Math.max(0, Math.min(5, Number(patch.adminRating)))
+      : null;
+    const nextShortlisted = typeof patch.shortlisted === 'boolean' ? patch.shortlisted : null;
+
+    updateState((current) => ({
+      ...current,
+      applications: current.applications.map((application) =>
+        application.id === applicationId
+          ? {
+              ...application,
+              adminTag: patch.adminTag === undefined ? application.adminTag : nextAdminTag,
+              adminRating: nextAdminRating ?? application.adminRating,
+              shortlisted: nextShortlisted ?? application.shortlisted,
+            }
+          : application,
+      ),
+      auditLogs: [
+        createAdminAudit(
+          actorName,
+          'تحديث تقييم المرشح',
+          'applications',
+          applicationId,
+          'تم حفظ بيانات المتابعة الداخلية للمرشح.',
+          'info',
+        ),
+        ...current.auditLogs,
+      ],
+    }));
+  };
+
   const forwardApplication: AdminContextValue['forwardApplication'] = (applicationId, companyName) => {
     updateState((current) => ({
       ...current,
@@ -4804,7 +4855,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     downloadCsv(
       'rahma-applications.csv',
       [
-        ['الاسم', 'البريد', 'الهاتف', 'المدينة', 'الخبرة', 'الوظيفة', 'الشركة', 'الحالة', 'تاريخ التقديم'],
+        ['الاسم', 'البريد', 'الهاتف', 'المدينة', 'الخبرة', 'الوظيفة', 'الشركة', 'الحالة', 'تمييز الشركة', 'تمييز الأدمن', 'تقييم الأدمن', 'قائمة مختصرة', 'تاريخ التقديم'],
         ...state.applications.map((application) => [
           application.applicantName,
           application.applicantEmail,
@@ -4814,6 +4865,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
           application.jobTitle,
           application.companyName,
           application.status,
+          application.companyTag,
+          application.adminTag,
+          String(application.adminRating || 0),
+          application.shortlisted ? 'نعم' : 'لا',
           formatDate(application.submittedAt),
         ]),
       ],
@@ -4939,6 +4994,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       restoreJob,
       saveJob,
       updateApplicationStatus,
+      updateApplicationReview,
       forwardApplication,
       addNote,
       updateSettings,

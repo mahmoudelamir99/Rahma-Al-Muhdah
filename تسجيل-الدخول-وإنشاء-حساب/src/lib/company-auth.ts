@@ -1,4 +1,4 @@
-import { getFirebaseServices, hasFirebaseConfig } from './firebase';
+﻿import { getFirebaseServices, hasFirebaseConfig } from './firebase';
 
 export type CompanyRegistrationInput = {
   companyName: string;
@@ -53,6 +53,19 @@ const AUTH_SESSION_KEY = 'rahmaAuthSession';
 const APPLICATION_PROFILE_KEY = 'rahmaApplicationProfile';
 const ADMIN_RUNTIME_KEY = 'rahmaAdminPublicRuntime.v1';
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+
+function getCompanyPasswordResetRedirectUrl() {
+  if (typeof window === 'undefined') return '';
+
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set('view', 'login');
+    url.hash = '';
+    return url.toString();
+  } catch {
+    return '';
+  }
+}
 
 function normalize(value: string | null | undefined) {
   return String(value || '').trim().toLowerCase();
@@ -444,7 +457,7 @@ async function persistFirebaseProfile(session: CompanySession, profile: Record<s
     deletedAt: null,
     logoUrl: String(profile.companyLogoUrl || '').trim(),
     coverUrl: String(profile.companyCoverUrl || '').trim(),
-    logoLetter: String(profile.companyName || session.name || 'ش').trim().slice(0, 1) || 'ش',
+    logoLetter: String(profile.companyName || session.name || 'ط´').trim().slice(0, 1) || 'ط´',
     createdAt: profile.createdAt || now,
     updatedAt: now,
   };
@@ -470,7 +483,7 @@ async function registerWithFirebase(input: CompanyRegistrationInput): Promise<Co
   if (!services) {
     return {
       ok: false,
-      message: 'الخدمة غير متاحة الآن. جرّب مرة أخرى بعد قليل.',
+      message: 'ط§ظ„ط®ط¯ظ…ط© ط؛ظٹط± ظ…طھط§ط­ط© ط§ظ„ط¢ظ†. ط¬ط±ظ‘ط¨ ظ…ط±ط© ط£ط®ط±ظ‰ ط¨ط¹ط¯ ظ‚ظ„ظٹظ„.',
     };
   }
 
@@ -501,7 +514,7 @@ async function registerWithFirebase(input: CompanyRegistrationInput): Promise<Co
 
   return {
     ok: true,
-    message: 'تم إنشاء حساب الشركة بنجاح.',
+    message: 'طھظ… ط¥ظ†ط´ط§ط، ط­ط³ط§ط¨ ط§ظ„ط´ط±ظƒط© ط¨ظ†ط¬ط§ط­.',
     session,
   };
 }
@@ -511,7 +524,7 @@ async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthR
   if (!services) {
     return {
       ok: false,
-      message: 'الخدمة غير متاحة الآن. جرّب مرة أخرى بعد قليل.',
+      message: 'ط§ظ„ط®ط¯ظ…ط© ط؛ظٹط± ظ…طھط§ط­ط© ط§ظ„ط¢ظ†. ط¬ط±ظ‘ط¨ ظ…ط±ط© ط£ط®ط±ظ‰ ط¨ط¹ط¯ ظ‚ظ„ظٹظ„.',
     };
   }
 
@@ -530,11 +543,11 @@ async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthR
   if (companyData.status && ['restricted', 'suspended', 'archived'].includes(normalize(String(companyData.status)))) {
     return {
       ok: false,
-      message: 'هذا الحساب غير متاح حاليًا. تواصل مع الدعم لو كنت تحتاج مراجعة الحالة.',
+      message: 'ظ‡ط°ط§ ط§ظ„ط­ط³ط§ط¨ ط؛ظٹط± ظ…طھط§ط­ ط­ط§ظ„ظٹظ‹ط§. طھظˆط§طµظ„ ظ…ط¹ ط§ظ„ط¯ط¹ظ… ظ„ظˆ ظƒظ†طھ طھط­طھط§ط¬ ظ…ط±ط§ط¬ط¹ط© ط§ظ„ط­ط§ظ„ط©.',
     };
   }
 
-  const companyName = String(companyData.name || companyData.companyName || user.displayName || input.email.split('@')[0] || 'شركة').trim();
+  const companyName = String(companyData.name || companyData.companyName || user.displayName || input.email.split('@')[0] || 'ط´ط±ظƒط©').trim();
   const profile = buildProfileFromRegistration(
     {
       companyName,
@@ -577,7 +590,7 @@ async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthR
 
   return {
     ok: true,
-    message: 'تم تسجيل الدخول بنجاح.',
+    message: 'طھظ… طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط¨ظ†ط¬ط§ط­.',
     session,
   };
 }
@@ -590,7 +603,7 @@ async function registerWithLocalFallback(input: CompanyRegistrationInput): Promi
   if (existingAccount) {
     return {
       ok: false,
-      message: 'هذا البريد مستخدم بالفعل لحساب شركة محلي.',
+      message: 'ظ‡ط°ط§ ط§ظ„ط¨ط±ظٹط¯ ظ…ط³طھط®ط¯ظ… ط¨ط§ظ„ظپط¹ظ„ ظ„ط­ط³ط§ط¨ ط´ط±ظƒط© ظ…ط­ظ„ظٹ.',
     };
   }
 
@@ -629,7 +642,7 @@ async function registerWithLocalFallback(input: CompanyRegistrationInput): Promi
 
   return {
     ok: true,
-    message: 'تم إنشاء حساب الشركة محليًا بنجاح.',
+    message: 'طھظ… ط¥ظ†ط´ط§ط، ط­ط³ط§ط¨ ط§ظ„ط´ط±ظƒط© ظ…ط­ظ„ظٹظ‹ط§ ط¨ظ†ط¬ط§ط­.',
     session,
   };
 }
@@ -645,7 +658,7 @@ async function loginWithLocalFallback(input: CompanyLoginInput): Promise<Company
   if (!account) {
     return {
       ok: false,
-      message: 'بيانات الدخول غير صحيحة في الوضع المحلي.',
+      message: 'ط¨ظٹط§ظ†ط§طھ ط§ظ„ط¯ط®ظˆظ„ ط؛ظٹط± طµط­ظٹط­ط© ظپظٹ ط§ظ„ظˆط¶ط¹ ط§ظ„ظ…ط­ظ„ظٹ.',
     };
   }
 
@@ -680,7 +693,7 @@ async function loginWithLocalFallback(input: CompanyLoginInput): Promise<Company
 
   return {
     ok: true,
-    message: 'تم تسجيل الدخول محليًا بنجاح.',
+    message: 'طھظ… طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ظ…ط­ظ„ظٹظ‹ط§ ط¨ظ†ط¬ط§ط­.',
     session,
   };
 }
@@ -689,14 +702,14 @@ async function loginWithLocalFallback(input: CompanyLoginInput): Promise<Company
 async function registerWithLocalFallback(_input: CompanyRegistrationInput): Promise<CompanyAuthResult> {
   return {
     ok: false,
-    message: 'التسجيل المحلي غير متاح الآن. فعّل الخدمة المطلوبة قبل إنشاء أي حساب شركة.',
+    message: 'ط§ظ„طھط³ط¬ظٹظ„ ط§ظ„ظ…ط­ظ„ظٹ ط؛ظٹط± ظ…طھط§ط­ ط§ظ„ط¢ظ†. ظپط¹ظ‘ظ„ ط§ظ„ط®ط¯ظ…ط© ط§ظ„ظ…ط·ظ„ظˆط¨ط© ظ‚ط¨ظ„ ط¥ظ†ط´ط§ط، ط£ظٹ ط­ط³ط§ط¨ ط´ط±ظƒط©.',
   };
 }
 
 async function loginWithLocalFallback(_input: CompanyLoginInput): Promise<CompanyAuthResult> {
   return {
     ok: false,
-    message: 'تسجيل الدخول المحلي غير متاح الآن. فعّل الخدمة المطلوبة قبل استخدام لوحة الشركة.',
+    message: 'طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ط§ظ„ظ…ط­ظ„ظٹ ط؛ظٹط± ظ…طھط§ط­ ط§ظ„ط¢ظ†. ظپط¹ظ‘ظ„ ط§ظ„ط®ط¯ظ…ط© ط§ظ„ظ…ط·ظ„ظˆط¨ط© ظ‚ط¨ظ„ ط§ط³طھط®ط¯ط§ظ… ظ„ظˆط­ط© ط§ظ„ط´ط±ظƒط©.',
   };
 }
 
@@ -704,28 +717,28 @@ export async function registerCompany(input: CompanyRegistrationInput): Promise<
   if (!input.companyName.trim() || !input.companySector.trim() || !input.companyCity.trim() || !input.email.trim()) {
     return {
       ok: false,
-      message: 'املأ بيانات الشركة الأساسية قبل المتابعة.',
+      message: 'ط§ظ…ظ„ط£ ط¨ظٹط§ظ†ط§طھ ط§ظ„ط´ط±ظƒط© ط§ظ„ط£ط³ط§ط³ظٹط© ظ‚ط¨ظ„ ط§ظ„ظ…طھط§ط¨ط¹ط©.',
     };
   }
 
   if (input.password.length < 8) {
     return {
       ok: false,
-      message: 'كلمة المرور لازم تكون 8 أحرف على الأقل.',
+      message: 'ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ظ„ط§ط²ظ… طھظƒظˆظ† 8 ط£ط­ط±ظپ ط¹ظ„ظ‰ ط§ظ„ط£ظ‚ظ„.',
     };
   }
 
   if (input.confirmPassword && input.password !== input.confirmPassword) {
     return {
       ok: false,
-      message: 'كلمتا المرور غير متطابقتين.',
+      message: 'ظƒظ„ظ…طھط§ ط§ظ„ظ…ط±ظˆط± ط؛ظٹط± ظ…طھط·ط§ط¨ظ‚طھظٹظ†.',
     };
   }
 
   if (!hasFirebaseConfig()) {
     return {
       ok: false,
-      message: 'تسجيل الشركات غير متاح الآن. أعد المحاولة بعد قليل.',
+      message: 'طھط³ط¬ظٹظ„ ط§ظ„ط´ط±ظƒط§طھ ط؛ظٹط± ظ…طھط§ط­ ط§ظ„ط¢ظ†. ط£ط¹ط¯ ط§ظ„ظ…ط­ط§ظˆظ„ط© ط¨ط¹ط¯ ظ‚ظ„ظٹظ„.',
     };
   }
 
@@ -736,14 +749,14 @@ export async function loginCompany(input: CompanyLoginInput): Promise<CompanyAut
   if (!input.email.trim() || !input.password) {
     return {
       ok: false,
-      message: 'اكتب البريد الإلكتروني وكلمة المرور أولًا.',
+      message: 'ط§ظƒطھط¨ ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ظˆظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط£ظˆظ„ظ‹ط§.',
     };
   }
 
   if (!hasFirebaseConfig()) {
     return {
       ok: false,
-      message: 'تسجيل الدخول للشركات غير متاح الآن. أعد المحاولة بعد قليل.',
+      message: 'طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ظ„ظ„ط´ط±ظƒط§طھ ط؛ظٹط± ظ…طھط§ط­ ط§ظ„ط¢ظ†. ط£ط¹ط¯ ط§ظ„ظ…ط­ط§ظˆظ„ط© ط¨ط¹ط¯ ظ‚ظ„ظٹظ„.',
     };
   }
 
@@ -775,10 +788,19 @@ export async function requestCompanyPasswordReset(email: string): Promise<{ ok: 
   }
 
   const { auth, authModule } = services;
-  await authModule.sendPasswordResetEmail(auth, normalizedEmail);
+  const resetRedirectUrl = getCompanyPasswordResetRedirectUrl();
+  const actionCodeSettings = resetRedirectUrl
+    ? {
+        url: resetRedirectUrl,
+        handleCodeInApp: false,
+      }
+    : undefined;
+
+  await authModule.sendPasswordResetEmail(auth, normalizedEmail, actionCodeSettings);
 
   return {
     ok: true,
-    message: 'تم إرسال رابط استعادة كلمة المرور إلى بريد الشركة إذا كان مسجلًا لدينا.',
+    message: 'إذا كان البريد مسجلًا لدينا، ستصلك رسالة رسمية تحتوي على رابط آمن لإعادة تعيين كلمة المرور.',
   };
 }
+

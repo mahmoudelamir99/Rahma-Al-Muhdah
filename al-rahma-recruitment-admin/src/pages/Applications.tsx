@@ -1,5 +1,18 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle2, ChevronDown, Clock3, Eye, FileSearch, NotebookPen, Search, X } from 'lucide-react';
+﻿import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  ChevronDown,
+  Clock3,
+  Download,
+  Eye,
+  FileSearch,
+  NotebookPen,
+  RefreshCcw,
+  Search,
+  Star,
+  X,
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -19,6 +32,7 @@ import {
   AdminEmptyState,
   AdminField,
   AdminInput,
+  AdminPageHeader,
   AdminSelect,
   AdminTextarea,
 } from '../components/ui/admin-kit';
@@ -41,12 +55,41 @@ const TAG_OPTIONS = [
   { value: 'not-fit', label: 'غير مناسب' },
 ] as const;
 
+const ADMIN_TAG_OPTIONS = [
+  { value: 'all', label: 'كل تمييزات الأدمن' },
+  { value: 'priority', label: 'أولوية عالية' },
+  { value: 'ready', label: 'جاهز للعرض' },
+  { value: 'needs-review', label: 'يحتاج مراجعة إضافية' },
+  { value: 'reserve', label: 'احتياطي' },
+  { value: 'blocked', label: 'موقوف داخليًا' },
+] as const;
+
 const COMPANY_TAG_LABELS: Record<string, string> = {
   strong: 'مناسب',
   contact: 'يحتاج تواصل',
   reserve: 'احتياطي',
   'not-fit': 'غير مناسب',
 };
+
+const ADMIN_TAG_LABELS: Record<string, string> = {
+  priority: 'أولوية عالية',
+  ready: 'جاهز للعرض',
+  'needs-review': 'يحتاج مراجعة إضافية',
+  reserve: 'احتياطي',
+  blocked: 'موقوف داخليًا',
+};
+
+const SHORTLIST_OPTIONS = [
+  { value: 'all', label: 'كل المرشحين' },
+  { value: 'shortlisted', label: 'القائمة المختصرة' },
+  { value: 'regular', label: 'غير مختصرين' },
+] as const;
+
+const DUPLICATE_OPTIONS = [
+  { value: 'all', label: 'كل السجلات' },
+  { value: 'duplicates', label: 'المكررة فقط' },
+  { value: 'clean', label: 'غير المكررة' },
+] as const;
 
 const INTERVIEW_MODE_LABELS: Record<string, string> = {
   onsite: 'حضوري',
@@ -58,6 +101,33 @@ type FeedbackState = {
   tone: 'success' | 'danger';
   text: string;
 } | null;
+
+type DuplicateMeta = {
+  email: boolean;
+  phone: boolean;
+  count: number;
+  reasons: string[];
+};
+
+function normalizeSearchValue(value: unknown) {
+  return cleanAdminText(value).trim().toLowerCase();
+}
+
+function normalizeDuplicateEmail(value: unknown) {
+  return cleanAdminText(value).trim().toLowerCase();
+}
+
+function normalizeDuplicatePhone(value: unknown) {
+  return cleanAdminText(value).replace(/[^\d+]/g, '').trim();
+}
+
+function getAdminTagTone(tag: string) {
+  if (tag === 'priority') return 'danger' as const;
+  if (tag === 'ready') return 'success' as const;
+  if (tag === 'needs-review') return 'warning' as const;
+  if (tag === 'blocked') return 'danger' as const;
+  return 'info' as const;
+}
 
 function buildTimeline(application: ApplicationRecord) {
   const items = [
@@ -77,6 +147,16 @@ function buildTimeline(application: ApplicationRecord) {
     },
   ];
 
+  if (application.interviewScheduledAt) {
+    items.push({
+      id: `${application.id}-interview`,
+      label: 'موعد المقابلة',
+      value: formatDateTime(application.interviewScheduledAt),
+      helper: cleanAdminText(INTERVIEW_MODE_LABELS[application.interviewMode] || 'تمت جدولة مقابلة بواسطة الشركة.'),
+      tone: 'warning',
+    });
+  }
+
   if (application.respondedAt) {
     items.push({
       id: `${application.id}-responded`,
@@ -95,7 +175,23 @@ function buildTimeline(application: ApplicationRecord) {
 
 function downloadApplicationsCsvFile(filename: string, applications: ApplicationRecord[]) {
   const rows = [
-    ['رقم الطلب', 'الاسم', 'الهاتف', 'البريد', 'المدينة', 'الخبرة', 'الوظيفة', 'الشركة', 'الحالة', 'التمييز', 'موعد المقابلة', 'سبب الرفض'],
+    [
+      'رقم الطلب',
+      'الاسم',
+      'الهاتف',
+      'البريد',
+      'المدينة',
+      'الخبرة',
+      'الوظيفة',
+      'الشركة',
+      'الحالة',
+      'تمييز الشركة',
+      'تمييز الأدمن',
+      'تقييم الأدمن',
+      'قائمة مختصرة',
+      'موعد المقابلة',
+      'سبب الرفض',
+    ],
     ...applications.map((application) => [
       cleanAdminText(application.requestId),
       cleanAdminText(application.applicantName),
@@ -107,6 +203,9 @@ function downloadApplicationsCsvFile(filename: string, applications: Application
       cleanAdminText(application.companyName),
       getApplicationStatusLabel(application.status),
       cleanAdminText(COMPANY_TAG_LABELS[application.companyTag] || ''),
+      cleanAdminText(ADMIN_TAG_LABELS[application.adminTag] || application.adminTag),
+      String(application.adminRating || 0),
+      application.shortlisted ? 'نعم' : 'لا',
       cleanAdminText(application.interviewScheduledAt ? formatDateTime(application.interviewScheduledAt) : ''),
       cleanAdminText(application.rejectionReason),
     ]),
@@ -127,26 +226,79 @@ function downloadApplicationsCsvFile(filename: string, applications: Application
   window.setTimeout(() => window.URL.revokeObjectURL(url), 500);
 }
 
+function buildDuplicateMeta(applications: ApplicationRecord[]) {
+  const byEmail = new Map<string, string[]>();
+  const byPhone = new Map<string, string[]>();
+
+  applications
+    .filter((application) => !application.deletedAt)
+    .forEach((application) => {
+      const emailKey = normalizeDuplicateEmail(application.applicantEmail);
+      const phoneKey = normalizeDuplicatePhone(application.applicantPhone);
+
+      if (emailKey) {
+        byEmail.set(emailKey, [...(byEmail.get(emailKey) || []), application.id]);
+      }
+
+      if (phoneKey) {
+        byPhone.set(phoneKey, [...(byPhone.get(phoneKey) || []), application.id]);
+      }
+    });
+
+  const meta = new Map<string, DuplicateMeta>();
+
+  const attachGroup = (ids: string[], reason: 'البريد الإلكتروني' | 'رقم الهاتف') => {
+    if (ids.length < 2) return;
+
+    ids.forEach((id) => {
+      const current = meta.get(id) || { email: false, phone: false, count: 1, reasons: [] };
+      meta.set(id, {
+        email: current.email || reason === 'البريد الإلكتروني',
+        phone: current.phone || reason === 'رقم الهاتف',
+        count: Math.max(current.count, ids.length),
+        reasons: current.reasons.includes(reason) ? current.reasons : [...current.reasons, reason],
+      });
+    });
+  };
+
+  byEmail.forEach((ids) => attachGroup(ids, 'البريد الإلكتروني'));
+  byPhone.forEach((ids) => attachGroup(ids, 'رقم الهاتف'));
+
+  return meta;
+}
+
 function statusTone(status: ApplicationRecord['status']) {
   return getStatusTone(status) as 'success' | 'warning' | 'danger' | 'neutral' | 'info';
 }
 
 export default function Applications() {
-  const { state, updateApplicationStatus, addNote } = useAdmin();
+  const { state, updateApplicationStatus, updateApplicationReview, addNote, refreshFromSite } = useAdmin();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState('');
   const [companyFilter, setCompanyFilter] = useState('all');
   const [jobFilter, setJobFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [tagFilter, setTagFilter] = useState<(typeof TAG_OPTIONS)[number]['value']>('all');
+  const [adminTagFilter, setAdminTagFilter] = useState<(typeof ADMIN_TAG_OPTIONS)[number]['value']>('all');
+  const [shortlistFilter, setShortlistFilter] = useState<(typeof SHORTLIST_OPTIONS)[number]['value']>('all');
+  const [duplicateFilter, setDuplicateFilter] = useState<(typeof DUPLICATE_OPTIONS)[number]['value']>('all');
   const [selectedApplication, setSelectedApplication] = useState<ApplicationRecord | null>(null);
   const [statusDraft, setStatusDraft] = useState<ApplicationRecord['status']>('review');
   const [reasonDraft, setReasonDraft] = useState('');
   const [noteDraft, setNoteDraft] = useState('');
+  const [adminTagDraft, setAdminTagDraft] = useState('');
+  const [adminRatingDraft, setAdminRatingDraft] = useState('0');
+  const [shortlistedDraft, setShortlistedDraft] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkStatusDraft, setBulkStatusDraft] = useState<ApplicationRecord['status']>('review');
   const [bulkReasonDraft, setBulkReasonDraft] = useState('');
   const [feedback, setFeedback] = useState<FeedbackState>(null);
+
+  useEffect(() => {
+    refreshFromSite();
+    const intervalId = window.setInterval(() => refreshFromSite(), 20000);
+    return () => window.clearInterval(intervalId);
+  }, [refreshFromSite]);
 
   const companies = useMemo(
     () => Array.from(new Set(state.applications.filter((item) => !item.deletedAt).map((item) => cleanAdminText(item.companyName)))).sort(),
@@ -157,6 +309,8 @@ export default function Applications() {
     () => Array.from(new Set(state.applications.filter((item) => !item.deletedAt).map((item) => cleanAdminText(item.jobTitle)))).sort(),
     [state.applications],
   );
+
+  const duplicateMeta = useMemo(() => buildDuplicateMeta(state.applications), [state.applications]);
 
   const visibleApplications = useMemo(() => {
     return state.applications
@@ -173,25 +327,32 @@ export default function Applications() {
           application.city,
           application.experience,
           COMPANY_TAG_LABELS[application.companyTag] || '',
+          ADMIN_TAG_LABELS[application.adminTag] || application.adminTag,
         ]
           .map(cleanAdminText)
           .join(' ')
           .toLowerCase();
 
-        const matchesQuery = searchTarget.includes(query.trim().toLowerCase());
+        const duplicate = duplicateMeta.get(application.id);
+        const matchesQuery = !normalizeSearchValue(query) || searchTarget.includes(normalizeSearchValue(query));
         const matchesCompany = companyFilter === 'all' ? true : cleanAdminText(application.companyName) === companyFilter;
         const matchesJob = jobFilter === 'all' ? true : cleanAdminText(application.jobTitle) === jobFilter;
         const matchesStatus = statusFilter === 'all' ? true : application.status === statusFilter;
         const matchesTag = tagFilter === 'all' ? true : application.companyTag === tagFilter;
+        const matchesAdminTag = adminTagFilter === 'all' ? true : application.adminTag === adminTagFilter;
+        const matchesShortlist =
+          shortlistFilter === 'all' ? true : shortlistFilter === 'shortlisted' ? application.shortlisted : !application.shortlisted;
+        const matchesDuplicate =
+          duplicateFilter === 'all' ? true : duplicateFilter === 'duplicates' ? Boolean(duplicate) : !duplicate;
 
-        return matchesQuery && matchesCompany && matchesJob && matchesStatus && matchesTag;
+        return matchesQuery && matchesCompany && matchesJob && matchesStatus && matchesTag && matchesAdminTag && matchesShortlist && matchesDuplicate;
       })
       .sort((first, second) => {
         const firstTime = new Date(first.submittedAt).getTime() || 0;
         const secondTime = new Date(second.submittedAt).getTime() || 0;
         return secondTime - firstTime;
       });
-  }, [companyFilter, jobFilter, query, state.applications, statusFilter, tagFilter]);
+  }, [adminTagFilter, companyFilter, duplicateFilter, duplicateMeta, jobFilter, query, shortlistFilter, state.applications, statusFilter, tagFilter]);
 
   useEffect(() => {
     if (!selectedApplication) return;
@@ -201,6 +362,9 @@ export default function Applications() {
       if (nextSelected) {
         setStatusDraft(nextSelected.status);
         setReasonDraft(cleanAdminText(nextSelected.rejectionReason));
+        setAdminTagDraft(cleanAdminText(nextSelected.adminTag));
+        setAdminRatingDraft(String(nextSelected.adminRating || 0));
+        setShortlistedDraft(Boolean(nextSelected.shortlisted));
       }
     }
   }, [selectedApplication, state.applications]);
@@ -214,6 +378,9 @@ export default function Applications() {
       setSelectedApplication(targetApplication);
       setStatusDraft(targetApplication.status);
       setReasonDraft(cleanAdminText(targetApplication.rejectionReason));
+      setAdminTagDraft(cleanAdminText(targetApplication.adminTag));
+      setAdminRatingDraft(String(targetApplication.adminRating || 0));
+      setShortlistedDraft(Boolean(targetApplication.shortlisted));
       setFeedback(null);
     }
   }, [searchParams, selectedApplication, state.applications]);
@@ -228,6 +395,9 @@ export default function Applications() {
     setStatusDraft(application.status);
     setReasonDraft(cleanAdminText(application.rejectionReason));
     setNoteDraft('');
+    setAdminTagDraft(cleanAdminText(application.adminTag));
+    setAdminRatingDraft(String(application.adminRating || 0));
+    setShortlistedDraft(Boolean(application.shortlisted));
     setFeedback(null);
     setSearchParams((current) => {
       const next = new URLSearchParams(current);
@@ -259,6 +429,17 @@ export default function Applications() {
     setFeedback({ tone: 'success', text: 'تم تحديث حالة الطلب بنجاح.' });
   };
 
+  const saveReviewMeta = () => {
+    if (!selectedApplication) return;
+
+    updateApplicationReview(selectedApplication.id, {
+      adminTag: adminTagDraft.trim(),
+      adminRating: Number(adminRatingDraft || 0),
+      shortlisted: shortlistedDraft,
+    });
+    setFeedback({ tone: 'success', text: 'تم حفظ متابعة الأدمن على المرشح.' });
+  };
+
   const submitNote = () => {
     if (!selectedApplication || !noteDraft.trim()) return;
     addNote('applications', selectedApplication.id, noteDraft.trim());
@@ -267,6 +448,7 @@ export default function Applications() {
   };
 
   const selectedTimeline = selectedApplication ? buildTimeline(selectedApplication) : [];
+  const selectedDuplicateMeta = selectedApplication ? duplicateMeta.get(selectedApplication.id) || null : null;
   const allVisibleSelected = visibleApplications.length > 0 && visibleApplications.every((application) => selectedIds.includes(application.id));
 
   const toggleSelection = (applicationId: string) => {
@@ -337,20 +519,28 @@ export default function Applications() {
         ) : null}
       </AnimatePresence>
 
-      <section className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <p className="text-sm font-bold text-[#7690ab]">متابعة الطلبات والقرارات</p>
-          <h1 className="mt-1 text-[clamp(1.55rem,2.5vw,2.25rem)] font-black text-[#0f223d]">إدارة طلبات التوظيف بخط سير واضح</h1>
-          <p className="mt-2 max-w-3xl text-sm leading-7 text-[#64768a]">
-            فلترة سريعة، اختيار جماعي، وتصدير مباشر للطلبات الظاهرة مع الاحتفاظ بكل تفاصيل المرشح داخل الدرج الجانبي.
-          </p>
-        </div>
-      </section>
+      <AdminPageHeader
+        eyebrow="المرشحون"
+        title="إدارة طلبات التوظيف بخط سير أوضح"
+        description="فلترة سريعة، تقييم داخلي، قائمة مختصرة، وكشف تكرار مع ربط مباشر بما تسجله الشركة والأدمن على كل مرشح."
+        actions={
+          <>
+            <AdminButton variant="secondary" onClick={refreshFromSite}>
+              <RefreshCcw size={16} />
+              تحديث البيانات
+            </AdminButton>
+            <AdminButton onClick={exportVisibleApplications}>
+              <Download size={16} />
+              تصدير الظاهر
+            </AdminButton>
+          </>
+        }
+      />
 
       <AdminDataShell
         toolbar={
           <div className="space-y-3">
-            <div className="grid gap-3 xl:grid-cols-[220px_220px_200px_200px_minmax(0,1fr)]">
+            <div className="grid gap-3 xl:grid-cols-[200px_200px_180px_180px_180px_180px_180px_minmax(0,1fr)]">
               <AdminSelect value={companyFilter} onChange={(event) => setCompanyFilter(event.target.value)}>
                 <option value="all">كل الشركات</option>
                 {companies.map((company) => (
@@ -382,6 +572,27 @@ export default function Applications() {
                   </option>
                 ))}
               </AdminSelect>
+              <AdminSelect value={adminTagFilter} onChange={(event) => setAdminTagFilter(event.target.value as (typeof ADMIN_TAG_OPTIONS)[number]['value'])}>
+                {ADMIN_TAG_OPTIONS.map((tag) => (
+                  <option key={tag.value} value={tag.value}>
+                    {tag.label}
+                  </option>
+                ))}
+              </AdminSelect>
+              <AdminSelect value={shortlistFilter} onChange={(event) => setShortlistFilter(event.target.value as (typeof SHORTLIST_OPTIONS)[number]['value'])}>
+                {SHORTLIST_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </AdminSelect>
+              <AdminSelect value={duplicateFilter} onChange={(event) => setDuplicateFilter(event.target.value as (typeof DUPLICATE_OPTIONS)[number]['value'])}>
+                {DUPLICATE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </AdminSelect>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#8797aa]" size={18} />
                 <AdminInput
@@ -397,6 +608,9 @@ export default function Applications() {
               <div className="flex flex-wrap items-center gap-2 text-sm font-bold text-[#61748a]">
                 <span className="rounded-full bg-[#eef3fb] px-3 py-2 text-[#17355b]">{visibleApplications.length} طلب ظاهر</span>
                 <span className="rounded-full bg-[#f6f8fc] px-3 py-2 text-[#586d84]">{selectedIds.length} محدد</span>
+                <span className="rounded-full bg-[#fff6e5] px-3 py-2 text-[#9a6d18]">
+                  {visibleApplications.filter((application) => duplicateMeta.has(application.id)).length} مكرر
+                </span>
               </div>
               <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
                 <AdminButton variant="ghost" onClick={toggleVisibleSelection}>
@@ -409,9 +623,8 @@ export default function Applications() {
                     </option>
                   ))}
                 </AdminSelect>
-                <AdminInput value={bulkReasonDraft} onChange={(event) => setBulkReasonDraft(event.target.value)} placeholder="سبب الرفض للجملة المحددة" />
+                <AdminInput value={bulkReasonDraft} onChange={(event) => setBulkReasonDraft(event.target.value)} placeholder="سبب الرفض للمجموعة المحددة" />
                 <AdminButton onClick={applyBulkStatus}>تطبيق على المحدد</AdminButton>
-                <AdminButton variant="secondary" onClick={exportVisibleApplications}>تصدير الظاهر</AdminButton>
               </div>
             </div>
           </div>
@@ -420,7 +633,10 @@ export default function Applications() {
         {visibleApplications.length ? (
           <>
             <div className="grid gap-3 p-4 lg:hidden">
-              {visibleApplications.map((application) => (
+              {visibleApplications.map((application) => {
+                const duplicate = duplicateMeta.get(application.id);
+
+                return (
                 <article key={`mobile-${application.id}`} className="rounded-[1.15rem] border border-[rgba(24,37,63,0.08)] bg-white p-4 shadow-[0_14px_28px_rgba(18,30,54,0.06)]">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -440,6 +656,9 @@ export default function Applications() {
                   <div className="mt-3 flex flex-wrap gap-2">
                     <AdminBadge tone="neutral">{cleanAdminText(application.jobTitle || 'بدون وظيفة')}</AdminBadge>
                     {application.companyTag ? <AdminBadge tone="info">{cleanAdminText(COMPANY_TAG_LABELS[application.companyTag] || application.companyTag)}</AdminBadge> : null}
+                    {application.adminTag ? <AdminBadge tone={getAdminTagTone(application.adminTag)}>{cleanAdminText(ADMIN_TAG_LABELS[application.adminTag] || application.adminTag)}</AdminBadge> : null}
+                    {application.shortlisted ? <AdminBadge tone="success">قائمة مختصرة</AdminBadge> : null}
+                    {duplicate ? <AdminBadge tone="danger">مكرر</AdminBadge> : null}
                   </div>
                   <div className="mt-4 flex items-center justify-between gap-3 rounded-[1rem] border border-[rgba(24,37,63,0.08)] px-3.5 py-3">
                     <div>
@@ -458,11 +677,11 @@ export default function Applications() {
                     </AdminButton>
                   </div>
                 </article>
-              ))}
+              )})}
             </div>
 
             <div className="hidden overflow-x-auto lg:block">
-              <table className="rm-table min-w-[1260px]">
+              <table className="rm-table min-w-[1560px]">
                 <thead>
                   <tr>
                     <th>
@@ -476,15 +695,19 @@ export default function Applications() {
                     <th>المتقدم</th>
                     <th>الوظيفة</th>
                     <th>الشركة</th>
+                    <th>متابعة الشركة</th>
+                    <th>متابعة الأدمن</th>
                     <th>تاريخ التقديم</th>
                     <th>الحالة</th>
-                    <th>التمييز</th>
                     <th>رقم الطلب</th>
                     <th>التفاصيل</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {visibleApplications.map((application, index) => (
+                  {visibleApplications.map((application, index) => {
+                    const duplicate = duplicateMeta.get(application.id);
+
+                    return (
                     <motion.tr
                       key={application.id}
                       initial={{ opacity: 0, y: 10 }}
@@ -507,17 +730,32 @@ export default function Applications() {
                           <div className="min-w-0">
                             <div className="text-sm font-black text-[#11213d]">{cleanAdminText(application.applicantName || 'متقدم جديد')}</div>
                             <div className="mt-1 text-xs text-[#75869a]">{cleanAdminText(application.applicantPhone || 'بدون هاتف')}</div>
+                            {duplicate ? (
+                              <div className="mt-2">
+                                <AdminBadge tone="danger">مكرر {duplicate.count} مرات</AdminBadge>
+                              </div>
+                            ) : null}
                           </div>
                         </div>
                       </td>
                       <td>{cleanAdminText(application.jobTitle || 'غير محدد')}</td>
                       <td>{cleanAdminText(application.companyName || 'غير محددة')}</td>
+                      <td>
+                        <div className="flex flex-wrap gap-2">
+                          {application.companyTag ? <AdminBadge tone="info">{cleanAdminText(COMPANY_TAG_LABELS[application.companyTag] || application.companyTag)}</AdminBadge> : <span className="text-xs font-bold text-[#90a0b2]">بدون تمييز</span>}
+                          {application.interviewScheduledAt ? <AdminBadge tone="warning">مقابلة مجدولة</AdminBadge> : null}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex flex-wrap gap-2">
+                          {application.adminTag ? <AdminBadge tone={getAdminTagTone(application.adminTag)}>{cleanAdminText(ADMIN_TAG_LABELS[application.adminTag] || application.adminTag)}</AdminBadge> : <span className="text-xs font-bold text-[#90a0b2]">غير مصنف</span>}
+                          {application.shortlisted ? <AdminBadge tone="success">مختصر</AdminBadge> : null}
+                          {application.adminRating ? <AdminBadge tone="warning"><Star size={12} />{application.adminRating}/5</AdminBadge> : null}
+                        </div>
+                      </td>
                       <td>{formatDateTime(application.submittedAt)}</td>
                       <td>
                         <AdminBadge tone={statusTone(application.status)}>{getApplicationStatusLabel(application.status)}</AdminBadge>
-                      </td>
-                      <td>
-                        {application.companyTag ? <AdminBadge tone="info">{cleanAdminText(COMPANY_TAG_LABELS[application.companyTag] || application.companyTag)}</AdminBadge> : <span className="text-xs font-bold text-[#90a0b2]">بدون تمييز</span>}
                       </td>
                       <td>
                         <span className="rounded-full bg-[#eef3ff] px-3 py-1 text-xs font-black text-[#17335b]">{cleanAdminText(application.requestId)}</span>
@@ -529,7 +767,7 @@ export default function Applications() {
                         </AdminButton>
                       </td>
                     </motion.tr>
-                  ))}
+                  )})}
                 </tbody>
               </table>
             </div>
@@ -550,8 +788,23 @@ export default function Applications() {
                 <AdminBadge tone={statusTone(selectedApplication.status)}>{getApplicationStatusLabel(selectedApplication.status)}</AdminBadge>
                 <AdminBadge tone="info">طلب #{cleanAdminText(selectedApplication.requestId)}</AdminBadge>
                 {selectedApplication.companyTag ? <AdminBadge tone="info">{cleanAdminText(COMPANY_TAG_LABELS[selectedApplication.companyTag] || selectedApplication.companyTag)}</AdminBadge> : null}
+                {selectedApplication.adminTag ? <AdminBadge tone={getAdminTagTone(selectedApplication.adminTag)}>{cleanAdminText(ADMIN_TAG_LABELS[selectedApplication.adminTag] || selectedApplication.adminTag)}</AdminBadge> : null}
+                {selectedApplication.shortlisted ? <AdminBadge tone="success">ضمن القائمة المختصرة</AdminBadge> : null}
               </div>
             </div>
+
+            {selectedDuplicateMeta ? (
+              <section className="rounded-[1.2rem] border border-[#f1d5bf] bg-[#fff9f1] px-4 py-4 text-sm leading-7 text-[#8b6133]">
+                <div className="mb-2 flex items-center gap-2 font-black text-[#9a6220]">
+                  <AlertTriangle size={16} />
+                  تم اكتشاف تكرار محتمل
+                </div>
+                <p>
+                  هذا المرشح مكرر بعدد <strong>{selectedDuplicateMeta.count}</strong> سجلات بناءً على{' '}
+                  {selectedDuplicateMeta.reasons.join(' و')}.
+                </p>
+              </section>
+            ) : null}
 
             <div className="grid gap-3 sm:grid-cols-2">
               {[
@@ -560,9 +813,13 @@ export default function Applications() {
                 ['الهاتف', selectedApplication.applicantPhone || 'غير متاح'],
                 ['البريد الإلكتروني', selectedApplication.applicantEmail || 'غير متاح'],
                 ['المدينة', selectedApplication.city || 'غير محدد'],
+                ['العنوان', selectedApplication.address || 'غير محدد'],
                 ['سنوات الخبرة', selectedApplication.experienceYears || selectedApplication.experience || 'غير محدد'],
                 ['الراتب المتوقع', selectedApplication.expectedSalary || 'غير محدد'],
+                ['المؤهل', selectedApplication.educationLevel || 'غير محدد'],
                 ['التخصص', selectedApplication.specialization || 'غير محدد'],
+                ['الحالة العسكرية', selectedApplication.militaryStatus || 'غير محدد'],
+                ['الحالة الاجتماعية', selectedApplication.maritalStatus || 'غير محدد'],
               ].map(([label, value]) => (
                 <div key={label} className="rounded-[1.1rem] bg-[#f5f8fc] px-4 py-3">
                   <div className="text-xs font-bold text-[#7a8b9e]">{label}</div>
@@ -597,6 +854,48 @@ export default function Applications() {
                 </div>
               </section>
             ) : null}
+
+            <section className="rounded-[1.2rem] border border-[rgba(24,37,63,0.08)] bg-white p-4">
+              <div className="mb-3">
+                <h3 className="text-sm font-black text-[#10213d]">متابعة الأدمن</h3>
+                <p className="mt-1 text-xs leading-6 text-[#718399]">تمييز داخلي، تقييم، وقائمة مختصرة لا تظهر إلا للإدارة.</p>
+              </div>
+              <div className="grid gap-4">
+                <AdminField label="تمييز الأدمن">
+                  <AdminSelect value={adminTagDraft} onChange={(event) => setAdminTagDraft(event.target.value)}>
+                    <option value="">بدون تمييز</option>
+                    {ADMIN_TAG_OPTIONS.filter((item) => item.value !== 'all').map((tag) => (
+                      <option key={tag.value} value={tag.value}>
+                        {tag.label}
+                      </option>
+                    ))}
+                  </AdminSelect>
+                </AdminField>
+                <AdminField label="تقييم الأدمن">
+                  <AdminSelect value={adminRatingDraft} onChange={(event) => setAdminRatingDraft(event.target.value)}>
+                    <option value="0">بدون تقييم</option>
+                    <option value="1">1 / 5</option>
+                    <option value="2">2 / 5</option>
+                    <option value="3">3 / 5</option>
+                    <option value="4">4 / 5</option>
+                    <option value="5">5 / 5</option>
+                  </AdminSelect>
+                </AdminField>
+                <label className="flex items-center justify-between gap-3 rounded-[1rem] border border-[rgba(24,37,63,0.08)] bg-[#fbfcfe] px-4 py-3">
+                  <div className="space-y-1">
+                    <div className="text-sm font-black text-[#10213d]">إضافة إلى القائمة المختصرة</div>
+                    <div className="text-xs leading-6 text-[#70839a]">استخدمها للمرشحين الجاهزين للمتابعة السريعة.</div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={shortlistedDraft}
+                    onChange={(event) => setShortlistedDraft(event.target.checked)}
+                    className="h-5 w-5 rounded border-[#bfd0e2] text-[#17355b] focus:ring-[#17355b]"
+                  />
+                </label>
+                <AdminButton onClick={saveReviewMeta}>حفظ متابعة الأدمن</AdminButton>
+              </div>
+            </section>
 
             <section className="rounded-[1.2rem] border border-[rgba(24,37,63,0.08)] bg-white p-4">
               <div className="mb-3 flex items-center justify-between gap-3">

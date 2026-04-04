@@ -31,7 +31,7 @@ import {
   getActivityFeed,
   getApplicationStatusSeries,
   getCompaniesStatusSeries,
-  getDashboardMetrics,
+  getRealRecordCounts,
   getTopCompanies,
   getTopJobs,
   getTrendsSeries,
@@ -47,13 +47,13 @@ export default function Reports() {
     return () => window.clearInterval(intervalId);
   }, [refreshFromSite]);
 
-  const metrics = useMemo(() => getDashboardMetrics(state), [state]);
   const statusSeries = useMemo(() => getApplicationStatusSeries(state), [state]);
   const companiesSeries = useMemo(() => getCompaniesStatusSeries(state), [state]);
   const activityFeed = useMemo(() => getActivityFeed(state), [state]);
   const topCompanies = useMemo(() => getTopCompanies(state), [state]);
   const topJobs = useMemo(() => getTopJobs(state), [state]);
   const trends = useMemo(() => getTrendsSeries(state), [state]);
+  const realCounts = useMemo(() => getRealRecordCounts(state), [state]);
 
   return (
     <>
@@ -76,9 +76,9 @@ export default function Reports() {
       />
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <AdminStatCard label="كل الشركات" value={formatNumber(metrics.companiesCount)} helper="إجمالي السجلات الحالية" icon={Building2} tone="secondary" />
-        <AdminStatCard label="كل الوظائف" value={formatNumber(state.jobs.filter((job) => !job.deletedAt).length)} helper="تشمل كل الحالات" icon={BriefcaseBusiness} tone="primary" />
-        <AdminStatCard label="كل الطلبات" value={formatNumber(state.applications.filter((item) => !item.deletedAt).length)} helper="مرتبطة بالموقع مباشرة" icon={BarChart3} tone="accent" />
+        <AdminStatCard label="كل الشركات" value={formatNumber(realCounts.companies)} helper="إجمالي السجلات الحقيقية الحالية" icon={Building2} tone="secondary" />
+        <AdminStatCard label="كل الوظائف" value={formatNumber(realCounts.jobs)} helper="وظائف مرتبطة بشركات حقيقية وغير محذوفة" icon={BriefcaseBusiness} tone="primary" />
+        <AdminStatCard label="كل الطلبات" value={formatNumber(realCounts.applications)} helper="طلبات حقيقية مرتبطة ببيانات صالحة للعرض" icon={BarChart3} tone="accent" />
         <AdminStatCard label="سجل التدقيق" value={formatNumber(state.auditLogs.length)} helper="آخر عمليات الإدارة" icon={ShieldCheck} tone="success" />
       </section>
 
