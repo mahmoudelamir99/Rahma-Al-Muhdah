@@ -6,7 +6,7 @@ import {
   FileSpreadsheet,
   ShieldCheck,
 } from 'lucide-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   Bar,
   BarChart,
@@ -39,7 +39,13 @@ import {
 import { useAdmin } from '../lib/admin-store';
 
 export default function Reports() {
-  const { state, exportApplicationsCsv, exportAuditCsv } = useAdmin();
+  const { state, exportApplicationsCsv, exportAuditCsv, refreshFromSite } = useAdmin();
+
+  useEffect(() => {
+    refreshFromSite();
+    const intervalId = window.setInterval(() => refreshFromSite(), 20000);
+    return () => window.clearInterval(intervalId);
+  }, [refreshFromSite]);
 
   const metrics = useMemo(() => getDashboardMetrics(state), [state]);
   const statusSeries = useMemo(() => getApplicationStatusSeries(state), [state]);

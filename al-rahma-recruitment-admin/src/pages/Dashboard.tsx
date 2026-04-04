@@ -9,7 +9,7 @@ import {
   RefreshCcw,
   UserCheck2,
 } from 'lucide-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bar,
@@ -65,6 +65,12 @@ const STATUS_CARDS = [
 export default function Dashboard() {
   const navigate = useNavigate();
   const { state, refreshFromSite, hasPermission } = useAdmin();
+
+  useEffect(() => {
+    refreshFromSite();
+    const intervalId = window.setInterval(() => refreshFromSite(), 20000);
+    return () => window.clearInterval(intervalId);
+  }, [refreshFromSite]);
 
   const metrics = useMemo(() => getDashboardMetrics(state), [state]);
   const trends = useMemo(() => getTrendsSeries(state), [state]);
