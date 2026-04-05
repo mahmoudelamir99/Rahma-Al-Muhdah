@@ -1486,7 +1486,6 @@
         firestoreModule.onSnapshot(publicJobsQuery, (snapshot) => {
           firebaseRuntimeCache.jobs = snapshot.docs.map((doc) => mapFirebaseJobRecord({ ...doc.data(), id: doc.id }));
           refreshPublicPagesFromFirebaseCache();
-          refreshPublicPagesFromFirebaseCache();
         }),
       );
       firebasePublicUnsubscribers.push(
@@ -1691,6 +1690,56 @@
 
     try {
       const { db, firestoreModule } = services;
+      const syncRelatedJobApplicantsCount = async (jobId = '') => {
+        const normalizedJobId = String(jobId || '').trim();
+        if (!normalizedJobId) return false;
+
+        try {
+          const jobDocRef = firestoreModule.doc(db, 'jobs', normalizedJobId);
+          const applicationsQuery = firestoreModule.query(
+            firestoreModule.collection(db, 'applications'),
+            firestoreModule.where('jobId', '==', normalizedJobId),
+            firestoreModule.where('deletedAt', '==', null),
+          );
+          const [jobSnapshot, applicationsSnapshot] = await Promise.all([
+            firestoreModule.getDoc(jobDocRef),
+            firestoreModule.getDocs(applicationsQuery),
+          ]);
+
+          if (!jobSnapshot.exists()) return false;
+
+          const nextApplicantsCount = applicationsSnapshot.docs.length;
+          const nextUpdatedAt = new Date().toISOString();
+
+          await firestoreModule.updateDoc(jobDocRef, {
+            applicantsCount: nextApplicantsCount,
+            updatedAt: nextUpdatedAt,
+          });
+
+          const nextJobRecord = mapFirebaseJobRecord({
+            ...jobSnapshot.data(),
+            id: jobSnapshot.id,
+            applicantsCount: nextApplicantsCount,
+            updatedAt: nextUpdatedAt,
+          });
+          upsertFirebaseJobCache(nextJobRecord);
+          firebaseRuntimeCache.jobs = getAdminRuntimeJobs().map((job) =>
+            normalize(job?.id) === normalize(normalizedJobId)
+              ? {
+                  ...job,
+                  applicantsCount: nextApplicantsCount,
+                  updatedAt: nextUpdatedAt,
+                }
+              : job,
+          );
+          refreshPublicPagesFromFirebaseCache();
+          return true;
+        } catch (countError) {
+          console.warn('Unable to sync Firebase job applicants count', countError);
+          return false;
+        }
+      };
+
       const applicationDocRef = firestoreModule.doc(db, 'applications', requestId);
       const jobRecord = applicationRecord?.job || {};
       const applicantRecord = applicationRecord?.applicant || {};
@@ -1770,11 +1819,13 @@
             id: requestId,
           }),
         );
+        await syncRelatedJobApplicantsCount(firebasePayload.jobId);
         return true;
       }
 
       await firestoreModule.setDoc(applicationDocRef, firebasePayload, { merge: true });
       upsertFirebaseApplicationCache(mapFirebaseApplicationRecord(firebasePayload));
+      await syncRelatedJobApplicantsCount(firebasePayload.jobId);
       return true;
     } catch (error) {
       console.warn('Unable to sync application to Firebase', error);
