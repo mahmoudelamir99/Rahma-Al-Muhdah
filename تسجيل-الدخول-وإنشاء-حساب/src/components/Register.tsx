@@ -64,7 +64,7 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
         const nextTarget = sanitizeRedirectTarget(redirectTo, 'company-dashboard.html');
         window.setTimeout(() => {
           window.location.href = buildSiteUrl(nextTarget, 'company-dashboard.html');
-        }, 450);
+        }, 320);
       } else if (result.requiresEmailVerification) {
         window.setTimeout(() => {
           onNavigate('login');
@@ -82,13 +82,13 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f8f5ef_0%,#eef6f6_55%,#e8f1f2_100%)] px-3 py-3 text-slate-900 sm:px-4 sm:py-4">
-      <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] max-w-[1160px] gap-3 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] max-w-[1120px] gap-3 lg:grid-cols-[minmax(0,1fr)_18.5rem]">
         <section className="flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="w-full rounded-[28px] border border-[#d7e6e8] bg-[rgba(248,245,239,0.95)] p-4 shadow-[0_26px_68px_rgba(15,61,76,0.12)] backdrop-blur sm:p-5"
+            className="w-full rounded-[26px] border border-[#d7e6e8] bg-[rgba(248,245,239,0.95)] p-4 shadow-[0_24px_60px_rgba(15,61,76,0.12)] backdrop-blur sm:p-5"
           >
             <div className="mb-4 flex items-center justify-between gap-3">
               <a
@@ -100,7 +100,7 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
               </a>
 
               <div className="flex items-center gap-3 lg:hidden">
-                <div className="flex h-11 w-11 items-center justify-center rounded-[16px] bg-[linear-gradient(135deg,#0f3d4c,#1f6b7a)] p-2 shadow-[0_18px_30px_rgba(15,61,76,0.2)]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[16px] bg-white p-2 shadow-[0_16px_28px_rgba(15,61,76,0.14)]">
                   <img src={logoHref} alt={SITE_NAME} className="h-full w-full object-contain" />
                 </div>
                 <div className="text-right">
@@ -113,13 +113,14 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
             <div className="hidden lg:block">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#d9c79d] bg-[#f5ecda] px-3.5 py-2 text-[0.76rem] font-black text-[#8b6a2f]">
                 <Building2 className="h-4 w-4" />
-                ملف شركة جديد
+                فتح ملف شركة جديد
               </div>
-              <h1 className="mt-3 text-[1.95rem] font-black tracking-[-0.05em] text-[#0f3d4c]">
-                أنشئ حساب شركتك وابدأ إدارة الوظائف من واجهة مرتبة وواضحة.
+              <h1 className="mt-3 text-[1.88rem] font-black tracking-[-0.05em] text-[#0f3d4c]">
+                أنشئ حساب شركتك وابدأ إدارة الوظائف من لوحة أوضح وأهدأ.
               </h1>
-              <p className="mt-3 max-w-[34rem] text-[0.95rem] leading-7 text-[#5f7b82]">
-                املأ البيانات الأساسية مرة واحدة، وبعدها تنتقل مباشرة إلى لوحة الشركة لإضافة الوظائف ومراجعة الطلبات.
+              <p className="mt-3 max-w-[33rem] text-[0.93rem] leading-7 text-[#5f7b82]">
+                املأ البيانات الأساسية مرة واحدة، وبعدها تنتقل مباشرة إلى لوحة الشركة لإضافة الوظائف ومراجعة الطلبات
+                والمتقدمين.
               </p>
             </div>
 
@@ -167,7 +168,7 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
                       type="text"
                       required
                       className="h-11 w-full rounded-[16px] border border-[#d5e3e5] bg-white py-2.5 pr-12 pl-4 text-[0.94rem] font-semibold text-slate-900 outline-none transition focus:border-[#1f6b7a] focus:ring-4 focus:ring-[#1f6b7a]/12"
-                      placeholder="مثل: التوظيف أو الخدمات"
+                      placeholder="مثال: التوظيف أو الخدمات"
                       value={companySector}
                       onChange={(event) => setCompanySector(event.target.value)}
                     />
@@ -314,26 +315,30 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
           </motion.div>
         </section>
 
-        <aside className="hidden rounded-[28px] bg-[linear-gradient(180deg,#0f3d4c_0%,#1f6b7a_100%)] p-5 text-white shadow-[0_28px_70px_rgba(15,61,76,0.2)] lg:flex lg:flex-col lg:justify-between">
+        <aside className="hidden rounded-[26px] bg-[linear-gradient(180deg,#0f3d4c_0%,#1f6b7a_100%)] p-5 text-white shadow-[0_28px_70px_rgba(15,61,76,0.2)] lg:flex lg:flex-col lg:justify-between">
           <div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-white/10 p-2.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-[20px] bg-white p-3 shadow-[0_18px_34px_rgba(8,24,30,0.16)]">
               <img src={logoHref} alt={SITE_NAME} className="h-full w-full object-contain" />
             </div>
-            <div className="mt-4 text-[0.78rem] font-black tracking-[0.12em] text-white/74">{SITE_NAME}</div>
-            <h2 className="mt-3 text-[1.7rem] font-black leading-tight">ملف شركة منظم من أول تسجيل حتى أول وظيفة منشورة.</h2>
-            <p className="mt-3 text-[0.9rem] leading-7 text-white/78">
-              بمجرد إنشاء الحساب تقدر تضيف الوظائف، تراجع الطلبات، وتدير بيانات الشركة من نفس اللوحة.
+            <div className="mt-4 text-[0.76rem] font-black tracking-[0.12em] text-white/76">{SITE_NAME}</div>
+            <h2 className="mt-3 text-[1.62rem] font-black leading-tight">ملف شركة منظم من أول تسجيل حتى أول وظيفة منشورة.</h2>
+            <p className="mt-3 text-[0.88rem] leading-7 text-white/80">
+              بمجرد إنشاء الحساب تقدر تضيف الوظائف، تراجع الطلبات، وتدير بيانات الشركة من نفس اللوحة بشكل بسيط وواضح.
             </p>
           </div>
 
           <div className="space-y-3">
             <div className="rounded-[18px] border border-white/10 bg-white/8 px-4 py-3.5">
               <div className="text-sm font-black">بيانات أساسية واضحة</div>
-              <p className="mt-1 text-[0.84rem] leading-7 text-white/74">اسم الشركة، المجال، المدينة، الهاتف ووسيلة الدخول في نفس النموذج.</p>
+              <p className="mt-1 text-[0.84rem] leading-7 text-white/76">
+                اسم الشركة، المجال، المدينة، الهاتف ووسيلة الدخول في نموذج واحد مرتب.
+              </p>
             </div>
             <div className="rounded-[18px] border border-white/10 bg-white/8 px-4 py-3.5">
               <div className="text-sm font-black">انتقال مباشر للوحة</div>
-              <p className="mt-1 text-[0.84rem] leading-7 text-white/74">بعد الإتمام تنتقل مباشرة لمتابعة الوظائف والمتقدمين بدون تعقيد.</p>
+              <p className="mt-1 text-[0.84rem] leading-7 text-white/76">
+                بعد الإتمام تنتقل مباشرة لمتابعة الوظائف والمتقدمين من نفس الحساب.
+              </p>
             </div>
           </div>
         </aside>

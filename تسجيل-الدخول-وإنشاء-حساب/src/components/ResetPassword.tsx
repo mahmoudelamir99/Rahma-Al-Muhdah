@@ -50,7 +50,7 @@ export default function ResetPassword() {
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="w-full max-w-[30rem] rounded-[26px] border border-[#d6e5e7] bg-[rgba(248,245,239,0.95)] p-4 shadow-[0_24px_60px_rgba(15,61,76,0.12)] backdrop-blur sm:p-5"
+        className="w-full max-w-[31rem] rounded-[26px] border border-[#d6e5e7] bg-[rgba(248,245,239,0.95)] p-4 shadow-[0_24px_60px_rgba(15,61,76,0.12)] backdrop-blur sm:p-5"
       >
         <div className="mb-4 flex items-center justify-between gap-3">
           <a
@@ -61,7 +61,7 @@ export default function ResetPassword() {
             العودة للموقع
           </a>
 
-          <div className="flex h-12 w-12 items-center justify-center rounded-[16px] bg-[linear-gradient(135deg,#0f3d4c,#1f6b7a)] p-2.5 shadow-[0_18px_28px_rgba(15,61,76,0.18)]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[16px] bg-white p-2.5 shadow-[0_16px_28px_rgba(15,61,76,0.14)]">
             <img src={logoHref} alt={SITE_NAME} className="h-full w-full object-contain" />
           </div>
         </div>
@@ -72,9 +72,9 @@ export default function ResetPassword() {
         </div>
 
         <div className="mt-4 space-y-2">
-          <h1 className="text-[1.8rem] font-black tracking-[-0.05em] text-[#0f3d4c]">حدّث كلمة المرور ثم ارجع للدخول مباشرة.</h1>
+          <h1 className="text-[1.72rem] font-black tracking-[-0.05em] text-[#0f3d4c]">حدّث كلمة المرور ثم ارجع لتسجيل الدخول مباشرة.</h1>
           <p className="text-[0.92rem] leading-7 text-[#5f7b82]">
-            اختر كلمة مرور قوية وآمنة، وبعد الحفظ يمكنك العودة لتسجيل الدخول باستخدامها مباشرة.
+            اختر كلمة مرور قوية وآمنة، وبعد الحفظ يمكنك العودة لتسجيل الدخول بها مباشرة.
           </p>
         </div>
 

@@ -20,11 +20,11 @@ interface PhoneInputProps {
 
 export default function PhoneInput({ value, onChange, countryCode, onCountryCodeChange }: PhoneInputProps) {
   return (
-    <div className="flex min-h-10 w-full overflow-hidden rounded-[16px] border border-[#cfe0e1] bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition focus-within:border-[#1f6b7a] focus-within:ring-4 focus-within:ring-[#1f6b7a]/12">
+    <div className="flex min-h-11 w-full overflow-hidden rounded-[18px] border border-[#cfe0e1] bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition focus-within:border-[#1f6b7a] focus-within:ring-4 focus-within:ring-[#1f6b7a]/12">
       <select
         value={countryCode}
         onChange={(event) => onCountryCodeChange(event.target.value)}
-        className="min-w-[6.5rem] border-l border-[#d9e7e8] bg-[#eef6f6] px-3 text-[0.8rem] font-extrabold text-[#0f3d4c] outline-none sm:min-w-[7rem]"
+        className="min-w-[6.75rem] border-l border-[#d9e7e8] bg-[#eef6f6] px-3 text-[0.8rem] font-extrabold text-[#0f3d4c] outline-none sm:min-w-[7.4rem]"
         dir="rtl"
         aria-label="مفتاح الدولة"
       >

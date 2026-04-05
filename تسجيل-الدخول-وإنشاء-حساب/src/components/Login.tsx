@@ -18,6 +18,7 @@ export default function Login({ onNavigate, redirectTo }: LoginProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const searchParams = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search);
   const forgotPasswordParams = new URLSearchParams(searchParams);
   const siteHref = buildSiteUrl('index.html');
@@ -48,7 +49,7 @@ export default function Login({ onNavigate, redirectTo }: LoginProps) {
         const nextTarget = sanitizeRedirectTarget(redirectTo, 'company-dashboard.html');
         window.setTimeout(() => {
           window.location.href = buildSiteUrl(nextTarget, 'company-dashboard.html');
-        }, 350);
+        }, 260);
       }
     } catch (error) {
       setStatus({
@@ -62,13 +63,13 @@ export default function Login({ onNavigate, redirectTo }: LoginProps) {
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f8f5ef_0%,#eef6f6_52%,#e8f1f2_100%)] px-3 py-3 text-slate-900 sm:px-4 sm:py-4">
-      <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] max-w-[1080px] gap-3 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] max-w-[1040px] gap-3 lg:grid-cols-[minmax(0,1fr)_18.5rem]">
         <section className="flex items-center justify-center">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="w-full max-w-[38rem] rounded-[28px] border border-[#d7e6e8] bg-[rgba(248,245,239,0.95)] p-4 shadow-[0_26px_68px_rgba(15,61,76,0.12)] backdrop-blur sm:p-5"
+            className="w-full max-w-[36rem] rounded-[26px] border border-[#d7e6e8] bg-[rgba(248,245,239,0.95)] p-4 shadow-[0_24px_60px_rgba(15,61,76,0.12)] backdrop-blur sm:p-5"
           >
             <div className="mb-4 flex items-center justify-between gap-3">
               <a
@@ -80,12 +81,12 @@ export default function Login({ onNavigate, redirectTo }: LoginProps) {
               </a>
 
               <div className="flex items-center gap-3 lg:hidden">
-                <div className="flex h-11 w-11 items-center justify-center rounded-[16px] bg-[linear-gradient(135deg,#0f3d4c,#1f6b7a)] p-2 shadow-[0_18px_30px_rgba(15,61,76,0.2)]">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[16px] bg-white p-2 shadow-[0_16px_28px_rgba(15,61,76,0.14)]">
                   <img src={logoHref} alt={SITE_NAME} className="h-full w-full object-contain" />
                 </div>
                 <div className="text-right">
                   <div className="text-[0.68rem] font-black tracking-[0.1em] text-[#7e6b44]">{SITE_NAME}</div>
-                  <h1 className="text-[1rem] font-black text-[#0f3d4c]">تسجيل الدخول</h1>
+                  <h1 className="text-[1rem] font-black text-[#0f3d4c]">تسجيل دخول الشركات</h1>
                 </div>
               </div>
             </div>
@@ -93,13 +94,14 @@ export default function Login({ onNavigate, redirectTo }: LoginProps) {
             <div className="hidden lg:block">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#d9c79d] bg-[#f5ecda] px-3.5 py-2 text-[0.76rem] font-black text-[#8b6a2f]">
                 <ShieldCheck className="h-4 w-4" />
-                دخول آمن للشركات
+                جلسة آمنة للشركات
               </div>
-              <h1 className="mt-3 text-[2rem] font-black tracking-[-0.05em] text-[#0f3d4c]">
-                ادخل إلى لوحة شركتك وتابع الوظائف والطلبات بسهولة.
+              <h1 className="mt-3 text-[1.92rem] font-black tracking-[-0.05em] text-[#0f3d4c]">
+                ادخل إلى لوحة شركتك وتابع الوظائف والطلبات من مكان واحد.
               </h1>
-              <p className="mt-3 max-w-[32rem] text-[0.95rem] leading-7 text-[#5f7b82]">
-                استخدم البريد الإلكتروني وكلمة المرور المرتبطين بحساب الشركة للوصول السريع إلى لوحة التشغيل والمتابعة.
+              <p className="mt-3 max-w-[31rem] text-[0.93rem] leading-7 text-[#5f7b82]">
+                استخدم البريد الإلكتروني وكلمة المرور المرتبطين بحساب الشركة للوصول السريع إلى إدارة الوظائف والمتقدمين
+                وحالة كل طلب بشكل واضح ومنظم.
               </p>
             </div>
 
@@ -200,26 +202,30 @@ export default function Login({ onNavigate, redirectTo }: LoginProps) {
           </motion.div>
         </section>
 
-        <aside className="hidden rounded-[28px] bg-[linear-gradient(180deg,#0f3d4c_0%,#1f6b7a_100%)] p-5 text-white shadow-[0_28px_70px_rgba(15,61,76,0.2)] lg:flex lg:flex-col lg:justify-between">
+        <aside className="hidden rounded-[26px] bg-[linear-gradient(180deg,#0f3d4c_0%,#1f6b7a_100%)] p-5 text-white shadow-[0_28px_70px_rgba(15,61,76,0.2)] lg:flex lg:flex-col lg:justify-between">
           <div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-white/10 p-2.5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-[20px] bg-white p-3 shadow-[0_18px_34px_rgba(8,24,30,0.16)]">
               <img src={logoHref} alt={SITE_NAME} className="h-full w-full object-contain" />
             </div>
-            <div className="mt-4 text-[0.78rem] font-black tracking-[0.12em] text-white/74">{SITE_NAME}</div>
-            <h2 className="mt-3 text-[1.75rem] font-black leading-tight">وصول سريع وواضح لإدارة الوظائف والطلبات.</h2>
-            <p className="mt-3 text-[0.9rem] leading-7 text-white/78">
-              نفس حساب الشركة ينقلك إلى لوحة واحدة تراجع منها الوظائف، الطلبات، وحالة كل مرشح بشكل منظم.
+            <div className="mt-4 text-[0.76rem] font-black tracking-[0.12em] text-white/76">{SITE_NAME}</div>
+            <h2 className="mt-3 text-[1.62rem] font-black leading-tight">وصول سريع وواضح لإدارة الوظائف والطلبات.</h2>
+            <p className="mt-3 text-[0.88rem] leading-7 text-white/80">
+              نفس حساب الشركة ينقلك إلى لوحة واحدة تراجع منها الوظائف المنشورة، المتقدمين، وحالة كل طلب من غير تعقيد.
             </p>
           </div>
 
           <div className="space-y-3">
             <div className="rounded-[18px] border border-white/10 bg-white/8 px-4 py-3.5">
               <div className="text-sm font-black">جلسة محمية</div>
-              <p className="mt-1 text-[0.84rem] leading-7 text-white/74">الدخول مرتبط بحساب الشركة نفسه وبصلاحياته التشغيلية فقط.</p>
+              <p className="mt-1 text-[0.84rem] leading-7 text-white/76">
+                الدخول مرتبط بحساب الشركة نفسه وبصلاحياته التشغيلية فقط.
+              </p>
             </div>
             <div className="rounded-[18px] border border-white/10 bg-white/8 px-4 py-3.5">
               <div className="text-sm font-black">متابعة مباشرة</div>
-              <p className="mt-1 text-[0.84rem] leading-7 text-white/74">راجع الوظائف المنشورة والمتقدمين من نفس الواجهة بدون خطوات إضافية.</p>
+              <p className="mt-1 text-[0.84rem] leading-7 text-white/76">
+                راجع الوظائف المنشورة والمتقدمين من نفس الواجهة بدون خطوات إضافية.
+              </p>
             </div>
           </div>
         </aside>

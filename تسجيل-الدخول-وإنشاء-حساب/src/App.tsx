@@ -51,7 +51,7 @@ export default function App() {
   if (!bootstrapped) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,#f8f5ef_0%,#eef6f6_100%)] px-4 text-center text-sm font-bold text-[#46636a]">
-        جارٍ التحقق من الجلسة...
+        جارٍ تجهيز بوابة الشركات...
       </div>
     );
   }
