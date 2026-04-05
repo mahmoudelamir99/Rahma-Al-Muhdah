@@ -81,16 +81,33 @@
     /[\u00a1-\u00bf\u0192\u0152\u0153\u0161\u0178\u017e\u02c6\u200c\u201a\u201e\u2020\u2021\u2026\u2030\u2039\u203a\u06af\u06ba\u06be\u0679\u067e\u0686\u0691]/;
   const LEGACY_MOJIBAKE_FRAGMENT_PATTERN =
     /(?:(?:ط|ظ)[\u0600-\u06ff]){2,}|[\u00a1-\u00bf\u0192\u0152\u0153\u0161\u0178\u017e\u02c6\u200c\u201a\u201e\u2020\u2021\u2026\u2030\u2039\u203a]{2,}/g;
+  const REPLACEMENT_CHAR_PATTERN = /\uFFFD/;
   let cp1256EncodingMap = null;
 
   const countLegacyMojibakeChars = (value) =>
     Array.from(String(value || '')).reduce((total, character) => total + Number(LEGACY_MOJIBAKE_PATTERN.test(character)), 0);
   const countLegacyMojibakePairs = (value) =>
     (String(value || '').match(/(?:ط[اأإآء-ي]|ظ[اأإآء-ي])/g) || []).length;
-  const getLegacySignalScore = (value) => countLegacyMojibakeChars(value) * 3 + countLegacyMojibakePairs(value);
+  const countReplacementChars = (value) => (String(value || '').match(/\uFFFD/g) || []).length;
+  const getLegacySignalScore = (value) =>
+    countLegacyMojibakeChars(value) * 3 + countLegacyMojibakePairs(value) + countReplacementChars(value) * 6;
   const shouldAttemptLegacyDecode = (value) => {
     const rawValue = String(value ?? '');
-    return LEGACY_MOJIBAKE_PATTERN.test(rawValue) || countLegacyMojibakePairs(rawValue) >= 2;
+    return (
+      LEGACY_MOJIBAKE_PATTERN.test(rawValue) ||
+      countLegacyMojibakePairs(rawValue) >= 2 ||
+      REPLACEMENT_CHAR_PATTERN.test(rawValue)
+    );
+  };
+
+  const sanitizeReplacementGlyphs = (value) => {
+    const rawValue = String(value ?? '');
+    if (!REPLACEMENT_CHAR_PATTERN.test(rawValue)) return rawValue;
+
+    const cleaned = rawValue.replace(/\uFFFD+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+    if (!cleaned) return '';
+
+    return cleaned;
   };
 
   const getCp1256EncodingMap = () => {
@@ -151,20 +168,22 @@
 
   const repairLegacyMojibakeText = (value) => {
     const rawValue = String(value ?? '');
-    if (!shouldAttemptLegacyDecode(rawValue)) return rawValue;
+    const sanitizedRawValue = sanitizeReplacementGlyphs(rawValue);
+    if (!shouldAttemptLegacyDecode(rawValue)) return sanitizedRawValue;
 
     const encoderMap = getCp1256EncodingMap();
-    if (!encoderMap.size) return rawValue;
+    if (!encoderMap.size) return sanitizedRawValue;
 
-    let bestValue = rawValue;
-    let bestScore = getLegacySignalScore(rawValue);
+    let bestValue = sanitizedRawValue;
+    let bestScore = getLegacySignalScore(sanitizedRawValue);
 
     const considerCandidate = (candidate) => {
       if (typeof candidate !== 'string' || candidate === bestValue) return;
 
-      const candidateScore = getLegacySignalScore(candidate);
+      const normalizedCandidate = sanitizeReplacementGlyphs(candidate);
+      const candidateScore = getLegacySignalScore(normalizedCandidate);
       if (candidateScore < bestScore) {
-        bestValue = candidate;
+        bestValue = normalizedCandidate;
         bestScore = candidateScore;
       }
     };
@@ -194,7 +213,7 @@
       considerCandidate(repairLegacyMojibakeFragments(bestValue, encoderMap));
     }
 
-    return bestValue;
+    return sanitizeReplacementGlyphs(bestValue);
   };
 
   const repairLegacyStoredValue = (value) => {
