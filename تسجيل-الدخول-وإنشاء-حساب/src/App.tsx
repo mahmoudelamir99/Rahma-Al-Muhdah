@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { LoaderCircle } from 'lucide-react';
 import ForgotPassword from './components/ForgotPassword';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -6,22 +7,43 @@ import ResetPassword from './components/ResetPassword';
 import { bootstrapCompanySession, hasCompanyPasswordRecoveryPending } from './lib/company-auth';
 import { buildSiteUrl, sanitizeRedirectTarget } from './lib/navigation';
 
+type PortalView = 'login' | 'register' | 'forgot-password' | 'reset-password';
+
+function getInitialView(searchParams: URLSearchParams): PortalView {
+  const view = searchParams.get('view');
+  if (view === 'register' || view === 'forgot-password' || view === 'reset-password') {
+    return view;
+  }
+
+  if (hasCompanyPasswordRecoveryPending()) {
+    return 'reset-password';
+  }
+
+  return 'login';
+}
+
 export default function App() {
-  const searchParams = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search);
-  const [currentPage, setCurrentPage] = useState<'login' | 'register' | 'forgot-password' | 'reset-password'>(() => {
-    const view = searchParams.get('view');
-    if (view === 'register' || view === 'forgot-password' || view === 'reset-password') {
-      return view;
-    }
+  const searchParams = useMemo(
+    () => (typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search)),
+    [],
+  );
 
-    if (hasCompanyPasswordRecoveryPending()) {
-      return 'reset-password';
-    }
-
-    return 'login';
-  });
+  const [currentPage, setCurrentPage] = useState<PortalView>(() => getInitialView(searchParams));
   const [bootstrapped, setBootstrapped] = useState(false);
   const redirectTarget = sanitizeRedirectTarget(searchParams.get('redirect'), 'company-dashboard.html');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+
+    if (currentPage === 'login') {
+      url.searchParams.delete('view');
+    } else {
+      url.searchParams.set('view', currentPage);
+    }
+
+    window.history.replaceState({}, '', url.toString());
+  }, [currentPage]);
 
   useEffect(() => {
     if (currentPage === 'forgot-password' || currentPage === 'reset-password') {
@@ -30,6 +52,7 @@ export default function App() {
     }
 
     let active = true;
+    setBootstrapped(false);
 
     void (async () => {
       const session = await bootstrapCompanySession();
@@ -50,23 +73,27 @@ export default function App() {
 
   if (!bootstrapped) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,#f8f5ef_0%,#eef6f6_100%)] px-4 text-center text-sm font-bold text-[#46636a]">
-        جارٍ تجهيز بوابة الشركات...
+      <div className="portal-loading">
+        <div className="portal-loading-card">
+          <LoaderCircle className="portal-spinner h-8 w-8" />
+          <div className="portal-loading-title">جارٍ تجهيز بوابة الشركات</div>
+          <p className="portal-loading-text">لحظات بسيطة ويتم توجيهك إلى الشاشة المناسبة.</p>
+        </div>
       </div>
     );
   }
 
-  return (
-    <>
-      {currentPage === 'login' ? (
-        <Login onNavigate={setCurrentPage} redirectTo={redirectTarget} />
-      ) : currentPage === 'forgot-password' ? (
-        <ForgotPassword />
-      ) : currentPage === 'reset-password' ? (
-        <ResetPassword />
-      ) : (
-        <Register onNavigate={setCurrentPage} redirectTo={redirectTarget} />
-      )}
-    </>
-  );
+  if (currentPage === 'login') {
+    return <Login onNavigate={setCurrentPage} redirectTo={redirectTarget} />;
+  }
+
+  if (currentPage === 'forgot-password') {
+    return <ForgotPassword onNavigate={setCurrentPage} />;
+  }
+
+  if (currentPage === 'reset-password') {
+    return <ResetPassword onNavigate={setCurrentPage} />;
+  }
+
+  return <Register onNavigate={setCurrentPage} redirectTo={redirectTarget} />;
 }
