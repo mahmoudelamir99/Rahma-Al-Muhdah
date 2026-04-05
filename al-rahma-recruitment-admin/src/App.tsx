@@ -2,12 +2,12 @@ import { Suspense, lazy } from 'react';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AdminLayout from './components/layout/AdminLayout';
 import { AdminLoadingBlock } from './components/ui/admin-kit';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
 
 const Applications = lazy(() => import('./pages/Applications'));
 const Companies = lazy(() => import('./pages/Companies'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Jobs = lazy(() => import('./pages/Jobs'));
-const Login = lazy(() => import('./pages/Login'));
 const Messages = lazy(() => import('./pages/Messages'));
 const Notifications = lazy(() => import('./pages/Notifications'));
 const Reports = lazy(() => import('./pages/Reports'));

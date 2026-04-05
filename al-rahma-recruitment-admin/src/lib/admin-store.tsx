@@ -29,7 +29,7 @@ const STORAGE_KEYS = {
   loginAttempts: 'rahmaAdminLoginAttempts.v1',
 } as const;
 const SHARED_RUNTIME_SYNC_PATH = '/__runtime-sync__/public-runtime';
-const SHARED_RUNTIME_POLL_INTERVAL_MS = 2500;
+const SHARED_RUNTIME_POLL_INTERVAL_MS = 6000;
 
 function isPrivateRuntimeSyncHost(hostname = '') {
   const normalizedHost = String(hostname || '').trim().toLowerCase();
@@ -3139,7 +3139,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
           }
 
           try {
-            const tokenResult = await authModule.getIdTokenResult(firebaseUser, true);
+            const tokenResult = await authModule.getIdTokenResult(firebaseUser, false);
             const claims = (tokenResult?.claims || {}) as Record<string, unknown>;
 
             if (!hasFirebaseAdminAccess(claims)) {
@@ -3622,7 +3622,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         );
 
         const credential = await authModule.signInWithEmailAndPassword(auth, normalizedIdentifier, password);
-        const tokenResult = await authModule.getIdTokenResult(credential.user, true);
+        const tokenResult = await authModule.getIdTokenResult(credential.user, false);
         const claims = (tokenResult?.claims || {}) as Record<string, unknown>;
 
         if (!hasFirebaseAdminAccess(claims)) {

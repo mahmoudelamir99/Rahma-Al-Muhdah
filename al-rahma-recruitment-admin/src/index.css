@@ -534,3 +534,42 @@
     border-radius: 0.92rem;
   }
 }
+
+/* 2026 admin compact stabilization */
+@media (min-width: 992px) {
+  html {
+    font-size: 12.95px;
+  }
+}
+
+.rm-hero,
+.rm-panel,
+.rm-stat-card,
+.rm-dashboard-hero,
+.rm-executive-stat {
+  border-radius: 0.96rem;
+}
+
+.rm-hero,
+.rm-panel,
+.rm-stat-card,
+.rm-dashboard-hero {
+  padding: 0.74rem;
+}
+
+.rm-table thead th,
+.rm-table tbody td {
+  padding: 0.54rem 0.66rem;
+}
+
+@media (max-width: 1280px) {
+  html {
+    font-size: 12.9px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 12.55px;
+  }
+}

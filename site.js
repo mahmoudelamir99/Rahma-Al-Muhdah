@@ -9,7 +9,7 @@
     bookmarkedJobs: 'rahmaBookmarkedJobs',
   };
   const COMPANY_DASHBOARD_FEEDBACK_STORAGE_KEY = 'rahmaCompanyDashboardFeedback';
-  const PUBLIC_SITE_BUILD = '20260405-5';
+  const PUBLIC_SITE_BUILD = '20260405-6';
   const PUBLIC_SITE_BUILD_MARKER_KEY = 'rahmaPublicBuildMarker';
   const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 
@@ -312,10 +312,32 @@
     });
   };
 
+  const shouldEnableLegacyMojibakeObserver = () => {
+    try {
+      const bodySample = document.body?.innerText?.slice(0, 5000) || '';
+      const titleSample = document.title || '';
+      const attributeSample = Array.from(
+        document.querySelectorAll('[title],[placeholder],[aria-label],[alt]'),
+      )
+        .slice(0, 36)
+        .map((element) =>
+          LEGACY_MOJIBAKE_TEXT_ATTRIBUTE_NAMES.map((attributeName) => element.getAttribute(attributeName) || '')
+            .join(' ')
+            .trim(),
+        )
+        .join(' ');
+
+      return shouldAttemptLegacyDecode(`${titleSample} ${bodySample} ${attributeSample}`);
+    } catch (error) {
+      return false;
+    }
+  };
+
   const initLegacyMojibakeDomRepair = () => {
     if (!document.documentElement) return;
 
-    queueLegacyMojibakeDomRepair();
+    repairLegacyMojibakeSubtree(document);
+    if (!shouldEnableLegacyMojibakeObserver()) return;
     if (legacyMojibakeDomObserver) return;
 
     legacyMojibakeDomObserver = new MutationObserver((mutations) => {

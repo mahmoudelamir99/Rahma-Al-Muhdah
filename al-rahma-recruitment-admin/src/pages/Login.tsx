@@ -22,6 +22,7 @@ export default function Login() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    void import('./Dashboard');
     if (isAuthenticated) {
       navigate('/dashboard', { replace: true });
     }

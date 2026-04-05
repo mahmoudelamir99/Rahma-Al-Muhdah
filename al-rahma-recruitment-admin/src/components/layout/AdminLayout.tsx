@@ -59,7 +59,7 @@ export default function AdminLayout() {
           <Topbar onMenuClick={() => setMobileSidebarOpen(true)} />
 
           <main className="px-3 py-3.5 sm:px-4 lg:px-5 lg:py-4 lg:pr-[20.5rem] xl:pr-[21rem]">
-            <div className="mx-auto flex w-full max-w-[1460px] flex-col gap-3.5">
+            <div className="mx-auto flex w-full max-w-[1360px] flex-col gap-3.5">
               <Outlet />
             </div>
           </main>
