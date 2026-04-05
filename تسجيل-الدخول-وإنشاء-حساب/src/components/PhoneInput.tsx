@@ -7,7 +7,7 @@ const countries = [
   { code: '+965', name: 'الكويت' },
   { code: '+974', name: 'قطر' },
   { code: '+973', name: 'البحرين' },
-  { code: '+968', name: 'عمان' },
+  { code: '+968', name: 'عُمان' },
   { code: '+962', name: 'الأردن' },
 ];
 
@@ -20,11 +20,11 @@ interface PhoneInputProps {
 
 export default function PhoneInput({ value, onChange, countryCode, onCountryCodeChange }: PhoneInputProps) {
   return (
-    <div className="flex min-h-10 w-full overflow-hidden rounded-[14px] border border-[#d9e0e8] bg-[#fbfcfd] transition focus-within:border-[#b88f47] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#b88f47]/20">
+    <div className="flex min-h-10 w-full overflow-hidden rounded-[16px] border border-[#cfe0e1] bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition focus-within:border-[#1f6b7a] focus-within:ring-4 focus-within:ring-[#1f6b7a]/12">
       <select
         value={countryCode}
         onChange={(event) => onCountryCodeChange(event.target.value)}
-        className="min-w-[6.8rem] border-l border-[#e3e8ee] bg-[#f7f9fb] px-2.5 text-[0.85rem] font-bold text-[#24364f] outline-none sm:min-w-[7.4rem]"
+        className="min-w-[6.5rem] border-l border-[#d9e7e8] bg-[#eef6f6] px-3 text-[0.8rem] font-extrabold text-[#0f3d4c] outline-none sm:min-w-[7rem]"
         dir="rtl"
         aria-label="مفتاح الدولة"
       >
@@ -38,7 +38,7 @@ export default function PhoneInput({ value, onChange, countryCode, onCountryCode
       <input
         type="tel"
         dir="ltr"
-        className="min-w-0 flex-1 bg-transparent px-3 text-left text-[0.95rem] text-slate-900 outline-none placeholder:text-[#95a2b1]"
+        className="min-w-0 flex-1 bg-transparent px-3 text-left text-[0.92rem] font-semibold text-slate-900 outline-none placeholder:text-[#90a1a5]"
         placeholder="10XXXXXXXX"
         value={value}
         onChange={(event) => onChange(event.target.value.replace(/\D/g, ''))}

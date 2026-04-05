@@ -9,7 +9,7 @@
     bookmarkedJobs: 'rahmaBookmarkedJobs',
   };
   const COMPANY_DASHBOARD_FEEDBACK_STORAGE_KEY = 'rahmaCompanyDashboardFeedback';
-  const PUBLIC_SITE_BUILD = '20260329-4';
+  const PUBLIC_SITE_BUILD = '20260405-5';
   const PUBLIC_SITE_BUILD_MARKER_KEY = 'rahmaPublicBuildMarker';
   const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 
@@ -524,6 +524,27 @@
     const message = String(error?.message || '').trim().toLowerCase();
     return code === 'permission-denied' || message.includes('missing or insufficient permissions');
   };
+  const clearSupabaseStoredAuthArtifacts = () => {
+    const clearFromStorage = (storage) => {
+      if (!storage) return;
+      try {
+        const keysToRemove = [];
+        for (let index = 0; index < storage.length; index += 1) {
+          const key = storage.key(index);
+          if (!key) continue;
+          if (/^sb-[a-z0-9-]+-auth-token(?:-code-verifier)?$/i.test(key)) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach((key) => storage.removeItem(key));
+      } catch (error) {
+        console.warn('Unable to clear Supabase auth artifacts', error);
+      }
+    };
+
+    clearFromStorage(window.localStorage);
+    clearFromStorage(window.sessionStorage);
+  };
   const signOutCompanySession = async () => {
     try {
       if (hasFirebaseSiteConfig()) {
@@ -535,6 +556,7 @@
     } catch (error) {
       console.warn('Unable to sign out Firebase company session', error);
     } finally {
+      clearSupabaseStoredAuthArtifacts();
       clearSession();
     }
   };
@@ -637,6 +659,22 @@
     if (/^172\.(1[6-9]|2\d|3[01])\./.test(normalizedHost)) return true;
     return false;
   };
+  const CURRENT_SITE_PAGE = String(window.location.pathname.split('/').pop() || 'index.html').trim().toLowerCase();
+  const READONLY_PUBLIC_PAGES = new Set([
+    'index.html',
+    'jobs.html',
+    'job-details.html',
+    'companies.html',
+    'company-details.html',
+    'about.html',
+    'contact.html',
+    'privacy.html',
+    'terms.html',
+    'faq.html',
+    'track-application.html',
+  ]);
+  const shouldUseFirebaseOnlyPublicData = () =>
+    hasFirebaseSiteConfig() && !isPrivateRuntimeSyncHost(window.location.hostname) && READONLY_PUBLIC_PAGES.has(CURRENT_SITE_PAGE);
   const normalizeLooseArabic = (value = '') =>
     normalize(value)
       .replace(/[\u064b-\u065f]/g, '')
@@ -858,6 +896,10 @@
     ),
   });
   const getAdminRuntime = () => {
+    if (shouldUseFirebaseOnlyPublicData()) {
+      return {};
+    }
+
     const runtime = safeReadJSON(ADMIN_RUNTIME_KEY, {});
     const sanitizedRuntime = sanitizeAdminRuntime(runtime);
     if (sanitizedRuntime.changed) {
@@ -884,6 +926,10 @@
   };
 
   const syncAdminRuntimeFromSharedFile = () => {
+    if (hasFirebaseSiteConfig() && !isPrivateRuntimeSyncHost(window.location.hostname)) {
+      return false;
+    }
+
     const responseText = readSharedAdminRuntime();
     if (!responseText) return false;
 
@@ -924,6 +970,14 @@
     (Array.isArray(runtime?.jobs) && runtime.jobs.length > 0) ||
     (Array.isArray(runtime?.applications) && runtime.applications.length > 0);
   const purgeLegacyRuntimeStorage = () => {
+    if (shouldUseFirebaseOnlyPublicData()) {
+      window.localStorage.removeItem(ADMIN_RUNTIME_KEY);
+      window.localStorage.removeItem(STORAGE_KEYS.applications);
+      window.localStorage.removeItem(STORAGE_KEYS.applicationProfile);
+      window.localStorage.setItem(PUBLIC_SITE_BUILD_MARKER_KEY, PUBLIC_SITE_BUILD);
+      return;
+    }
+
     const sanitizedRuntime = sanitizeAdminRuntime(safeReadJSON(ADMIN_RUNTIME_KEY, {}));
     const runtime = sanitizedRuntime.runtime;
     const hasContent = Object.keys(runtime?.content || {}).length > 0;
@@ -1736,23 +1790,50 @@
       COMPANY_PLACEHOLDER_IMAGE,
     );
   const getAdminRuntimeJobs = () =>
-    mergeRuntimeCollections(
-      Array.isArray(getAdminRuntime()?.jobs) ? getAdminRuntime().jobs : [],
-      Array.isArray(firebaseRuntimeCache.jobs) ? firebaseRuntimeCache.jobs : [],
-      getRuntimeJobKey,
+    (
+      shouldUseFirebaseOnlyPublicData()
+        ? Array.isArray(firebaseRuntimeCache.jobs)
+          ? firebaseRuntimeCache.jobs
+          : []
+        : mergeRuntimeCollections(
+            Array.isArray(getAdminRuntime()?.jobs) ? getAdminRuntime().jobs : [],
+            Array.isArray(firebaseRuntimeCache.jobs) ? firebaseRuntimeCache.jobs : [],
+            getRuntimeJobKey,
+          )
     ).filter((job) => !isLegacyStaticJobRecord(job));
   const getAdminRuntimeCompanies = () =>
-    mergeRuntimeCollections(
-      Array.isArray(getAdminRuntime()?.companies) ? getAdminRuntime().companies : [],
-      Array.isArray(firebaseRuntimeCache.companies) ? firebaseRuntimeCache.companies : [],
-      getRuntimeCompanyKey,
+    (
+      shouldUseFirebaseOnlyPublicData()
+        ? Array.isArray(firebaseRuntimeCache.companies)
+          ? firebaseRuntimeCache.companies
+          : []
+        : mergeRuntimeCollections(
+            Array.isArray(getAdminRuntime()?.companies) ? getAdminRuntime().companies : [],
+            Array.isArray(firebaseRuntimeCache.companies) ? firebaseRuntimeCache.companies : [],
+            getRuntimeCompanyKey,
+          )
     ).filter((company) => !isLegacyStaticCompanyRecord(company));
+  const getPublicRuntimeCompanies = () =>
+    getAdminRuntimeCompanies().filter(
+      (company) => !company?.deletedAt && ['approved', 'active'].includes(normalize(company?.status)),
+    );
+  const getPublicRuntimeJobs = () =>
+    getAdminRuntimeJobs().filter((job) => {
+      const linkedCompany = findRuntimeCompanyRecord({ companyName: job?.companyName, companyId: job?.companyId });
+      return (
+        !job?.deletedAt &&
+        normalize(job?.status) === 'approved' &&
+        normalize(job?.title) &&
+        normalize(job?.companyName) &&
+        (!linkedCompany || (!linkedCompany?.deletedAt && normalize(linkedCompany?.status) === 'approved'))
+      );
+    });
   const getAdminRuntimeContent = () => ({
-    ...(getAdminRuntime()?.content || {}),
+    ...(shouldUseFirebaseOnlyPublicData() ? {} : getAdminRuntime()?.content || {}),
     ...(firebaseRuntimeCache.content || {}),
   });
   const getAdminRuntimeSettings = () => ({
-    ...(getAdminRuntime()?.settings || {}),
+    ...(shouldUseFirebaseOnlyPublicData() ? {} : getAdminRuntime()?.settings || {}),
     ...(firebaseRuntimeCache.settings || {}),
   });
   const escapeHtml = (value) =>
@@ -2775,6 +2856,13 @@
       return localApplications;
     }
 
+    if (shouldUseFirebaseOnlyPublicData()) {
+      const { applications: normalizedApplications } = migrateStoredApplications(
+        Array.isArray(firebaseApplicationsCache) ? firebaseApplicationsCache : [],
+      );
+      return normalizedApplications;
+    }
+
     if (!firebaseApplicationsCacheHydrated && !firebaseApplicationsCache.length) {
       return localApplications;
     }
@@ -3063,6 +3151,25 @@
 
       return matchesTitleAndCompany && applicationLocation === normalizedLocation;
     }).length;
+  };
+
+  const getJobDemandStatusMeta = (job = {}, applications = getStoredApplications()) => {
+    const positionsCount = getJobPositionsCount(job);
+    const applicantsCount = Math.max(Number(job?.applicantsCount || 0), getJobApplicantsCount(job, applications));
+    const isClosed =
+      job?.applicationEnabled === false ||
+      ['hidden', 'archived', 'rejected'].includes(normalize(job?.status || 'approved'));
+    const remainingCount = Math.max(positionsCount - applicantsCount, 0);
+    const filled = isClosed || remainingCount <= 0;
+
+    return {
+      positionsCount,
+      applicantsCount,
+      remainingCount,
+      filled,
+      statusText: filled ? 'اكتمل العدد المطلوب' : `باقي عدد ${remainingCount}`,
+      summaryText: filled ? 'تم إغلاق التقديم أو الوصول للعدد المطلوب.' : `${applicantsCount} متقدم حتى الآن`,
+    };
   };
 
   const buildApplicationRequestId = () => {
@@ -3904,14 +4011,17 @@
       return;
     }
 
-    const firebaseAuthState = await waitForFirebaseAuthUser();
-    if (
-      firebaseAuthState.supported &&
-      (!firebaseAuthState.user || (session?.uid && firebaseAuthState.user.uid !== session.uid))
-    ) {
-      await signOutCompanySession();
-      window.location.href = buildLoginUrl('company-dashboard.html');
-      return;
+    const companySessionProvider = normalize(session?.provider || '');
+    if (companySessionProvider !== 'supabase') {
+      const firebaseAuthState = await waitForFirebaseAuthUser();
+      if (
+        firebaseAuthState.supported &&
+        (!firebaseAuthState.user || (session?.uid && firebaseAuthState.user.uid !== session.uid))
+      ) {
+        await signOutCompanySession();
+        window.location.href = buildLoginUrl('company-dashboard.html');
+        return;
+      }
     }
 
     const profile = migrateLegacyCompanyDraftJobs(getStoredProfile(), session);
@@ -5406,7 +5516,7 @@
                   <h3 class="font-bold text-lg">${applicantName}</h3>
                   <span class="px-2 py-0.5 bg-accent-blue/10 text-accent-blue text-[10px] font-bold rounded-full">\u0637\u0644\u0628 \u062d\u0642\u064a\u0642\u064a</span>
                 </div>
-                <p class="text-sm text-slate-600 dark:text-slate-400">${jobTitle} ? ${company}</p>
+                <p class="text-sm text-slate-600 dark:text-slate-400">${jobTitle} • ${company}</p>
               </div>
             </div>
             <div class="flex flex-col justify-between gap-4 border-r md:pr-6 border-slate-100 dark:border-slate-800 min-w-[200px]">
@@ -5511,24 +5621,15 @@
 
     if (!jobsStat && !companiesStat && !responseStat) return;
 
-    const runtime = getAdminRuntime();
-    const runtimeJobs = Array.isArray(runtime?.jobs) ? runtime.jobs : [];
-    const runtimeCompanies = Array.isArray(runtime?.companies) ? runtime.companies : [];
+    const runtimeJobs = getPublicRuntimeJobs();
+    const runtimeCompanies = getPublicRuntimeCompanies();
     const applications = getStoredApplications();
 
-    const liveJobsCount = runtimeJobs.filter((job) => {
-      const status = normalize(job?.status);
-      return !job?.deletedAt && !['archived', 'hidden', 'rejected'].includes(status);
-    }).length;
-
-    const activeCompaniesCount = runtimeCompanies.filter((company) => {
-      const status = normalize(company?.status);
-      return !company?.deletedAt && ['approved', 'active'].includes(status);
-    }).length;
+    const liveJobsCount = runtimeJobs.length;
+    const activeCompaniesCount = runtimeCompanies.length;
 
     if (jobsStat) {
-      const fallbackCount = document.querySelectorAll('[data-jobs-grid] > *').length;
-      jobsStat.textContent = String(liveJobsCount || fallbackCount || 0);
+      jobsStat.textContent = String(liveJobsCount || 0);
     }
 
     if (companiesStat) {
@@ -6376,21 +6477,15 @@
     const countNode = document.querySelector('[data-jobs-count]');
     if (!grid) return;
 
-    const publicCompanies = getAdminRuntimeCompanies().filter(
+    const publicCompanies = getPublicRuntimeCompanies().filter(
       (company) =>
-        !company?.deletedAt &&
-        normalize(company?.status) === 'approved' &&
         String(company?.siteMode || 'full').trim() !== 'landing',
     );
     const companyImages = new Map(publicCompanies.map((company) => [normalize(company?.name), resolvePublicCompanyImage(company)]));
     const publicCompanyNames = new Set(publicCompanies.map((company) => normalize(company?.name)));
-    const approvedJobs = getAdminRuntimeJobs()
+    const approvedJobs = getPublicRuntimeJobs()
       .filter(
         (job) =>
-          !job?.deletedAt &&
-          normalize(job?.status) === 'approved' &&
-          normalize(job?.title) &&
-          normalize(job?.companyName) &&
           publicCompanyNames.has(normalize(job?.companyName)),
       )
       .sort((firstJob, secondJob) => Number(Boolean(secondJob.featured)) - Number(Boolean(firstJob.featured)));
@@ -6420,9 +6515,13 @@
           jobSector: String(job.sector || '').trim(),
           jobFeatured: Boolean(job.featured),
         };
+        const demandMeta = getJobDemandStatusMeta(job);
         const companyImage = companyImages.get(normalize(job.companyName)) || COMPANY_PLACEHOLDER_IMAGE;
         const jobDetailsUrl = buildJobDetailsUrl(jobData);
         const applyJobUrl = buildApplyUrl(jobData);
+        const applyDisabledAttributes = demandMeta.filled
+          ? `aria-disabled="true" data-disabled-message="اكتمل العدد المطلوب لهذه الوظيفة أو تم إغلاق التقديم عليها."`
+          : '';
 
         return `
             <article
@@ -6463,6 +6562,17 @@
               ${escapeHtml(jobData.jobSummary || 'لا يوجد وصف مضاف لهذه الوظيفة حتى الآن.')}
             </p>
 
+            <div class="listing-job-card__demand">
+              <span class="listing-job-card__demand-chip">
+                <strong>${escapeHtml(String(demandMeta.positionsCount))}</strong>
+                <small>مطلوب</small>
+              </span>
+              <span class="listing-job-card__demand-chip ${demandMeta.filled ? 'listing-job-card__demand-chip--filled' : ''}">
+                <strong>${escapeHtml(demandMeta.filled ? 'اكتمل العدد' : `باقي ${demandMeta.remainingCount}`)}</strong>
+                <small>${escapeHtml(`${demandMeta.applicantsCount} متقدم`)}</small>
+              </span>
+            </div>
+
             <div class="listing-job-card__footer">
               <span class="listing-job-card__time">${escapeHtml(jobData.jobPosted || 'حديثًا')}</span>
               <div class="listing-job-card__actions">
@@ -6481,8 +6591,9 @@
                   data-job-sector="${escapeHtml(jobData.jobSector)}"
                   data-job-featured="${jobData.jobFeatured ? 'true' : 'false'}"
                   data-job-id="${escapeHtml(jobData.jobId)}"
+                  ${applyDisabledAttributes}
                 >
-                  قدّم الآن
+                  ${demandMeta.filled ? 'اكتمل العدد المطلوب' : 'قدّم الآن'}
                 </a>
                 <a
                   href="${escapeHtml(jobDetailsUrl)}"
@@ -6526,10 +6637,8 @@
     const countNode = document.querySelector('[data-companies-count]');
     if (!grid) return;
 
-    const approvedCompanies = getAdminRuntimeCompanies().filter(
+    const approvedCompanies = getPublicRuntimeCompanies().filter(
       (company) =>
-        !company?.deletedAt &&
-        normalize(company?.status) === 'approved' &&
         normalize(company?.name),
     );
 
@@ -7065,6 +7174,18 @@
         (entry) => normalize(entry?.name) === normalize(company),
       );
       const canonicalJobId = String(runtimeRecord?.id || runtimeRecord?.jobId || requestedId || '').trim();
+      const demandMeta = getJobDemandStatusMeta(
+        runtimeRecord || {
+          id: canonicalJobId,
+          title,
+          companyName: company,
+          location,
+          positions: params.get('positions') || '',
+          applicantsCount: params.get('applicantsCount') || '0',
+          applicationEnabled: true,
+          status: 'approved',
+        },
+      );
       const cleanJobUrl = canonicalJobId
         ? buildQueryUrl('job-details.html', { id: canonicalJobId })
         : 'job-details.html';
@@ -7093,6 +7214,21 @@
       });
       document.querySelectorAll('[data-job-summary-text], [data-job-summary-detail]').forEach((element) => {
         element.textContent = summary;
+      });
+      document.querySelectorAll('[data-job-applicants-count-text]').forEach((element) => {
+        element.textContent = String(demandMeta.applicantsCount);
+      });
+      document.querySelectorAll('[data-job-positions-text], [data-job-positions-card]').forEach((element) => {
+        element.textContent = String(demandMeta.positionsCount);
+      });
+      document.querySelectorAll('[data-job-availability-text]').forEach((element) => {
+        element.textContent = demandMeta.statusText;
+      });
+      document.querySelectorAll('[data-job-availability-summary]').forEach((element) => {
+        element.textContent = demandMeta.summaryText;
+      });
+      document.querySelectorAll('[data-job-availability-card]').forEach((element) => {
+        element.classList.toggle('job-demand-card--filled', demandMeta.filled);
       });
 
       const featuredBadge = document.querySelector('[data-job-featured-badge]');
@@ -7129,6 +7265,15 @@
           jobFeatured: featured ? 'true' : 'false',
           jobId: canonicalJobId,
         });
+        if (demandMeta.filled) {
+          applyCurrentLink.setAttribute('aria-disabled', 'true');
+          applyCurrentLink.dataset.disabledMessage = 'اكتمل العدد المطلوب لهذه الوظيفة أو تم إغلاق التقديم عليها.';
+          applyCurrentLink.textContent = 'اكتمل العدد المطلوب';
+        } else {
+          applyCurrentLink.removeAttribute('aria-disabled');
+          delete applyCurrentLink.dataset.disabledMessage;
+          applyCurrentLink.textContent = 'قدم الآن';
+        }
       }
 
       const canonicalLink = document.querySelector('link[rel="canonical"]');
@@ -7727,15 +7872,19 @@
     if (form.matches('.application-form')) {
       const currentJob = getCurrentJobData();
       const currentJobRecord = getCurrentRuntimeJobRecord(currentJob);
+      const currentJobDemand = getJobDemandStatusMeta(currentJobRecord || currentJob);
       const runtimeSettings = getAdminRuntimeSettings();
       const jobApplicationsAllowed =
         currentJobRecord?.applicationEnabled !== false &&
-        !['hidden', 'archived', 'rejected'].includes(normalize(currentJobRecord?.status || 'approved'));
+        !['hidden', 'archived', 'rejected'].includes(normalize(currentJobRecord?.status || 'approved')) &&
+        !currentJobDemand.filled;
       const applicationsEnabled =
         runtimeSettings.jobApplications !== false && !runtimeSettings.maintenanceMode && jobApplicationsAllowed;
       const applicationsDisabledMessage = jobApplicationsAllowed
         ? 'التقديم على الوظائف متوقف حالياً من إعدادات الأدمن.'
-        : 'التقديم على هذه الوظيفة موقوف حالياً من لوحة الأدمن.';
+        : currentJobDemand.filled
+          ? 'اكتمل العدد المطلوب لهذه الوظيفة أو تم إغلاق التقديم عليها.'
+          : 'التقديم على هذه الوظيفة موقوف حالياً من لوحة الأدمن.';
       const searchParams = new URLSearchParams(window.location.search);
       const governorateSelect = form.querySelector('[data-application-governorate]');
       const yearsSelect = form.querySelector('[data-application-years]');
@@ -8083,6 +8232,8 @@
           ),
         });
 
+        renderPublicJobsPage();
+        initJobDetailsPage();
         const cleanUrl = appendQueryParams(window.location.href, { apply: null });
         window.history.replaceState({}, '', cleanUrl);
         showToast(`تم إرسال الطلب بنجاح. رقم الطلب: ${requestId}`);
@@ -8109,10 +8260,12 @@
 
     const currentJob = getCurrentJobData();
     const currentJobRecord = getCurrentRuntimeJobRecord(currentJob);
+    const currentJobDemand = getJobDemandStatusMeta(currentJobRecord || currentJob);
     const runtimeSettings = getAdminRuntimeSettings();
     const jobApplicationsAllowed =
       currentJobRecord?.applicationEnabled !== false &&
-      !['hidden', 'archived', 'rejected'].includes(normalize(currentJobRecord?.status || 'approved'));
+      !['hidden', 'archived', 'rejected'].includes(normalize(currentJobRecord?.status || 'approved')) &&
+      !currentJobDemand.filled;
     const applicationsEnabled =
       runtimeSettings.jobApplications !== false &&
       runtimeSettings.fileUploads !== false &&
@@ -8120,7 +8273,9 @@
       jobApplicationsAllowed;
     const applicationsDisabledMessage = jobApplicationsAllowed
       ? 'التقديم على الوظائف أو رفع الملفات متوقف مؤقتًا من إعدادات لوحة الأدمن.'
-      : 'التقديم على هذه الوظيفة موقوف حاليًا من لوحة الأدمن.';
+      : currentJobDemand.filled
+        ? 'اكتمل العدد المطلوب لهذه الوظيفة أو تم إغلاق التقديم عليها.'
+        : 'التقديم على هذه الوظيفة موقوف حاليًا من لوحة الأدمن.';
     const searchParams = new URLSearchParams(window.location.search);
     const currentUrl = getRelativeUrl(window.location.href);
     const getSavedProfile = () => safeReadJSON(STORAGE_KEYS.applicationProfile, {});
@@ -8383,6 +8538,8 @@
       setStatus(`تم إرسال الطلب بنجاح. رقم الطلب: ${requestId}.`, 'success');
       showToast(`تم إرسال الطلب بنجاح. رقم الطلب: ${requestId}`);
 
+      renderPublicJobsPage();
+      initJobDetailsPage();
       const cleanUrl = appendQueryParams(window.location.href, { apply: null });
       window.history.replaceState({}, '', cleanUrl);
 

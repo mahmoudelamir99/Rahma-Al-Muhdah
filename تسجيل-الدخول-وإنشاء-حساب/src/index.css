@@ -4,7 +4,51 @@
   --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
 }
 
+html {
+  color-scheme: light;
+  font-size: 15px;
+}
+
 body {
   font-family: "Cairo", sans-serif;
-  background-color: #f8fafc;
+  background:
+    radial-gradient(circle at top right, rgba(31, 107, 122, 0.12), transparent 22rem),
+    linear-gradient(180deg, #f8f5ef 0%, #eef6f6 52%, #e8f1f2 100%);
+  color: #123643;
+}
+
+::selection {
+  background: rgba(31, 107, 122, 0.18);
+  color: #0f3d4c;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+input,
+button,
+select,
+textarea {
+  font: inherit;
+}
+
+@media (max-width: 1024px) {
+  html {
+    font-size: 14.1px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 13.55px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13.1px;
+  }
 }

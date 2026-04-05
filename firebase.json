@@ -1,4 +1,4 @@
-{
+﻿{
   "hosting": [
     {
       "target": "public",
@@ -6,6 +6,8 @@
       "ignore": [
         "firebase.json",
         ".firebaserc",
+        ".git/**",
+        "**/.git/**",
         "**/.*",
         "**/node_modules/**",
         "scripts/**",
@@ -28,6 +30,9 @@
         "**/*.sh",
         "*.md",
         "*.log",
+        "package.json",
+        "package-lock.json",
+        "vercel.json",
         "functions/**",
         "firestore.rules",
         "firestore.indexes.json",
@@ -42,7 +47,11 @@
         "stitch/**",
         "stitch_/**",
         "stitch_companies_management_system/**",
+        "temp_admin/**",
+        "tmp_public_repo/**",
         "portal/**",
+        "shared/**",
+        "supabase/**",
         "admin-login.html",
         "admin-panel.html",
         "al-rahma-recruitment-admin/**",
@@ -61,6 +70,7 @@
         "tailwind-site.input.css",
         "python-version.txt",
         "start-test*.txt",
+        "start-public-site.vbs",
         "tmp*",
         "1.jpg",
         "2.jpg",
@@ -98,6 +108,15 @@
             {
               "key": "Content-Security-Policy",
               "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://www.gstatic.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.firebasestorage.app https://*.cloudfunctions.net https://*.run.app; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' mailto:"
+            }
+          ]
+        },
+        {
+          "source": "**/*.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-store, max-age=0"
             }
           ]
         },
@@ -263,3 +282,5 @@
     "rules": "database.rules.json"
   }
 }
+
+

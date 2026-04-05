@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, LoaderCircle, Mail, ShieldCheck } from 'lucide-react';
-import { requestCompanyPasswordReset } from '../lib/company-auth';
+import { ArrowRight, Eye, EyeOff, KeyRound, LoaderCircle, ShieldCheck } from 'lucide-react';
+import { resetCompanyPassword } from '../lib/company-auth';
 import { buildSiteUrl } from '../lib/navigation';
 
 const SITE_NAME = 'الرحمة المهداه للتوظيف';
 
-export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
+export default function ResetPassword() {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [status, setStatus] = useState<{ tone: 'success' | 'error'; message: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,18 +24,20 @@ export default function ForgotPassword() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setStatus(null);
-    setIsSubmitting(true);
 
+    if (password !== confirmPassword) {
+      setStatus({ tone: 'error', message: 'كلمتا المرور غير متطابقتين.' });
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      const result = await requestCompanyPasswordReset(email);
-      setStatus({
-        tone: result.ok ? 'success' : 'error',
-        message: result.message,
-      });
+      const result = await resetCompanyPassword(password);
+      setStatus({ tone: result.ok ? 'success' : 'error', message: result.message });
     } catch (error) {
       setStatus({
         tone: 'error',
-        message: error instanceof Error ? error.message : 'تعذر تنفيذ الطلب الآن.',
+        message: error instanceof Error ? error.message : 'تعذر تحديث كلمة المرور الآن.',
       });
     } finally {
       setIsSubmitting(false);
@@ -63,13 +68,13 @@ export default function ForgotPassword() {
 
         <div className="inline-flex items-center gap-2 rounded-full border border-[#d9c79d] bg-[#f5ecda] px-3.5 py-2 text-[0.76rem] font-black text-[#8b6a2f]">
           <ShieldCheck className="h-4 w-4" />
-          استعادة كلمة المرور
+          تعيين كلمة مرور جديدة
         </div>
 
         <div className="mt-4 space-y-2">
-          <h1 className="text-[1.8rem] font-black tracking-[-0.05em] text-[#0f3d4c]">أعد الوصول إلى حساب شركتك بسرعة.</h1>
+          <h1 className="text-[1.8rem] font-black tracking-[-0.05em] text-[#0f3d4c]">حدّث كلمة المرور ثم ارجع للدخول مباشرة.</h1>
           <p className="text-[0.92rem] leading-7 text-[#5f7b82]">
-            اكتب البريد الإلكتروني المسجل في حساب الشركة، وسنرسل لك رابطًا آمنًا لإعادة تعيين كلمة المرور.
+            اختر كلمة مرور قوية وآمنة، وبعد الحفظ يمكنك العودة لتسجيل الدخول باستخدامها مباشرة.
           </p>
         </div>
 
@@ -95,20 +100,54 @@ export default function ForgotPassword() {
 
         <form className="mt-4 space-y-3.5" onSubmit={handleSubmit}>
           <label className="block">
-            <span className="mb-2 block text-[0.88rem] font-black text-[#183845]">البريد الإلكتروني</span>
+            <span className="mb-2 block text-[0.88rem] font-black text-[#183845]">كلمة المرور الجديدة</span>
             <div className="relative">
               <span className="pointer-events-none absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-[12px] bg-[#eef6f6] text-[#1f6b7a]">
-                <Mail className="h-4 w-4" />
+                <KeyRound className="h-4 w-4" />
               </span>
               <input
-                type="email"
+                type={showPassword ? 'text' : 'password'}
                 required
-                autoComplete="email"
-                className="h-11 w-full rounded-[16px] border border-[#d5e3e5] bg-white py-2.5 pr-12 pl-4 text-[0.94rem] font-semibold text-slate-900 outline-none transition focus:border-[#1f6b7a] focus:ring-4 focus:ring-[#1f6b7a]/12"
-                placeholder="name@company.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                autoComplete="new-password"
+                className="h-11 w-full rounded-[16px] border border-[#d5e3e5] bg-white py-2.5 pr-12 pl-12 text-[0.94rem] font-semibold text-slate-900 outline-none transition focus:border-[#1f6b7a] focus:ring-4 focus:ring-[#1f6b7a]/12"
+                placeholder="8 أحرف على الأقل"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((value) => !value)}
+                className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-[12px] bg-[#f8f5ef] text-[#55727a] transition hover:bg-[#eef6f6] hover:text-[#0f3d4c]"
+                aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </label>
+
+          <label className="block">
+            <span className="mb-2 block text-[0.88rem] font-black text-[#183845]">تأكيد كلمة المرور</span>
+            <div className="relative">
+              <span className="pointer-events-none absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-[12px] bg-[#eef6f6] text-[#1f6b7a]">
+                <KeyRound className="h-4 w-4" />
+              </span>
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                required
+                autoComplete="new-password"
+                className="h-11 w-full rounded-[16px] border border-[#d5e3e5] bg-white py-2.5 pr-12 pl-12 text-[0.94rem] font-semibold text-slate-900 outline-none transition focus:border-[#1f6b7a] focus:ring-4 focus:ring-[#1f6b7a]/12"
+                placeholder="أعد كتابة كلمة المرور"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((value) => !value)}
+                className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-[12px] bg-[#f8f5ef] text-[#55727a] transition hover:bg-[#eef6f6] hover:text-[#0f3d4c]"
+                aria-label={showConfirmPassword ? 'إخفاء تأكيد كلمة المرور' : 'إظهار تأكيد كلمة المرور'}
+              >
+                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
           </label>
 
@@ -118,7 +157,7 @@ export default function ForgotPassword() {
             className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-[16px] bg-[linear-gradient(135deg,#0f3d4c,#1f6b7a)] px-5 text-[0.94rem] font-black text-white shadow-[0_18px_30px_rgba(15,61,76,0.18)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_36px_rgba(15,61,76,0.22)] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting ? <LoaderCircle className="h-5 w-5 animate-spin" /> : null}
-            {isSubmitting ? 'جارٍ الإرسال...' : 'إرسال رابط الاستعادة'}
+            {isSubmitting ? 'جارٍ الحفظ...' : 'حفظ كلمة المرور الجديدة'}
           </button>
         </form>
       </motion.div>

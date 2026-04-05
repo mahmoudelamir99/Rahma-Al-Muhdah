@@ -482,3 +482,55 @@
     font-size: 13.55px;
   }
 }
+
+@media (max-width: 1280px) {
+  .rm-hero,
+  .rm-panel,
+  .rm-stat-card,
+  .rm-dashboard-hero {
+    padding: 0.82rem;
+    border-radius: 1rem;
+  }
+
+  .rm-table thead th,
+  .rm-table tbody td {
+    padding: 0.56rem 0.68rem;
+  }
+
+  .rm-search-field {
+    min-height: 2.35rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .rm-toolbar {
+    gap: 0.45rem;
+    padding: 0.58rem 0.64rem;
+  }
+
+  .rm-input,
+  .rm-search-field,
+  .rm-select {
+    min-height: 2.3rem;
+  }
+}
+
+@media (max-width: 1280px) {
+  html {
+    font-size: 13.05px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 12.7px;
+  }
+
+  .rm-dashboard-hero,
+  .rm-hero,
+  .rm-panel,
+  .rm-stat-card {
+    padding: 0.72rem;
+    border-radius: 0.92rem;
+  }
+}

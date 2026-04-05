@@ -10,9 +10,9 @@
   <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
   <link rel="icon" type="image/png" href="logo-mark.png"/>
-  <link rel="stylesheet" href="site.css?v=20260327-3"/>
+  <link rel="stylesheet" href="site.css?v=20260405-5"/>
   <script src="firebase-site-config.js" defer></script>
-  <script src="site.js?v=20260327-3" defer></script>
+  <script src="site.js?v=20260405-5" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="اعرف تفاصيل الوظيفة والمتطلبات والراتب وطريقة التقديم المباشر على فرص عمل حقيقية داخل منصة وظائف في مصر.">
   <meta name="keywords" content="تفاصيل الوظيفة, وظائف في مصر, فرص عمل, تقديم وظائف, وظائف شاغرة, توظيف شركات">
@@ -89,6 +89,20 @@
             <a class="site-action site-action--primary" data-apply-current="true" href="?apply=1">قدم الآن</a>
             <button class="site-action site-action--secondary" data-bookmark-job="true" type="button">حفظ الوظيفة</button>
             <button class="site-action site-action--ghost" data-copy-job-link="true" type="button">نسخ الرابط</button>
+          </div>
+
+          <div class="job-demand-cards">
+            <article class="job-demand-card">
+              <span class="job-demand-card__label">عدد المطلوب</span>
+              <strong class="job-demand-card__value" data-job-positions-card>1</strong>
+              <small class="job-demand-card__hint">عدد المقاعد المتاحة لهذه الوظيفة</small>
+            </article>
+
+            <article class="job-demand-card" data-job-availability-card>
+              <span class="job-demand-card__label">حالة التقديم</span>
+              <strong class="job-demand-card__value" data-job-availability-text>باقي عدد 1</strong>
+              <small class="job-demand-card__hint" data-job-availability-summary>0 متقدم حتى الآن</small>
+            </article>
           </div>
         </div>
       </div>
@@ -356,6 +370,7 @@
   </footer>
 </body>
 </html>
+
 
 
 
