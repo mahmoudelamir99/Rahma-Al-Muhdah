@@ -1,6 +1,6 @@
 import React from 'react';
 
-const countries = [
+export const PHONE_COUNTRIES = [
   { code: '+20', name: 'مصر' },
   { code: '+966', name: 'السعودية' },
   { code: '+971', name: 'الإمارات' },
@@ -28,7 +28,7 @@ export default function PhoneInput({ value, onChange, countryCode, onCountryCode
         dir="rtl"
         aria-label="مفتاح الدولة"
       >
-        {countries.map((country) => (
+        {PHONE_COUNTRIES.map((country) => (
           <option key={country.code} value={country.code}>
             {country.name} ({country.code})
           </option>

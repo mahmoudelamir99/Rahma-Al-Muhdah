@@ -5,9 +5,11 @@ import { getSupabaseClient, hasSupabaseConfig } from './supabase';
 export type CompanyRegistrationInput = {
   companyName: string;
   companySector: string;
+  country?: string;
   companyCity: string;
   teamSize: string;
   phone: string;
+  landline?: string;
   email: string;
   password: string;
   confirmPassword?: string;
@@ -61,6 +63,7 @@ type SupabaseCompanyRow = {
   email: string;
   phone: string;
   landline: string;
+  country?: string;
   address: string;
   sector: string;
   location: string;
@@ -185,11 +188,12 @@ export function getStoredCompanySession(): CompanySession | null {
 function buildProfileFromRegistration(input: CompanyRegistrationInput, extras: Record<string, unknown> = {}) {
   const companyName = input.companyName.trim();
   const companySector = input.companySector.trim();
+  const country = String(input.country || extras.companyCountry || '').trim();
   const companyCity = input.companyCity.trim();
   const teamSize = input.teamSize.trim();
   const phone = input.phone.trim();
   const email = input.email.trim().toLowerCase();
-  const landline = String(extras.companyLandline || '').trim();
+  const landline = String(input.landline || extras.companyLandline || '').trim();
   const socialLinks = normalizeCompanySocialLinks(extras.socialLinks);
   const siteMode = String(extras.siteMode || 'full').trim() === 'landing' ? 'landing' : 'full';
 
@@ -200,6 +204,8 @@ function buildProfileFromRegistration(input: CompanyRegistrationInput, extras: R
     email,
     phone,
     companyLandline: landline,
+    country,
+    companyCountry: country,
     city: companyCity,
     headline: companySector,
     companyName,
@@ -224,6 +230,7 @@ function buildProfileFromRegistration(input: CompanyRegistrationInput, extras: R
     companyProfile: {
       companyName,
       companySector,
+      country,
       companyCity,
       teamSize,
       phone,
@@ -293,9 +300,11 @@ function buildSupabaseProfileFromCompany(user: User, company: SupabaseCompanyRow
     {
       companyName: company.name,
       companySector: company.sector || '',
+      country: String((company.country || user.user_metadata?.companyCountry || '') as string).trim(),
       companyCity: company.location || company.address || '',
       teamSize: String((user.user_metadata?.teamSize as string | undefined) || '').trim(),
       phone: company.phone || '',
+      landline: company.landline || '',
       email: company.email || user.email || '',
       password: '',
       confirmPassword: '',
@@ -412,9 +421,11 @@ async function bootstrapSupabaseCompanyState(user: User, remember: boolean, fall
       {
         companyName: String(user.user_metadata.companyName || user.email || 'شركة').trim(),
         companySector: String(user.user_metadata.companySector || '').trim(),
+        country: String(user.user_metadata.companyCountry || '').trim(),
         companyCity: String(user.user_metadata.companyCity || '').trim(),
         teamSize: String(user.user_metadata.teamSize || '').trim(),
         phone: String(user.user_metadata.phone || '').trim(),
+        landline: String(user.user_metadata.landline || '').trim(),
         email: user.email || '',
         password: '',
         confirmPassword: '',
@@ -516,6 +527,12 @@ function syncCompanyRuntimeSnapshot(profile: Record<string, unknown>) {
     name: companyName,
     sector: String(profile.companySector || profile.headline || (existingCompany as Record<string, unknown>)?.sector || '').trim(),
     location: String(profile.companyCity || profile.city || (existingCompany as Record<string, unknown>)?.location || '').trim(),
+    country: String(
+      profile.companyCountry ||
+        (profile.companyProfile as Record<string, unknown> | undefined)?.country ||
+        (existingCompany as Record<string, unknown>)?.country ||
+        '',
+    ).trim(),
     phone: String(profile.phone || (existingCompany as Record<string, unknown>)?.phone || '').trim(),
     landline: String(
       profile.companyLandline ||
@@ -629,7 +646,10 @@ async function persistFirebaseProfile(session: CompanySession, profile: Record<s
     city: String(profile.companyCity || profile.city || '').trim(),
     location: String(profile.companyCity || profile.city || '').trim(),
     teamSize: String(profile.teamSize || '').trim(),
-    phone: String(profile.phone || session.email || '').trim(),
+    country: String(
+      profile.companyCountry || (profile.companyProfile as Record<string, unknown> | undefined)?.country || '',
+    ).trim(),
+    phone: String(profile.phone || '').trim(),
     landline: String(profile.companyLandline || (profile.companyProfile as Record<string, unknown> | undefined)?.landline || '').trim(),
     email: String(profile.email || session.email || '').trim().toLowerCase(),
     website: String(profile.companyWebsite || profile.website || '').trim(),
@@ -685,9 +705,11 @@ function buildSupabaseMetadata(input: CompanyRegistrationInput) {
     role: 'company',
     companyName: input.companyName.trim(),
     companySector: input.companySector.trim(),
+    companyCountry: String(input.country || '').trim(),
     companyCity: input.companyCity.trim(),
     teamSize: input.teamSize.trim(),
     phone: input.phone.trim(),
+    landline: String(input.landline || '').trim(),
   };
 }
 
@@ -866,9 +888,11 @@ async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthR
     {
       companyName,
       companySector: String(companyData.sector || companyData.companySector || '').trim(),
+      country: String(companyData.country || '').trim(),
       companyCity: String(companyData.city || companyData.location || '').trim(),
       teamSize: String(companyData.teamSize || '').trim(),
       phone: String(companyData.phone || '').trim(),
+      landline: String(companyData.landline || companyData.companyLandline || '').trim(),
       email: user.email || input.email.trim().toLowerCase(),
       password: input.password,
       confirmPassword: input.password,

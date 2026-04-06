@@ -306,7 +306,7 @@ img {
 }
 
 .portal-input--with-left {
-  padding-left: 3.1rem;
+  padding-left: 4.1rem;
 }
 
 .portal-field-icon,
@@ -330,11 +330,12 @@ img {
 }
 
 .portal-field-action {
-  left: 0.55rem;
+  left: 0.7rem;
   border: 0;
   background: #f4efe4;
   color: #627980;
   cursor: pointer;
+  z-index: 2;
   transition:
     background-color 160ms ease,
     color 160ms ease,

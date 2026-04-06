@@ -3,15 +3,17 @@ import {
   Building2,
   Eye,
   EyeOff,
+  Globe2,
   Landmark,
   LoaderCircle,
   Mail,
   MapPin,
+  Phone,
   Users,
 } from 'lucide-react';
 import { registerCompany } from '../lib/company-auth';
 import { buildSiteUrl, sanitizeRedirectTarget } from '../lib/navigation';
-import PhoneInput from './PhoneInput';
+import PhoneInput, { PHONE_COUNTRIES } from './PhoneInput';
 import PortalShell from './PortalShell';
 
 interface RegisterProps {
@@ -39,10 +41,12 @@ function StatusMessage({
 export default function Register({ onNavigate, redirectTo }: RegisterProps) {
   const [companyName, setCompanyName] = useState('');
   const [companySector, setCompanySector] = useState('');
+  const [country, setCountry] = useState(PHONE_COUNTRIES[0]?.name || 'مصر');
   const [companyCity, setCompanyCity] = useState('');
   const [teamSize, setTeamSize] = useState('');
   const [phone, setPhone] = useState('');
-  const [countryCode, setCountryCode] = useState('+20');
+  const [landline, setLandline] = useState('');
+  const [countryCode, setCountryCode] = useState(PHONE_COUNTRIES[0]?.code || '+20');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -57,12 +61,15 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
     setIsSubmitting(true);
 
     try {
+      const normalizedPhone = phone.trim() ? `${countryCode}${phone}`.trim() : '';
       const result = await registerCompany({
         companyName,
         companySector,
+        country,
         companyCity,
         teamSize,
-        phone: `${countryCode}${phone}`.trim(),
+        phone: normalizedPhone,
+        landline: landline.trim(),
         email,
         password,
         confirmPassword,
@@ -108,7 +115,7 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
       sideHighlights={[
         {
           title: 'نموذج مختصر',
-          description: 'الحقول الأساسية فقط: اسم الشركة، المجال، المدينة، الهاتف، والبريد الإلكتروني.',
+          description: 'الحقول الأساسية فقط: اسم الشركة، المجال، الدولة، المدينة، وبيانات التواصل الأساسية.',
         },
         {
           title: 'انتقال مباشر',
@@ -165,6 +172,36 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
               />
             </div>
           </label>
+        </div>
+
+        <div className="portal-grid portal-grid--2">
+          <label className="portal-label">
+            <span className="portal-label-text">الدولة</span>
+            <div className="portal-control-wrap">
+              <span className="portal-field-icon">
+                <Globe2 className="h-4 w-4" />
+              </span>
+              <select
+                required
+                className="portal-select portal-input--with-right"
+                value={country}
+                onChange={(event) => {
+                  const nextCountry = event.target.value;
+                  setCountry(nextCountry);
+                  const matchedCountry = PHONE_COUNTRIES.find((entry) => entry.name === nextCountry);
+                  if (matchedCountry) {
+                    setCountryCode(matchedCountry.code);
+                  }
+                }}
+              >
+                {PHONE_COUNTRIES.map((entry) => (
+                  <option key={entry.code} value={entry.name}>
+                    {entry.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </label>
 
           <label className="portal-label">
             <span className="portal-label-text">المدينة</span>
@@ -182,7 +219,9 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
               />
             </div>
           </label>
+        </div>
 
+        <div className="portal-grid portal-grid--2">
           <label className="portal-label">
             <span className="portal-label-text">حجم الفريق</span>
             <div className="portal-control-wrap">
@@ -204,17 +243,34 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
               </select>
             </div>
           </label>
-        </div>
 
-        <div className="portal-grid portal-grid--2">
           <label className="portal-label">
-            <span className="portal-label-text">رقم الموبايل</span>
+            <span className="portal-label-text">رقم الموبايل (اختياري)</span>
             <PhoneInput
               value={phone}
               onChange={(value) => setPhone(value)}
               countryCode={countryCode}
               onCountryCodeChange={(value) => setCountryCode(value)}
             />
+          </label>
+        </div>
+
+        <div className="portal-grid portal-grid--2">
+          <label className="portal-label">
+            <span className="portal-label-text">الرقم الأرضي (اختياري)</span>
+            <div className="portal-control-wrap">
+              <span className="portal-field-icon">
+                <Phone className="h-4 w-4" />
+              </span>
+              <input
+                type="tel"
+                autoComplete="tel"
+                className="portal-input portal-input--with-right"
+                placeholder="مثال: 0231234567"
+                value={landline}
+                onChange={(event) => setLandline(event.target.value.replace(/[^\d+()\s-]/g, ''))}
+              />
+            </div>
           </label>
 
           <label className="portal-label">

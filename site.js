@@ -410,8 +410,10 @@
   const saveJSON = (key, value) => {
     try {
       window.localStorage.setItem(key, JSON.stringify(repairLegacyStoredValue(value).value));
+      return true;
     } catch (error) {
       console.warn(`Unable to save ${key}`, error);
+      return false;
     }
   };
 
@@ -1221,6 +1223,75 @@
       reader.onerror = () => reject(new Error('تعذر قراءة الملف المحدد.'));
       reader.readAsDataURL(file);
     });
+  const optimizeImageDataUrlForStorage = async (dataUrl, options = {}) => {
+    const rawDataUrl = String(dataUrl || '').trim();
+    if (!/^data:image\//i.test(rawDataUrl)) return rawDataUrl;
+
+    const {
+      maxWidth = 1280,
+      maxHeight = 1280,
+      quality = 0.84,
+      mimeType = 'image/jpeg',
+    } = options;
+
+    return await new Promise((resolve) => {
+      const image = new Image();
+      image.onload = () => {
+        const originalWidth = Number(image.naturalWidth || image.width || 0);
+        const originalHeight = Number(image.naturalHeight || image.height || 0);
+        if (!originalWidth || !originalHeight) {
+          resolve(rawDataUrl);
+          return;
+        }
+
+        const scale = Math.min(1, maxWidth / originalWidth, maxHeight / originalHeight);
+        const targetWidth = Math.max(1, Math.round(originalWidth * scale));
+        const targetHeight = Math.max(1, Math.round(originalHeight * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        const context = canvas.getContext('2d');
+        if (!context) {
+          resolve(rawDataUrl);
+          return;
+        }
+
+        if (mimeType === 'image/jpeg') {
+          context.fillStyle = '#ffffff';
+          context.fillRect(0, 0, targetWidth, targetHeight);
+        }
+
+        context.drawImage(image, 0, 0, targetWidth, targetHeight);
+        const optimized = canvas.toDataURL(mimeType, quality);
+        resolve(optimized.length < rawDataUrl.length ? optimized : rawDataUrl);
+      };
+      image.onerror = () => resolve(rawDataUrl);
+      image.src = rawDataUrl;
+    });
+  };
+  const buildCompanyAssetDataUrl = async (file, kind = 'asset') => {
+    const rawDataUrl = await readFileAsDataUrl(file);
+    if (String(file?.type || '').trim().toLowerCase() === 'image/svg+xml') {
+      return rawDataUrl;
+    }
+
+    if (kind === 'logo') {
+      return optimizeImageDataUrlForStorage(rawDataUrl, {
+        maxWidth: 720,
+        maxHeight: 720,
+        quality: 0.9,
+        mimeType: 'image/png',
+      });
+    }
+
+    return optimizeImageDataUrlForStorage(rawDataUrl, {
+      maxWidth: 1440,
+      maxHeight: 900,
+      quality: 0.82,
+      mimeType: 'image/jpeg',
+    });
+  };
   const importFirebaseSiteModule = (modulePath) => import(`${FIREBASE_SITE_CDN_BASE}/${modulePath}`);
   const getFirebaseSiteServices = async () => {
     if (!hasFirebaseSiteConfig()) {
@@ -4748,7 +4819,7 @@
           if (uploadedUrl) {
             return uploadedUrl;
           }
-          return readFileAsDataUrl(file);
+          return buildCompanyAssetDataUrl(file, kind);
         };
 
         let nextCompanyLogoUrl = companyLogoUrl;
@@ -4759,7 +4830,7 @@
         try {
           setDashboardButtonPending(submitButton, true, 'جارٍ حفظ بيانات الشركة...');
           if (selectedLogo) {
-            nextCompanyLogoUrl = await readSelectedImage(selectedLogo, 'شعار الشركة');
+            nextCompanyLogoUrl = await readSelectedImage(selectedLogo, 'شعار الشركة', 'logo');
             nextCompanyLogoMeta = {
               name: selectedLogo.name,
               type: selectedLogo.type || 'image/*',
@@ -4768,7 +4839,7 @@
           }
 
           if (selectedCover) {
-            nextCompanyCoverUrl = await readSelectedImage(selectedCover, 'صورة الغلاف');
+            nextCompanyCoverUrl = await readSelectedImage(selectedCover, 'صورة الغلاف', 'cover');
             nextCompanyCoverMeta = {
               name: selectedCover.name,
               type: selectedCover.type || 'image/*',
@@ -4779,6 +4850,24 @@
           setDashboardButtonPending(submitButton, false);
           setProfileFeedback(error?.message || 'تعذر حفظ الصورة المحددة.', 'error');
           return;
+        }
+
+        if (/^data:image\//i.test(String(nextCompanyLogoUrl || ''))) {
+          nextCompanyLogoUrl = await optimizeImageDataUrlForStorage(nextCompanyLogoUrl, {
+            maxWidth: 720,
+            maxHeight: 720,
+            quality: 0.9,
+            mimeType: 'image/png',
+          });
+        }
+
+        if (/^data:image\//i.test(String(nextCompanyCoverUrl || ''))) {
+          nextCompanyCoverUrl = await optimizeImageDataUrlForStorage(nextCompanyCoverUrl, {
+            maxWidth: 1440,
+            maxHeight: 900,
+            quality: 0.82,
+            mimeType: 'image/jpeg',
+          });
         }
 
         const nextProfile = {
@@ -4838,7 +4927,12 @@
           companyJobDraft: profile?.companyJobDraft || profile?.companyProfile?.draft || {},
         };
 
-        saveJSON(STORAGE_KEYS.applicationProfile, nextProfile);
+        const profileSaved = saveJSON(STORAGE_KEYS.applicationProfile, nextProfile);
+        if (!profileSaved) {
+          setDashboardButtonPending(submitButton, false);
+          setProfileFeedback('تعذر حفظ بيانات الشركة على هذا الجهاز الآن. قلّل حجم الصور ثم أعد المحاولة.', 'error');
+          return;
+        }
         const nextSession = refreshCompanySession(nextProfile, activeSession);
         syncCompanyPublishingState(nextProfile, nextSession);
         if (logoField) logoField.value = '';
