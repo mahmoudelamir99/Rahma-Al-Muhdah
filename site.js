@@ -9,7 +9,7 @@
     bookmarkedJobs: 'rahmaBookmarkedJobs',
   };
   const COMPANY_DASHBOARD_FEEDBACK_STORAGE_KEY = 'rahmaCompanyDashboardFeedback';
-  const PUBLIC_SITE_BUILD = '20260405-6';
+  const PUBLIC_SITE_BUILD = '20260406-1';
   const PUBLIC_SITE_BUILD_MARKER_KEY = 'rahmaPublicBuildMarker';
   const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
 
@@ -4097,29 +4097,106 @@
   const renderCompanyDashboard = async () => {
     if (!window.location.pathname.endsWith('company-dashboard.html')) return;
 
-    const session = getSession();
-    if (!session?.loggedIn || normalize(session?.role) !== 'company') {
-      window.location.href = buildLoginUrl('company-dashboard.html');
-      return;
-    }
+    const loadingShell = document.querySelector('[data-company-dashboard-loading]');
+    const loadingTitle = document.querySelector('[data-company-dashboard-loading-title]');
+    const loadingMessage = document.querySelector('[data-company-dashboard-loading-message]');
+    const dashboardBody = document.body;
+    const setDashboardLoading = (isLoading, message = 'نحمّل بيانات الوظائف والطلبات وملف الشركة الآن.') => {
+      if (!(loadingShell instanceof HTMLElement)) return;
+      if (loadingTitle instanceof HTMLElement) {
+        loadingTitle.textContent = 'جارٍ تجهيز لوحة الشركة';
+      }
+      if (loadingMessage instanceof HTMLElement) {
+        loadingMessage.textContent = message;
+      }
+      loadingShell.classList.toggle('is-hidden', !isLoading);
+      loadingShell.setAttribute('aria-hidden', isLoading ? 'false' : 'true');
+    };
+    const setDashboardSidebarOpen = (isOpen) => {
+      if (!(dashboardBody instanceof HTMLElement)) return;
+      if (isOpen) {
+        dashboardBody.dataset.dashboardSidebarOpen = 'true';
+      } else {
+        delete dashboardBody.dataset.dashboardSidebarOpen;
+      }
+    };
+    const bindCompanyDashboardChrome = () => {
+      const openers = document.querySelectorAll('[data-company-sidebar-toggle]');
+      const closers = document.querySelectorAll('[data-company-sidebar-close], .dashboard-nav__link, .dashboard-logout-link');
 
-    const companySessionProvider = normalize(session?.provider || '');
-    if (companySessionProvider !== 'supabase') {
-      const firebaseAuthState = await waitForFirebaseAuthUser();
-      if (
-        firebaseAuthState.supported &&
-        (!firebaseAuthState.user || (session?.uid && firebaseAuthState.user.uid !== session.uid))
-      ) {
-        await signOutCompanySession();
+      openers.forEach((button) => {
+        if (!(button instanceof HTMLElement) || button.dataset.boundCompanySidebarOpen === 'true') return;
+        button.dataset.boundCompanySidebarOpen = 'true';
+        button.addEventListener('click', () => setDashboardSidebarOpen(true));
+      });
+
+      closers.forEach((button) => {
+        if (!(button instanceof HTMLElement) || button.dataset.boundCompanySidebarClose === 'true') return;
+        button.dataset.boundCompanySidebarClose = 'true';
+        button.addEventListener('click', () => setDashboardSidebarOpen(false));
+      });
+
+      if (dashboardBody instanceof HTMLElement && dashboardBody.dataset.boundCompanySidebarResize !== 'true') {
+        dashboardBody.dataset.boundCompanySidebarResize = 'true';
+        window.addEventListener('resize', () => {
+          if (window.innerWidth > 1120) {
+            setDashboardSidebarOpen(false);
+          }
+        });
+      }
+    };
+    const setDashboardButtonPending = (button, isPending, pendingLabel = 'جارٍ التنفيذ...') => {
+      if (!(button instanceof HTMLElement)) return;
+      if (isPending) {
+        if (!button.dataset.originalHtml) {
+          button.dataset.originalHtml = button.innerHTML;
+        }
+        button.classList.add('is-loading');
+        button.setAttribute('aria-busy', 'true');
+        if ('disabled' in button) {
+          button.disabled = true;
+        }
+        button.innerHTML = `<span class="dashboard-inline-spinner" aria-hidden="true"></span><span>${escapeHtml(pendingLabel)}</span>`;
+        return;
+      }
+
+      button.classList.remove('is-loading');
+      button.removeAttribute('aria-busy');
+      if ('disabled' in button) {
+        button.disabled = false;
+      }
+      if (button.dataset.originalHtml) {
+        button.innerHTML = button.dataset.originalHtml;
+      }
+    };
+
+    bindCompanyDashboardChrome();
+    setDashboardLoading(true);
+
+    try {
+      const session = getSession();
+      if (!session?.loggedIn || normalize(session?.role) !== 'company') {
         window.location.href = buildLoginUrl('company-dashboard.html');
         return;
       }
-    }
 
-    const profile = migrateLegacyCompanyDraftJobs(getStoredProfile(), session);
-    syncCompanyPublishingState(profile, session);
-    const activeSession = refreshCompanySession(profile, session);
-    await hydrateCompanyApplicationsCacheFromFirebase(activeSession);
+      const companySessionProvider = normalize(session?.provider || '');
+      if (companySessionProvider !== 'supabase') {
+        const firebaseAuthState = await waitForFirebaseAuthUser();
+        if (
+          firebaseAuthState.supported &&
+          (!firebaseAuthState.user || (session?.uid && firebaseAuthState.user.uid !== session.uid))
+        ) {
+          await signOutCompanySession();
+          window.location.href = buildLoginUrl('company-dashboard.html');
+          return;
+        }
+      }
+
+      const profile = migrateLegacyCompanyDraftJobs(getStoredProfile(), session);
+      syncCompanyPublishingState(profile, session);
+      const activeSession = refreshCompanySession(profile, session);
+      await hydrateCompanyApplicationsCacheFromFirebase(activeSession);
 
     const companyIdentity = getCompanyIdentity(profile, activeSession);
     const companyName = companyIdentity.name || getAccountDisplayName(profile, activeSession, '\u0634\u0631\u0643\u062a\u0643');
@@ -4400,7 +4477,7 @@
           const featuredBadge = job.featured
             ? `
               <span class="request-chip request-chip--featured mt-2">
-                <span class="material-symbols-outlined" style="font-size:13px;">star</span>
+                <i class="fa-solid fa-star" aria-hidden="true"></i>
                 وظيفة مميزة
               </span>`
             : '';
@@ -4447,6 +4524,7 @@
             const confirmed = window.confirm(`هل تريد حذف وظيفة "${jobTitle}" نهائيًا من لوحة الشركة؟`);
             if (!confirmed) return;
 
+            setDashboardButtonPending(node, true, 'جارٍ حذف الوظيفة...');
             const now = new Date().toISOString();
             const nextJobs = latestJobs.map((job) =>
               String(job?.id || '').trim() === targetJobId
@@ -4465,6 +4543,7 @@
             syncCompanyPublishingState(nextProfile, nextSession);
             const successMessage = `تم حذف الوظيفة من لوحة الشركة: ${jobTitle}`;
             showToast(successMessage);
+            setDashboardButtonPending(node, false);
             rerenderCompanyDashboardWithFeedback('[data-company-job-feedback]', successMessage, 'success');
           });
         });
@@ -4612,12 +4691,9 @@
             return;
           }
 
-          deleteCompanyButton.disabled = true;
-          const originalLabel = deleteCompanyButton.textContent;
-          deleteCompanyButton.textContent = 'جارٍ حذف الشركة...';
+          setDashboardButtonPending(deleteCompanyButton, true, 'جارٍ حذف الشركة...');
           const deleted = await deleteCompanyAccountPermanently(latestProfile, latestSession);
-          deleteCompanyButton.disabled = false;
-          deleteCompanyButton.textContent = originalLabel || 'حذف الشركة نهائيًا';
+          setDashboardButtonPending(deleteCompanyButton, false);
 
           if (!deleted) {
             setProfileFeedback('تعذر حذف حساب الشركة نهائيًا. حاول مرة أخرى أو راجع إعدادات الربط.', 'error');
@@ -4634,6 +4710,8 @@
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
+
+        const submitButton = form.querySelector('button[type="submit"]');
 
         const nextCompanyName = nameField?.value.trim() || '';
         const nextCompanySector = sectorField?.value.trim() || '';
@@ -4679,6 +4757,7 @@
         let nextCompanyCoverMeta = profile?.companyCoverMeta || profile?.companyProfile?.companyCoverMeta || null;
 
         try {
+          setDashboardButtonPending(submitButton, true, 'جارٍ حفظ بيانات الشركة...');
           if (selectedLogo) {
             nextCompanyLogoUrl = await readSelectedImage(selectedLogo, 'شعار الشركة');
             nextCompanyLogoMeta = {
@@ -4697,6 +4776,7 @@
             };
           }
         } catch (error) {
+          setDashboardButtonPending(submitButton, false);
           setProfileFeedback(error?.message || 'تعذر حفظ الصورة المحددة.', 'error');
           return;
         }
@@ -4766,6 +4846,7 @@
         const successMessage = 'تم حفظ بيانات الشركة والصور بنجاح.';
         setProfileFeedback(successMessage, 'success');
         showToast('تم تحديث ملف الشركة بنجاح.');
+        setDashboardButtonPending(submitButton, false);
         rerenderCompanyDashboardWithFeedback('[data-company-profile-feedback]', successMessage, 'success');
       });
     };
@@ -4965,6 +5046,8 @@
       form.addEventListener('submit', (event) => {
         event.preventDefault();
 
+        const submitButton = form.querySelector('button[type="submit"]');
+
         const nextTitle = form.querySelector('[name="job_title"]')?.value.trim() || '';
         const nextCity = form.querySelector('[name="job_city"]')?.value.trim() || companyIdentity.city || '';
         const nextType = form.querySelector('[name="job_type"]')?.value.trim() || '';
@@ -4978,6 +5061,7 @@
           return;
         }
 
+        setDashboardButtonPending(submitButton, true, 'جارٍ إرسال الوظيفة...');
         const latestProfile = migrateLegacyCompanyDraftJobs(getStoredProfile(), session);
         const nextJob = normalizeCompanyStoredJob(
           {
@@ -4998,6 +5082,7 @@
         );
 
         if (!nextJob) {
+          setDashboardButtonPending(submitButton, false);
           setComposerFeedback('تعذر تجهيز بيانات الوظيفة. حاول مرة أخرى.', 'error');
           return;
         }
@@ -5012,6 +5097,7 @@
         setComposerFeedback(successMessage, 'success');
         showToast(successMessage);
         form.reset();
+        setDashboardButtonPending(submitButton, false);
         rerenderCompanyDashboardWithFeedback('[data-company-job-feedback]', successMessage, 'success');
       });
     };
@@ -5244,7 +5330,7 @@
             <article class="dashboard-applicant-card">
               <div class="dashboard-applicant-card__head">
                 <div class="dashboard-applicant-card__avatar">
-                  <span class="material-symbols-outlined">person</span>
+                  <i class="fa-solid fa-user" aria-hidden="true"></i>
                 </div>
                 <div class="dashboard-applicant-card__copy">
                   <div class="dashboard-applicant-card__title-row">
@@ -5376,9 +5462,12 @@
       reviewForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
+        const reviewSubmitButton = reviewForm.querySelector('button[type="submit"]');
+
         const applicationId = String(reviewForm.elements.application_id.value || selectedReviewApplicationId || '').trim();
         const nextStatus = String(reviewForm.elements.application_status.value || 'review').trim();
         const nextReason = String(reviewForm.elements.application_rejection_reason.value || '').trim();
+        setDashboardButtonPending(reviewSubmitButton, true, 'جارٍ حفظ التحديث...');
         const updated = await updateCompanyApplicationStatus(profile, activeSession, applicationId, nextStatus, nextReason, {
           companyTag: reviewForm.elements.application_tag.value,
           interviewScheduledAt: reviewForm.elements.interview_scheduled_at.value,
@@ -5388,6 +5477,7 @@
         });
 
         if (!updated) {
+          setDashboardButtonPending(reviewSubmitButton, false);
           setReviewFeedback('تعذر حفظ التحديث. تأكد أن الطلب تابع لشركتك.', 'error');
           return;
         }
@@ -5398,6 +5488,7 @@
         setApplicationsFeedback(successMessage, 'success');
         setReviewFeedback(successMessage, 'success');
         showToast('تم حفظ تحديث المتقدم.');
+        setDashboardButtonPending(reviewSubmitButton, false);
         closeReviewModal();
         rerenderCompanyDashboardWithFeedback('[data-company-applications-feedback]', successMessage, 'success');
       });
@@ -5425,6 +5516,7 @@
         if (action === 'rejected') {
           const promptReason = window.prompt('اكتب سبب الرفض (اختياري):', '');
           if (promptReason === null) return;
+          setDashboardButtonPending(actionButton, true, 'جارٍ رفض الطلب...');
           const updated = await updateCompanyApplicationStatus(
             profile,
             activeSession,
@@ -5433,6 +5525,7 @@
             promptReason.trim(),
           );
           if (!updated) {
+            setDashboardButtonPending(actionButton, false);
             setApplicationsFeedback('تعذر تحديث حالة الطلب. تأكد أن الطلب تابع لشركتك.', 'error');
             return;
           }
@@ -5442,12 +5535,19 @@
           const successMessage = 'تم رفض الطلب وتحديث حالته بنجاح.';
           setApplicationsFeedback(successMessage, 'success');
           showToast('تم رفض الطلب.');
+          setDashboardButtonPending(actionButton, false);
           rerenderCompanyDashboardWithFeedback('[data-company-applications-feedback]', successMessage, 'success');
           return;
         }
 
+        setDashboardButtonPending(
+          actionButton,
+          true,
+          action === 'interview' ? 'جارٍ نقل الطلب للمقابلة...' : action === 'review' ? 'جارٍ إعادة الطلب...' : 'جارٍ قبول الطلب...',
+        );
         const updated = await updateCompanyApplicationStatus(profile, activeSession, applicationId, action);
         if (!updated) {
+          setDashboardButtonPending(actionButton, false);
           setApplicationsFeedback('تعذر تحديث حالة الطلب. تأكد أن الطلب تابع لشركتك.', 'error');
           return;
         }
@@ -5468,6 +5568,7 @@
               ? 'تمت إعادة الطلب للمراجعة.'
               : 'تمت الموافقة على الطلب.',
         );
+        setDashboardButtonPending(actionButton, false);
         rerenderCompanyDashboardWithFeedback('[data-company-applications-feedback]', successMessage, 'success');
       });
     }
@@ -5477,8 +5578,14 @@
       applicantsFeedback.textContent = '';
     }
 
-    renderApplicants();
-
+      renderApplicants();
+      setDashboardSidebarOpen(false);
+    } catch (error) {
+      console.error('Failed to render company dashboard', error);
+      showToast('تعذر تجهيز لوحة الشركة الآن. حاول تحديث الصفحة مرة أخرى.');
+    } finally {
+      setDashboardLoading(false);
+    }
   };
 
   const renderProfilePage = () => {};

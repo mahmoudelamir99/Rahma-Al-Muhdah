@@ -4,19 +4,17 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>لوحة الشركة | إدارة الوظائف والطلبات | الرحمة المهداه للتوظيف</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
   <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
   <style>
-    body { font-family: 'Cairo', sans-serif; }
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
   </style>
-  <link rel="stylesheet" href="site.css?v=20260405-10"/>
+  <link rel="stylesheet" href="site.css?v=20260406-1"/>
   <script src="firebase-site-config.js" defer></script>
-  <script src="site.js?v=20260405-10" defer></script>
+  <script src="site.js?v=20260406-1" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="لوحة الشركة الداخلية لإدارة الوظائف والطلبات وتحديث بيانات الشركة داخل منصة التوظيف بشكل مباشر وآمن.">
   <meta name="keywords" content="لوحة الشركة, إدارة الوظائف, إدارة الطلبات, توظيف شركات">
@@ -36,8 +34,17 @@
 <!-- RAHMA SEO END -->
 </head>
 <body class="page-company-dashboard antialiased">
+  <div class="dashboard-loading-screen" data-company-dashboard-loading>
+    <div class="dashboard-loading-screen__card">
+      <span class="dashboard-inline-spinner" aria-hidden="true"></span>
+      <strong data-company-dashboard-loading-title>جارٍ تجهيز لوحة الشركة</strong>
+      <p data-company-dashboard-loading-message>نحمّل بيانات الوظائف والطلبات وملف الشركة الآن.</p>
+    </div>
+  </div>
   <div class="dashboard-shell">
-    <aside class="dashboard-sidebar">
+    <button class="dashboard-mobile-backdrop" data-company-sidebar-close type="button" aria-label="إغلاق القائمة"></button>
+
+    <aside class="dashboard-sidebar" data-company-sidebar>
       <div class="dashboard-brand-card">
         <div class="dashboard-brand-card__top site-brand">
           <div class="w-11 h-11 flex items-center justify-center">
@@ -56,34 +63,34 @@
 
       <nav class="dashboard-nav">
         <a class="dashboard-nav__link is-active" href="company-dashboard.html">
-          <span class="material-symbols-outlined">space_dashboard</span>
+          <i class="fa-solid fa-table-cells-large dashboard-inline-icon" aria-hidden="true"></i>
           <span>لوحة القيادة</span>
         </a>
         <a class="dashboard-nav__link" href="#company-jobs">
-          <span class="material-symbols-outlined">work</span>
+          <i class="fa-solid fa-briefcase dashboard-inline-icon" aria-hidden="true"></i>
           <span>وظائفي</span>
         </a>
         <a class="dashboard-nav__link" href="#company-applications">
-          <span class="material-symbols-outlined">group</span>
+          <i class="fa-solid fa-users dashboard-inline-icon" aria-hidden="true"></i>
           <span>المتقدمون</span>
         </a>
         <a class="dashboard-nav__link" href="#company-actions">
-          <span class="material-symbols-outlined">bolt</span>
+          <i class="fa-solid fa-bolt dashboard-inline-icon" aria-hidden="true"></i>
           <span>إجراءات سريعة</span>
         </a>
         <a class="dashboard-nav__link" href="#company-profile">
-          <span class="material-symbols-outlined">business</span>
+          <i class="fa-solid fa-building dashboard-inline-icon" aria-hidden="true"></i>
           <span>ملف الشركة</span>
         </a>
       </nav>
 
       <div class="dashboard-sidebar__footer">
         <button class="dashboard-cta-button" data-company-job-open="true" type="button">
-          <span class="material-symbols-outlined">add_circle</span>
+          <i class="fa-solid fa-circle-plus dashboard-inline-icon" aria-hidden="true"></i>
           <span>نشر وظيفة جديدة</span>
         </button>
         <a class="dashboard-logout-link" data-logout="true" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">
-          <span class="material-symbols-outlined">logout</span>
+          <i class="fa-solid fa-right-from-bracket dashboard-inline-icon" aria-hidden="true"></i>
           <span>تسجيل الخروج</span>
         </a>
       </div>
@@ -91,14 +98,20 @@
 
     <main class="dashboard-content">
       <header class="dashboard-topbar">
-        <label class="dashboard-search">
-          <span class="material-symbols-outlined">search</span>
-          <input data-company-dashboard-search placeholder="ابحث عن وظيفة أو مرشح" type="search"/>
-        </label>
+        <div class="dashboard-topbar__cluster">
+          <button class="dashboard-mobile-toggle" data-company-sidebar-toggle type="button" aria-label="فتح القائمة">
+            <i class="fa-solid fa-bars dashboard-inline-icon" aria-hidden="true"></i>
+          </button>
+
+          <label class="dashboard-search">
+            <i class="fa-solid fa-magnifying-glass dashboard-inline-icon" aria-hidden="true"></i>
+            <input data-company-dashboard-search placeholder="ابحث عن وظيفة أو مرشح" type="search"/>
+          </label>
+        </div>
 
         <div class="dashboard-topbar__actions">
           <button aria-label="معاينة الملف العام" class="dashboard-icon-button" data-company-profile-preview-open="true" type="button">
-            <span class="material-symbols-outlined">visibility</span>
+            <i class="fa-solid fa-eye dashboard-inline-icon" aria-hidden="true"></i>
           </button>
           <div class="dashboard-profile-chip">
             <div class="dashboard-profile-chip__avatar">
@@ -135,7 +148,7 @@
       <section class="dashboard-stat-grid">
         <article class="dashboard-stat-card">
           <div class="dashboard-stat-card__icon dashboard-stat-card__icon--blue">
-            <span class="material-symbols-outlined">assignment_turned_in</span>
+            <i class="fa-solid fa-circle-check dashboard-inline-icon" aria-hidden="true"></i>
           </div>
           <div>
             <small>وظائف نشطة</small>
@@ -146,7 +159,7 @@
 
         <article class="dashboard-stat-card">
           <div class="dashboard-stat-card__icon dashboard-stat-card__icon--mint">
-            <span class="material-symbols-outlined">description</span>
+            <i class="fa-solid fa-file-lines dashboard-inline-icon" aria-hidden="true"></i>
           </div>
           <div>
             <small>إجمالي الطلبات</small>
@@ -157,7 +170,7 @@
 
         <article class="dashboard-stat-card">
           <div class="dashboard-stat-card__icon dashboard-stat-card__icon--amber">
-            <span class="material-symbols-outlined">pending_actions</span>
+            <i class="fa-solid fa-hourglass-half dashboard-inline-icon" aria-hidden="true"></i>
           </div>
           <div>
             <small>قيد المراجعة</small>
@@ -168,7 +181,7 @@
 
         <article class="dashboard-stat-card">
           <div class="dashboard-stat-card__icon dashboard-stat-card__icon--violet">
-            <span class="material-symbols-outlined">groups_2</span>
+            <i class="fa-solid fa-user-group dashboard-inline-icon" aria-hidden="true"></i>
           </div>
           <div>
             <small>مقابلات</small>
@@ -219,13 +232,13 @@
               </div>
               <div class="dashboard-company-profile__socials" data-company-profile-socials hidden>
                 <span>وسائل التواصل</span>
-                <div class="dashboard-company-profile__social-list">
-                  <a data-company-profile-social="facebook" href="#" hidden rel="noopener noreferrer" target="_blank">Facebook</a>
-                  <a data-company-profile-social="instagram" href="#" hidden rel="noopener noreferrer" target="_blank">Instagram</a>
-                  <a data-company-profile-social="linkedin" href="#" hidden rel="noopener noreferrer" target="_blank">LinkedIn</a>
-                  <a data-company-profile-social="x" href="#" hidden rel="noopener noreferrer" target="_blank">X</a>
-                </div>
-              </div>
+            <div class="dashboard-company-profile__social-list">
+              <a data-company-profile-social="facebook" href="#" hidden rel="noopener noreferrer" target="_blank">فيسبوك</a>
+              <a data-company-profile-social="instagram" href="#" hidden rel="noopener noreferrer" target="_blank">إنستجرام</a>
+              <a data-company-profile-social="linkedin" href="#" hidden rel="noopener noreferrer" target="_blank">لينكدإن</a>
+              <a data-company-profile-social="x" href="#" hidden rel="noopener noreferrer" target="_blank">إكس</a>
+            </div>
+          </div>
               <p data-company-profile-description>أضف نبذة واضحة تعرّف بالشركة وتوضح طبيعة عملها.</p>
             </div>
           </div>
@@ -289,24 +302,24 @@
 
             <div class="dashboard-job-form__grid">
               <label class="dashboard-job-field">
-                <span>Facebook</span>
+                <span>فيسبوك</span>
                 <input name="company_facebook" type="url" placeholder="https://facebook.com/your-page"/>
               </label>
 
               <label class="dashboard-job-field">
-                <span>Instagram</span>
+                <span>إنستجرام</span>
                 <input name="company_instagram" type="url" placeholder="https://instagram.com/your-page"/>
               </label>
             </div>
 
             <div class="dashboard-job-form__grid">
               <label class="dashboard-job-field">
-                <span>LinkedIn</span>
+                <span>لينكدإن</span>
                 <input name="company_linkedin" type="url" placeholder="https://linkedin.com/company/your-page"/>
               </label>
 
               <label class="dashboard-job-field">
-                <span>X</span>
+                <span>إكس</span>
                 <input name="company_x" type="url" placeholder="https://x.com/your-page"/>
               </label>
             </div>
@@ -363,17 +376,17 @@
 
         <div class="dashboard-actions-strip">
           <button class="dashboard-action-tile" data-company-job-open="true" type="button">
-            <span class="material-symbols-outlined">post_add</span>
+            <i class="fa-solid fa-square-plus dashboard-inline-icon" aria-hidden="true"></i>
             <strong>نشر وظيفة جديدة</strong>
             <small>انزل مباشرة إلى النموذج وأرسل الوظيفة للمراجعة.</small>
           </button>
           <button class="dashboard-action-tile" data-company-profile-preview-open="true" type="button">
-            <span class="material-symbols-outlined">visibility</span>
+            <i class="fa-solid fa-eye dashboard-inline-icon" aria-hidden="true"></i>
             <strong>معاينة الملف العام</strong>
             <small>شاهد شكل صفحة شركتك كما ستظهر للزوار.</small>
           </button>
           <a class="dashboard-action-tile dashboard-action-tile--link" href="#company-jobs">
-            <span class="material-symbols-outlined">work_history</span>
+            <i class="fa-solid fa-briefcase dashboard-inline-icon" aria-hidden="true"></i>
             <strong>مراجعة الوظائف الحالية</strong>
             <small>تابع الوظائف المنشورة وحالتها وعدد المتقدمين.</small>
           </a>
@@ -575,10 +588,10 @@
           <div class="company-preview-sheet__socials" data-company-preview-socials hidden>
             <span>وسائل التواصل</span>
             <div class="dashboard-company-profile__social-list">
-              <a data-company-preview-social="facebook" href="#" hidden rel="noopener noreferrer" target="_blank">Facebook</a>
-              <a data-company-preview-social="instagram" href="#" hidden rel="noopener noreferrer" target="_blank">Instagram</a>
-              <a data-company-preview-social="linkedin" href="#" hidden rel="noopener noreferrer" target="_blank">LinkedIn</a>
-              <a data-company-preview-social="x" href="#" hidden rel="noopener noreferrer" target="_blank">X</a>
+              <a data-company-preview-social="facebook" href="#" hidden rel="noopener noreferrer" target="_blank">فيسبوك</a>
+              <a data-company-preview-social="instagram" href="#" hidden rel="noopener noreferrer" target="_blank">إنستجرام</a>
+              <a data-company-preview-social="linkedin" href="#" hidden rel="noopener noreferrer" target="_blank">لينكدإن</a>
+              <a data-company-preview-social="x" href="#" hidden rel="noopener noreferrer" target="_blank">إكس</a>
             </div>
           </div>
 

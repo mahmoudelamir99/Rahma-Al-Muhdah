@@ -573,3 +573,26 @@
     font-size: 12.55px;
   }
 }
+
+html,
+body,
+#root {
+  scrollbar-gutter: stable both-edges;
+}
+
+.rm-button:hover,
+.rm-table tbody tr:hover,
+.rm-dashboard-action:hover {
+  transform: none !important;
+}
+
+.rm-button,
+.rm-table tbody tr,
+.rm-dashboard-action {
+  transition:
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    filter 180ms ease !important;
+}
