@@ -10678,6 +10678,258 @@ a.site-action:hover,
   transform: none !important;
 }
 
+/* Final public site stabilization */
+body,
+input,
+select,
+textarea,
+button {
+  font-family: "Times New Roman", Times, serif !important;
+}
+
+body.page-compact,
+body.page-home,
+body.page-jobs,
+body.page-companies,
+body.page-company-details,
+body.page-job-details,
+body.page-track-application,
+body.page-company-dashboard {
+  font-size: 14px !important;
+}
+
+.container,
+.site-topbar .container {
+  width: min(100% - 1rem, 1080px) !important;
+  max-width: 1080px !important;
+}
+
+.product-shell {
+  padding-top: 5.5rem !important;
+}
+
+.product-hero,
+.page-section--hero {
+  width: 100% !important;
+}
+
+.product-hero__grid,
+.product-hero__grid--single,
+.page-section--hero .hero-card,
+.page-section--hero .hero-card.hero-card--light {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.product-hero__copy,
+.page-section--hero .hero-card,
+.page-section--hero .hero-card.hero-card--light {
+  max-width: none !important;
+}
+
+.product-hero__actions .site-action--secondary,
+.product-hero__actions .site-action--ghost,
+.site-header__actions .site-action--ghost {
+  background: rgba(248, 245, 239, 0.98) !important;
+  color: #0f3d4c !important;
+  border-color: rgba(15, 61, 76, 0.16) !important;
+  box-shadow: 0 10px 24px rgba(15, 61, 76, 0.08) !important;
+  opacity: 1 !important;
+}
+
+.product-hero__actions .site-action--secondary:hover,
+.product-hero__actions .site-action--ghost:hover,
+.site-header__actions .site-action--ghost:hover {
+  color: #0f3d4c !important;
+  background: #ffffff !important;
+}
+
+.home-live-card,
+.page-card,
+.hero-card,
+.directory-company-card,
+.listing-job-card.page-card,
+.jobs-empty-state,
+.company-directory-empty,
+.track-panel,
+.contact-side-card,
+.page-section--hero .hero-card,
+.page-section--hero .hero-card.hero-card--light {
+  overflow: hidden !important;
+}
+
+.home-live-card strong,
+.home-live-card__label,
+.home-live-card p,
+.home-live-card li,
+.page-card h2,
+.page-card h3,
+.page-card p,
+.page-card li,
+.section-title,
+.section-copy,
+.hero-card__copy,
+.hero-card__meta {
+  position: relative;
+  z-index: 1;
+}
+
+.home-live-card strong {
+  color: #0f3d4c !important;
+}
+
+.home-live-card p,
+.home-live-card li,
+.page-card p,
+.page-card li,
+.page-card a:not(.site-action),
+.public-footer p,
+.public-footer__links a,
+.public-footer__meta,
+.section-copy,
+.hero-card__copy,
+.hero-card__meta {
+  color: #274852 !important;
+  opacity: 1 !important;
+}
+
+.page-card h2,
+.page-card h3,
+.section-title,
+.hero-card h1,
+.hero-card h2 {
+  color: #143b45 !important;
+}
+
+.page-section--hero .hero-card h1,
+.page-section--hero .hero-card.hero-card--light h1,
+.page-section--hero .hero-card h2,
+.page-section--hero .hero-card.hero-card--light h2,
+.page-section--hero .hero-card .hero-card__copy,
+.page-section--hero .hero-card .hero-card__meta,
+.page-section--hero .hero-card p,
+.page-section--hero .hero-card li,
+.page-section--hero .hero-card .section-title,
+.page-section--hero .hero-card .section-copy {
+  color: #ffffff !important;
+}
+
+.home-live-strip,
+.compact-grid,
+.jobs-results__grid,
+.company-directory-grid,
+.contact-layout,
+.detail-layout,
+.track-layout,
+.public-footer__grid {
+  gap: 0.75rem !important;
+}
+
+.page-card,
+.hero-card,
+.directory-company-card,
+.listing-job-card.page-card,
+.home-live-card,
+.job-demand-card,
+.jobs-empty-state,
+.company-directory-empty,
+.track-panel,
+.contact-side-card {
+  padding: 0.85rem 0.9rem !important;
+  border-radius: 0.95rem !important;
+}
+
+.home-live-card {
+  min-height: 13.5rem !important;
+}
+
+.site-action,
+button.site-action,
+a.site-action,
+.home-search-card button,
+.jobs-search-panel button {
+  min-height: 2.65rem !important;
+  padding: 0.5rem 0.9rem !important;
+  font-size: 0.96rem !important;
+}
+
+.site-nav__link {
+  font-size: 0.96rem !important;
+  padding: 0.58rem 0.82rem !important;
+}
+
+.site-name,
+.site-topbar .site-name {
+  font-size: 1.38rem !important;
+}
+
+@media (max-width: 1120px) {
+  .container,
+  .site-topbar .container {
+    width: min(100% - 0.9rem, 980px) !important;
+  }
+
+  .site-header__inner {
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body.page-compact,
+  body.page-home,
+  body.page-jobs,
+  body.page-companies,
+  body.page-company-details,
+  body.page-job-details,
+  body.page-track-application,
+  body.page-company-dashboard {
+    font-size: 13px !important;
+  }
+
+  .container,
+  .site-topbar .container {
+    width: min(100% - 0.65rem, 100%) !important;
+  }
+
+  .product-shell {
+    padding-top: 7.2rem !important;
+  }
+
+  .site-brand__mark {
+    width: 3.6rem !important;
+    height: 3.6rem !important;
+  }
+
+  .site-name,
+  .site-topbar .site-name {
+    font-size: 1.02rem !important;
+  }
+
+  .home-live-strip,
+  .compact-grid,
+  .company-directory-grid,
+  .detail-layout,
+  .contact-layout,
+  .track-layout,
+  .public-footer__grid {
+    gap: 0.65rem !important;
+  }
+
+  .page-card,
+  .hero-card,
+  .directory-company-card,
+  .listing-job-card.page-card,
+  .home-live-card,
+  .track-panel,
+  .contact-side-card {
+    padding: 0.78rem 0.82rem !important;
+  }
+
+  .home-live-card {
+    min-height: auto !important;
+  }
+}
+
 [data-motion-hover='card']::before,
 [data-motion-hover='panel']::before,
 [data-motion-hover='button']::after {
