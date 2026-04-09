@@ -62,93 +62,80 @@
   </header>
 
   <main class="product-shell">
-    <section class="product-hero" data-purpose="hero-section">
+    <section class="page-section pt-32 pb-24" data-purpose="hero-section">
       <div class="container mx-auto px-5 lg:px-6">
-        <div class="product-hero__grid home-cinematic-hero">
-          <div class="product-hero__copy">
-            <span class="section-eyebrow">وظائف وشركات</span>
-            <h1>وظائف منشورة فعليًا وتقديم مباشر برقم طلب واضح.</h1>
-            <p class="text-slate-600">
-              اعرض الفرص الحالية، قدّم من النموذج المطلوب، وارجع لحالة الطلب في أي وقت من صفحة المتابعة.
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div class="flex flex-col items-start text-right">
+            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-[#005dac] text-sm font-bold border border-blue-100 mb-6 drop-shadow-sm">
+              <i class="fa-solid fa-check-circle"></i>
+              المنصة الأولى للتوظيف الذكي في مصر
+            </span>
+            <h1 class="text-4xl md:text-5xl lg:text-7xl font-black text-slate-900 leading-[1.2] mb-6">
+              مستقبلك المهني يبدأ <span class="text-[#005dac]">بخطوة واحدة</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl leading-relaxed">
+              نحن نربط الكفاءات الطموحة بأفضل فرص العمل في السوق المحلي، بأسلوب عصري يحترم خصوصيتك ويدعم مسيرتك.
             </p>
 
-            <div class="product-hero__actions">
-              <a class="site-action site-action--primary" href="jobs.html">ابدأ البحث</a>
-              <a class="site-action site-action--secondary" href="track-application.html">متابعة الطلب</a>
+            <div class="flex flex-wrap items-center gap-4 w-full">
+              <a class="bg-[#005dac] text-white px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-3 transition-transform hover:-translate-y-1 shadow-xl hover:shadow-[#005dac]/30 magnetic-shell" href="jobs.html">
+                تصفح الوظائف <i class="fa-solid fa-briefcase"></i>
+              </a>
+              <a class="bg-white text-slate-700 bg-opacity-70 px-8 py-4 rounded-xl text-lg font-bold flex items-center gap-3 transition-transform hover:-translate-y-1 border border-slate-200 magnetic-shell" href="#about">
+                اكتشف المزيد
+              </a>
             </div>
 
-            <div class="home-search-card">
-              <div class="home-search-card__field">
-                <span><i class="fa-solid fa-briefcase"></i></span>
-                <input data-home-keyword placeholder="المسمى الوظيفي أو الشركة أو المهارة" type="text"/>
+            <div class="mt-12 w-full max-w-xl">
+              <div class="home-search-card bg-white/70 backdrop-blur-xl p-3 rounded-2xl shadow-lg border border-slate-100 flex flex-col md:flex-row gap-3 relative z-10 transition-shadow hover:shadow-xl">
+                <div class="home-search-card__field flex-1 flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border border-slate-100">
+                  <span class="text-[#005dac]"><i class="fa-solid fa-briefcase"></i></span>
+                  <input class="bg-transparent border-none outline-none w-full text-slate-800" data-home-keyword placeholder="المسمى الوظيفي أو الشركة" type="text"/>
+                </div>
+                <div class="home-search-card__field flex-1 flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border border-slate-100">
+                  <span class="text-[#005dac]"><i class="fa-solid fa-location-dot"></i></span>
+                  <select class="bg-transparent border-none outline-none w-full text-slate-800" data-home-governorate></select>
+                </div>
+                <button class="bg-[#005dac] text-white px-7 py-3 rounded-xl font-bold hover:bg-opacity-90 transition-transform hover:-translate-y-0.5" data-search-action="home" type="button">بحث</button>
               </div>
-
-              <div class="home-search-card__field">
-                <span><i class="fa-solid fa-location-dot"></i></span>
-                <select data-home-governorate></select>
-              </div>
-
-              <button data-search-action="home" type="button">عرض الوظائف</button>
             </div>
 
-            <div class="page-card page-card--inline hidden" data-company-only hidden>
+            <div class="page-card page-card--inline hidden mt-4 border-emerald-100 bg-emerald-50" data-company-only hidden>
               <div>
-                <strong>لوحة الشركة</strong>
-                <p>إدارة الوظائف والطلبات من نفس المنصة.</p>
+                <strong class="text-emerald-800">لوحة الشركة</strong>
+                <p class="text-emerald-700 text-sm">إدارة الوظائف والطلبات من نفس المنصة.</p>
               </div>
-              <a class="site-action site-action--secondary" href="company-dashboard.html">افتح اللوحة</a>
-            </div>
-
-            <div class="home-live-strip" aria-label="إحصائيات وتشغيل المنصة">
-              <article class="home-live-card">
-                <span class="home-live-card__label">الوظائف المعروضة الآن</span>
-                <strong data-home-live-stat="jobs" data-countup>0</strong>
-                <p>يُعرض هنا عدد الوظائف المعتمدة والمفتوحة فقط.</p>
-              </article>
-
-              <article class="home-live-card">
-                <span class="home-live-card__label">الشركات النشطة</span>
-                <strong data-home-live-stat="companies" data-countup>0</strong>
-                <p>العداد يرتبط بالشركات المعتمدة الظاهرة للجمهور فقط.</p>
-              </article>
-
-              <article class="home-live-card home-live-card--steps">
-                <span class="home-live-card__label">خطوات سريعة</span>
-                <ol class="step-list">
-                  <li>ابحث عن الوظيفة المناسبة من صفحة الوظائف.</li>
-                  <li>أكمل نموذج التقديم المطلوب لكل وظيفة.</li>
-                  <li>احتفظ برقم الطلب واستخدمه في المتابعة.</li>
-                </ol>
-              </article>
+              <a class="bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold text-sm" href="company-dashboard.html">افتح اللوحة</a>
             </div>
           </div>
-
-          <div class="home-cinematic-visual">
-            <article class="home-cinematic-visual__panel">
-              <span class="home-cinematic-visual__eyebrow">تجربة توظيف أكثر حيوية</span>
-              <div class="home-cinematic-visual__logo">
-                <img alt="شعار الرحمة المهداه للتوظيف" src="logo-mark.png"/>
-              </div>
-              <div class="home-cinematic-visual__copy">
-                <strong>واجهة واضحة بصريًا وسريعة عمليًا</strong>
-                <p>بحث مباشر، متابعة واضحة، وحركة محسوبة تجعل تجربة التصفح أكثر سلاسة وعمقًا.</p>
-              </div>
-              <div class="home-cinematic-visual__signals">
-                <article>
-                  <span>بطاقات تفاعلية</span>
-                  <strong>Glow + Tilt</strong>
-                </article>
-                <article>
-                  <span>نتائج أسرع</span>
-                  <strong>Search First</strong>
-                </article>
-                <article>
-                  <span>متابعة أوضح</span>
-                  <strong>Request Flow</strong>
-                </article>
-              </div>
+          <div class="relative flex justify-center lg:justify-end items-center py-10">
+            <div class="absolute inset-0 bg-[#005dac]/10 blur-3xl rounded-[4rem] scale-105 pointer-events-none"></div>
+            <article class="relative bg-white/70 backdrop-blur-2xl border border-white/50 p-14 rounded-[3.5rem] shadow-2xl w-[90%] max-w-md aspect-square flex items-center justify-center">
+              <img alt="شعار الرحمة المهداه للتوظيف" src="logo-mark.png" class="w-full h-auto object-contain drop-shadow-xl" />
             </article>
           </div>
+        </div>
+        <div class="home-live-strip mt-16 lg:mt-24 grid grid-cols-1 md:grid-cols-3 gap-6" aria-label="إحصائيات وتشغيل المنصة">
+          <article class="home-live-card magnetic-shell bg-white/60 backdrop-blur-xl border border-slate-100 rounded-3xl p-8 flex flex-col items-center text-center shadow-lg transition-transform hover:-translate-y-1">
+            <span class="text-4xl lg:text-5xl font-black text-[#005dac] mb-2 drop-shadow-sm" data-home-live-stat="jobs" data-countup>0</span>
+            <span class="text-slate-600 font-bold mb-1">الوظائف المعروضة</span>
+            <p class="text-xs text-slate-400">عدد الوظائف المعتمدة والمفتوحة.</p>
+          </article>
+          
+          <article class="home-live-card magnetic-shell bg-white/60 backdrop-blur-xl border border-slate-100 rounded-3xl p-8 flex flex-col items-center text-center shadow-lg transition-transform hover:-translate-y-1">
+            <span class="text-4xl lg:text-5xl font-black text-[#005dac] mb-2 drop-shadow-sm" data-home-live-stat="companies" data-countup>0</span>
+            <span class="text-slate-600 font-bold mb-1">الشركات النشطة</span>
+            <p class="text-xs text-slate-400">الشركات المعتمدة للتوظيف.</p>
+          </article>
+          
+          <article class="home-live-card bg-gradient-to-br from-[#005dac] to-[#004a80] rounded-3xl p-8 flex flex-col justify-center text-white shadow-xl shadow-[#005dac]/20">
+            <h3 class="text-xl font-black mb-3">رحلتك واضحة</h3>
+            <ol class="step-list text-blue-100 text-sm space-y-2 pr-4 list-decimal marker:font-bold marker:text-white">
+              <li>ابحث عن الوظيفة المناسبة.</li>
+              <li>أكمل التقديم بسهولة.</li>
+              <li>احتفظ برقم الطلب للمتابعة.</li>
+            </ol>
+          </article>
         </div>
       </div>
     </section>

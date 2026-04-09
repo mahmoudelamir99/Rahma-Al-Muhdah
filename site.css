@@ -2,30 +2,30 @@
 
 :root {
   color-scheme: light;
-  --font-base: 'Cairo', system-ui, sans-serif;
-  --font-display: 'Cairo', system-ui, sans-serif;
-  --bg: #f8f2e9;
-  --bg-soft: #edf2fb;
-  --bg-alt: #e7eefb;
-  --surface: rgba(255, 255, 255, 0.9);
+  --font-base: 'Times New Roman', Times, serif;
+  --font-display: 'Times New Roman', Times, serif;
+  --bg: #ebf0f5;
+  --bg-soft: #f4f7fb;
+  --bg-alt: #ffffff;
+  --surface: rgba(255, 255, 255, 0.85);
   --surface-strong: rgba(255, 255, 255, 0.96);
-  --surface-alt: rgba(247, 238, 224, 0.94);
-  --border: rgba(45, 69, 120, 0.12);
-  --border-strong: rgba(245, 144, 55, 0.28);
-  --shadow: 0 28px 70px rgba(20, 34, 70, 0.12);
-  --shadow-soft: 0 16px 38px rgba(20, 34, 70, 0.1);
-  --text: #18243b;
-  --text-muted: #5d6f8d;
-  --text-soft: #8d9ab0;
-  --primary: #4058b8;
-  --primary-strong: #32479b;
-  --secondary: #6e84cc;
-  --accent: #f28f2c;
-  --accent-strong: #df7816;
-  --highlight: #efc98b;
-  --focus-ring: rgba(64, 88, 184, 0.24);
+  --surface-alt: rgba(248, 250, 252, 0.94);
+  --border: rgba(45, 69, 120, 0.08);
+  --border-strong: rgba(0, 93, 172, 0.2);
+  --shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+  --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.03);
+  --text: #1b2435;
+  --text-muted: #64748b;
+  --text-soft: #94a3b8;
+  --primary: #005dac;
+  --primary-strong: #004a80;
+  --secondary: #e2e8f0;
+  --accent: #1e293b;
+  --accent-strong: #0f172a;
+  --highlight: #38bdf8;
+  --focus-ring: rgba(0, 93, 172, 0.24);
   --radius-xl: 1.2rem;
-  --radius-2xl: 1.55rem;
+  --radius-2xl: 1.5rem;
   --radius-3xl: 2rem;
 }
 
@@ -46,11 +46,7 @@ body {
   font-family: var(--font-base);
   line-height: 1.72;
   color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(110, 132, 204, 0.18), transparent 28%),
-    radial-gradient(circle at top right, rgba(64, 88, 184, 0.12), transparent 24%),
-    radial-gradient(circle at bottom right, rgba(242, 143, 44, 0.12), transparent 26%),
-    linear-gradient(180deg, #fffaf4 0%, #f7f1e8 48%, #eef2fb 100%);
+  background: var(--bg);
   background-attachment: fixed;
   overflow-x: hidden;
   overflow-wrap: break-word;
@@ -66,24 +62,24 @@ body::after {
   border-radius: 999px;
   pointer-events: none;
   z-index: 0;
-  filter: blur(24px);
-  opacity: 0.8;
+  filter: blur(48px);
+  opacity: 0.5;
 }
 
 body::before {
-  top: -5rem;
-  left: -5rem;
-  width: 18rem;
-  height: 18rem;
-  background: radial-gradient(circle, rgba(110, 132, 204, 0.22), rgba(110, 132, 204, 0));
+  top: -10rem;
+  left: -10rem;
+  width: 30rem;
+  height: 30rem;
+  background: radial-gradient(circle, rgba(0, 93, 172, 0.15), rgba(0, 93, 172, 0));
 }
 
 body::after {
-  right: -6rem;
-  bottom: -6rem;
-  width: 20rem;
-  height: 20rem;
-  background: radial-gradient(circle, rgba(242, 143, 44, 0.18), rgba(242, 143, 44, 0));
+  right: -10rem;
+  bottom: -10rem;
+  width: 30rem;
+  height: 30rem;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.1), rgba(56, 189, 248, 0));
 }
 
 html[data-maintenance-mode='true'] {
@@ -11737,3 +11733,19 @@ body.page-about .product-shell::after {
   justify-content: space-between;
   height: 100%;
 }
+
+ / *   O v e r r i d e s   f o r   B e n t o   G r i d   r e f e r e n c e   m a t c h   * / 
+ . b e n t o - c a r d   { 
+     b a c k g r o u n d :   v a r ( - - s u r f a c e )   ! i m p o r t a n t ; 
+     b o r d e r - r a d i u s :   v a r ( - - r a d i u s - 3 x l )   ! i m p o r t a n t ; 
+     p a d d i n g :   c l a m p ( 2 r e m ,   5 v w ,   3 r e m )   ! i m p o r t a n t ; 
+     b o r d e r :   1 p x   s o l i d   r g b a ( 0 ,   0 ,   0 ,   0 . 0 3 )   ! i m p o r t a n t ; 
+     b o x - s h a d o w :   v a r ( - - s h a d o w - s o f t )   ! i m p o r t a n t ; 
+     t r a n s i t i o n :   t r a n s f o r m   0 . 3 s   c u b i c - b e z i e r ( 0 . 1 6 ,   1 ,   0 . 3 ,   1 ) ,   b o x - s h a d o w   0 . 3 s   c u b i c - b e z i e r ( 0 . 1 6 ,   1 ,   0 . 3 ,   1 )   ! i m p o r t a n t ; 
+ } 
+ . b e n t o - c a r d : h o v e r   { 
+     t r a n s f o r m :   t r a n s l a t e Y ( - 4 p x )   ! i m p o r t a n t ; 
+     b o x - s h a d o w :   v a r ( - - s h a d o w )   ! i m p o r t a n t ; 
+ } 
+  
+ 
