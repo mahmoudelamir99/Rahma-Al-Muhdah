@@ -200,12 +200,11 @@
     targets.forEach((element) => {
       if (element.vanillaTilt) return;
       window.VanillaTilt.init(element, {
-        max: Number(element.dataset.tiltMax || 8),
-        speed: 380,
-        scale: 1.01,
-        glare: true,
-        'max-glare': 0.16,
-        perspective: 1400,
+        max: Number(element.dataset.tiltMax || 4),
+        speed: 500,
+        scale: 1,
+        glare: false,
+        perspective: 1200,
         gyroscope: false,
       });
     });
