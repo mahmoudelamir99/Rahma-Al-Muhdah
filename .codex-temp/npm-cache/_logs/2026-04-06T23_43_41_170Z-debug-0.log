@@ -1,0 +1,1011 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.6.2
+2 info using node@v24.13.0
+3 silly config load:file:C:\Program Files\nodejs\node_modules\npm\npmrc
+4 silly config load:file:K:\التعديلات الجديدة\Rahma Al Muhdah\.npmrc
+5 silly config load:file:C:\Users\accma\.npmrc
+6 silly config load:file:C:\Users\accma\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm exec vercel@latest whoami
+8 verbose argv "exec" "--yes" "--" "vercel@latest" "whoami"
+9 verbose logfile logs-max:10 dir:K:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_logs\2026-04-06T23_43_41_170Z-
+10 verbose logfile K:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_logs\2026-04-06T23_43_41_170Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:2348810240 maxSize:587202560 maxEntrySize:293601280
+13 http fetch GET 200 https://registry.npmjs.org/npm 2251ms
+14 http fetch GET 200 https://registry.npmjs.org/vercel 2445ms (cache miss)
+15 silly packumentCache heap:2348810240 maxSize:587202560 maxEntrySize:293601280
+16 silly packumentCache heap:2348810240 maxSize:587202560 maxEntrySize:293601280
+17 silly idealTree buildDeps
+18 silly fetch manifest vercel@50.40.0
+19 silly packumentCache full:https://registry.npmjs.org/vercel cache-miss
+20 http cache https://registry.npmjs.org/vercel 34ms (cache hit)
+21 silly packumentCache full:https://registry.npmjs.org/vercel set size:7186326 disposed:false
+22 silly placeDep ROOT vercel@50.40.0 REPLACE for:  want: 50.40.0
+23 silly fetch manifest jose@5.9.6
+24 silly packumentCache full:https://registry.npmjs.org/jose cache-miss
+25 silly fetch manifest luxon@^3.4.0
+26 silly packumentCache full:https://registry.npmjs.org/luxon cache-miss
+27 silly fetch manifest @vercel/fun@1.3.0
+28 silly packumentCache full:https://registry.npmjs.org/@vercel%2ffun cache-miss
+29 http cache https://registry.npmjs.org/luxon 79ms (cache hit)
+30 silly packumentCache full:https://registry.npmjs.org/luxon set size:511002 disposed:false
+31 silly fetch manifest @vercel/build-utils@13.12.2
+32 silly packumentCache full:https://registry.npmjs.org/@vercel%2fbuild-utils cache-miss
+33 http cache https://registry.npmjs.org/jose 89ms (cache hit)
+34 silly packumentCache full:https://registry.npmjs.org/jose set size:1407632 disposed:false
+35 http cache https://registry.npmjs.org/@vercel%2ffun 99ms (cache hit)
+36 silly packumentCache full:https://registry.npmjs.org/@vercel%2ffun set size:79614 disposed:false
+37 http cache https://registry.npmjs.org/@vercel%2fbuild-utils 31ms (cache hit)
+38 silly packumentCache full:https://registry.npmjs.org/@vercel%2fbuild-utils set size:2157167 disposed:false
+39 silly placeDep ROOT @vercel/build-utils@13.12.2 OK for: vercel@50.40.0 want: 13.12.2
+40 silly placeDep ROOT @vercel/fun@1.3.0 OK for: vercel@50.40.0 want: 1.3.0
+41 silly placeDep ROOT jose@5.9.6 OK for: vercel@50.40.0 want: 5.9.6
+42 silly placeDep ROOT luxon@3.7.2 OK for: vercel@50.40.0 want: ^3.4.0
+43 silly fetch manifest tar@7.5.7
+44 silly packumentCache full:https://registry.npmjs.org/tar cache-miss
+45 silly fetch manifest semver@7.5.4
+46 silly packumentCache full:https://registry.npmjs.org/semver cache-miss
+47 silly fetch manifest path-to-regexp@8.2.0
+48 silly packumentCache full:https://registry.npmjs.org/path-to-regexp cache-miss
+49 http cache https://registry.npmjs.org/semver 32ms (cache hit)
+50 silly packumentCache full:https://registry.npmjs.org/semver set size:229620 disposed:false
+51 http cache https://registry.npmjs.org/path-to-regexp 37ms (cache hit)
+52 silly packumentCache full:https://registry.npmjs.org/path-to-regexp set size:216334 disposed:false
+53 http cache https://registry.npmjs.org/tar 43ms (cache hit)
+54 silly packumentCache full:https://registry.npmjs.org/tar set size:531438 disposed:false
+55 silly placeDep node_modules/@vercel/fun path-to-regexp@8.2.0 OK for: @vercel/fun@1.3.0 want: 8.2.0
+56 silly placeDep node_modules/@vercel/fun semver@7.5.4 OK for: @vercel/fun@1.3.0 want: 7.5.4
+57 silly placeDep node_modules/@vercel/fun tar@7.5.7 OK for: @vercel/fun@1.3.0 want: 7.5.7
+58 silly fetch manifest lru-cache@^6.0.0
+59 silly packumentCache full:https://registry.npmjs.org/lru-cache cache-miss
+60 http cache https://registry.npmjs.org/lru-cache 7ms (cache hit)
+61 silly packumentCache full:https://registry.npmjs.org/lru-cache set size:428011 disposed:false
+62 silly placeDep node_modules/@vercel/fun lru-cache@6.0.0 OK for: semver@7.5.4 want: ^6.0.0
+63 silly fetch manifest yallist@^4.0.0
+64 silly packumentCache full:https://registry.npmjs.org/yallist cache-miss
+65 http cache https://registry.npmjs.org/yallist 8ms (cache hit)
+66 silly packumentCache full:https://registry.npmjs.org/yallist set size:34610 disposed:false
+67 silly placeDep node_modules/@vercel/fun/node_modules/lru-cache yallist@4.0.0 OK for: lru-cache@6.0.0 want: ^4.0.0
+68 silly reify mark retired [
+68 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\jose'
+68 silly reify ]
+69 silly reify mark retired [
+69 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\luxon'
+69 silly reify ]
+70 silly reify mark retired [
+70 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\semver\\node_modules\\lru-cache'
+70 silly reify ]
+71 silly reify mark retired [
+71 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\semver\\node_modules\\yallist'
+71 silly reify ]
+72 silly reify mark retired [
+72 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\vercel'
+72 silly reify ]
+73 silly reify mark retired [
+73 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@napi-rs\\wasm-runtime'
+73 silly reify ]
+74 silly reify mark retired [
+74 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@ts-morph\\common\\node_modules\\minimatch'
+74 silly reify ]
+75 silly reify mark retired [
+75 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\build-utils'
+75 silly reify ]
+76 silly reify mark retired [
+76 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\fun'
+76 silly reify ]
+77 silly reify mark retired [
+77 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\acorn',
+77 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\acorn',
+77 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\acorn.cmd',
+77 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\acorn.ps1'
+77 silly reify ]
+78 silly reify mark retired [
+78 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\balanced-match'
+78 silly reify ]
+79 silly reify mark retired [
+79 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\brace-expansion'
+79 silly reify ]
+80 silly reify mark retired [
+80 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\braces'
+80 silly reify ]
+81 silly reify mark retired [
+81 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\concat-map'
+81 silly reify ]
+82 silly reify mark retired [
+82 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\edge-runtime',
+82 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\edge-runtime',
+82 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\edge-runtime.cmd',
+82 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\edge-runtime.ps1'
+82 silly reify ]
+83 silly reify mark retired [
+83 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\esbuild',
+83 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esbuild',
+83 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esbuild.cmd',
+83 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esbuild.ps1'
+83 silly reify ]
+84 silly reify mark retired [
+84 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\escodegen',
+84 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esgenerate',
+84 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esgenerate.cmd',
+84 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esgenerate.ps1',
+84 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\escodegen',
+84 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\escodegen.cmd',
+84 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\escodegen.ps1'
+84 silly reify ]
+85 silly reify mark retired [
+85 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\esprima',
+85 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esparse',
+85 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esparse.cmd',
+85 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esparse.ps1',
+85 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esvalidate',
+85 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esvalidate.cmd',
+85 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esvalidate.ps1'
+85 silly reify ]
+86 silly reify mark retired [
+86 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\fast-deep-equal'
+86 silly reify ]
+87 silly reify mark retired [
+87 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\fast-glob'
+87 silly reify ]
+88 silly reify mark retired [
+88 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\fastq'
+88 silly reify ]
+89 silly reify mark retired [
+89 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\fill-range'
+89 silly reify ]
+90 silly reify mark retired [
+90 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\glob-parent'
+90 silly reify ]
+91 silly reify mark retired [
+91 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\is-glob'
+91 silly reify ]
+92 silly reify mark retired [
+92 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\is-extglob'
+92 silly reify ]
+93 silly reify mark retired [
+93 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\is-number'
+93 silly reify ]
+94 silly reify mark retired [
+94 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\js-yaml',
+94 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\js-yaml',
+94 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\js-yaml.cmd',
+94 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\js-yaml.ps1'
+94 silly reify ]
+95 silly reify mark retired [
+95 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\json-schema-traverse'
+95 silly reify ]
+96 silly reify mark retired [
+96 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\merge2'
+96 silly reify ]
+97 silly reify mark retired [
+97 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\micro',
+97 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\micro',
+97 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\micro.cmd',
+97 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\micro.ps1'
+97 silly reify ]
+98 silly reify mark retired [
+98 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\micromatch'
+98 silly reify ]
+99 silly reify mark retired [
+99 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\mkdirp',
+99 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\mkdirp',
+99 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\mkdirp.cmd',
+99 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\mkdirp.ps1'
+99 silly reify ]
+100 silly reify mark retired [
+100 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\nopt',
+100 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nopt',
+100 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nopt.cmd',
+100 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nopt.ps1'
+100 silly reify ]
+101 silly reify mark retired [
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\node-gyp-build',
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build',
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build.cmd',
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build.ps1',
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-optional',
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-optional.cmd',
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-optional.ps1',
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-test',
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-test.cmd',
+101 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-test.ps1'
+101 silly reify ]
+102 silly reify mark retired [
+102 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\path-browserify'
+102 silly reify ]
+103 silly reify mark retired [
+103 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\punycode'
+103 silly reify ]
+104 silly reify mark retired [
+104 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\queue-microtask'
+104 silly reify ]
+105 silly reify mark retired [
+105 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\require-from-string'
+105 silly reify ]
+106 silly reify mark retired [
+106 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\reusify'
+106 silly reify ]
+107 silly reify mark retired [
+107 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\rolldown',
+107 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\rolldown',
+107 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\rolldown.cmd',
+107 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\rolldown.ps1'
+107 silly reify ]
+108 silly reify mark retired [
+108 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\run-parallel'
+108 silly reify ]
+109 silly reify mark retired [
+109 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\srvx',
+109 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\srvx',
+109 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\srvx.cmd',
+109 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\srvx.ps1'
+109 silly reify ]
+110 silly reify mark retired [
+110 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\to-regex-range'
+110 silly reify ]
+111 silly reify mark retired [
+111 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\tree-kill',
+111 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tree-kill',
+111 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tree-kill.cmd',
+111 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tree-kill.ps1'
+111 silly reify ]
+112 silly reify mark retired [
+112 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\tsx',
+112 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tsx',
+112 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tsx.cmd',
+112 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tsx.ps1'
+112 silly reify ]
+113 silly reify mark retired [
+113 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\uri-js'
+113 silly reify ]
+114 silly reify mark retired [
+114 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\which',
+114 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-which',
+114 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-which.cmd',
+114 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-which.ps1'
+114 silly reify ]
+115 silly reify mark retired [
+115 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@emnapi\\core'
+115 silly reify ]
+116 silly reify mark retired [
+116 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@emnapi\\runtime'
+116 silly reify ]
+117 silly reify mark retired [
+117 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@emnapi\\wasi-threads'
+117 silly reify ]
+118 silly reify mark retired [
+118 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@fastify\\busboy'
+118 silly reify ]
+119 silly reify mark retired [
+119 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@mapbox\\node-pre-gyp',
+119 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-pre-gyp',
+119 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-pre-gyp.cmd',
+119 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-pre-gyp.ps1'
+119 silly reify ]
+120 silly reify mark retired [
+120 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@nodelib\\fs.scandir'
+120 silly reify ]
+121 silly reify mark retired [
+121 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@nodelib\\fs.stat'
+121 silly reify ]
+122 silly reify mark retired [
+122 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@nodelib\\fs.walk'
+122 silly reify ]
+123 silly reify mark retired [
+123 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@tybys\\wasm-util'
+123 silly reify ]
+124 silly reify mark retired [
+124 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\cervel',
+124 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\cervel',
+124 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\cervel.cmd',
+124 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\cervel.ps1'
+124 silly reify ]
+125 silly reify mark retired [
+125 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\nft',
+125 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nft',
+125 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nft.cmd',
+125 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nft.ps1'
+125 silly reify ]
+126 silly reify mark retired [
+126 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\semver',
+126 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.bin\\semver',
+126 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.bin\\semver.cmd',
+126 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.bin\\semver.ps1'
+126 silly reify ]
+127 silly reify moves {
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\jose': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.jose-m6d6Nj1F',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\luxon': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.luxon-aQwDqTuW',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\semver\\node_modules\\lru-cache': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\semver\\node_modules\\.lru-cache-fwAGBLtk',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\semver\\node_modules\\yallist': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\semver\\node_modules\\.yallist-t3fIfpaz',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\vercel': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.vercel-bSuMprIg',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@napi-rs\\wasm-runtime': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@napi-rs\\.wasm-runtime-9URJcaA9',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@ts-morph\\common\\node_modules\\minimatch': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@ts-morph\\common\\node_modules\\.minimatch-Qo1zWoHC',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\build-utils': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\.build-utils-RFBaOSWg',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\fun': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\.fun-YXBIKGAd',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\acorn': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.acorn-1j8xRXCk',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\acorn': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.acorn-cG9AceY2',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\acorn.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.acorn.cmd-8WkAsYod',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\acorn.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.acorn.ps1-XLIFHVt0',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\balanced-match': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.balanced-match-SV1dpCDq',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\brace-expansion': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.brace-expansion-qtgXcex7',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\braces': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.braces-6tiw9O1p',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\concat-map': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.concat-map-5zuemTQT',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\edge-runtime': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.edge-runtime-U2VFhCil',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\edge-runtime': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.edge-runtime-JK9eXg2n',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\edge-runtime.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.edge-runtime.cmd-ql0Baznb',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\edge-runtime.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.edge-runtime.ps1-ZJt5NMrB',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\esbuild': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.esbuild-KygvCNQY',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esbuild': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esbuild-9cqFoNBD',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esbuild.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esbuild.cmd-3VbDboNK',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esbuild.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esbuild.ps1-kzyVnxWE',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\escodegen': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.escodegen-d1Ntom1y',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esgenerate': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esgenerate-uW3P6e6r',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esgenerate.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esgenerate.cmd-Sm7lGE9t',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esgenerate.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esgenerate.ps1-BPVQZbMY',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\escodegen': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.escodegen-EGkQ9fLH',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\escodegen.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.escodegen.cmd-hL8PjiL0',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\escodegen.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.escodegen.ps1-newlMmEe',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\esprima': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.esprima-SaknB1Vm',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esparse': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esparse-s2wNGa52',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esparse.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esparse.cmd-YPUTPV2T',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esparse.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esparse.ps1-jvTSDhWW',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esvalidate': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esvalidate-eB2biXNt',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esvalidate.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esvalidate.cmd-p13Zq7re',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\esvalidate.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.esvalidate.ps1-K88EJor2',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\fast-deep-equal': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.fast-deep-equal-1vl4emGm',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\fast-glob': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.fast-glob-hzlGUZSj',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\fastq': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.fastq-Db30EAMG',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\fill-range': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.fill-range-hJPXJT7I',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\glob-parent': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.glob-parent-urlZB7I8',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\is-glob': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.is-glob-wSLsHGWO',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\is-extglob': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.is-extglob-xYFSjjbT',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\is-number': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.is-number-hBJPQlhz',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\js-yaml': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.js-yaml-0pE0PtN1',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\js-yaml': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.js-yaml-xCjkhx38',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\js-yaml.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.js-yaml.cmd-8lDDz16P',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\js-yaml.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.js-yaml.ps1-4cC7AYfX',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\json-schema-traverse': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.json-schema-traverse-qkUCYau1',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\merge2': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.merge2-QVlanSfj',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\micro': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.micro-jtOpBAXa',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\micro': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.micro-MNfglMp6',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\micro.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.micro.cmd-NSn5AWLR',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\micro.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.micro.ps1-awik8aEk',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\micromatch': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.micromatch-TLjWpDbz',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\mkdirp': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.mkdirp-YSrIdC9g',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\mkdirp': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.mkdirp-K2Jz5T23',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\mkdirp.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.mkdirp.cmd-YD3fwK8U',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\mkdirp.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.mkdirp.ps1-TTNeMH2A',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\nopt': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.nopt-Nde0cjT0',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nopt': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.nopt-NcakoIjR',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nopt.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.nopt.cmd-2x10dCPb',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nopt.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.nopt.ps1-OvHnDOPc',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\node-gyp-build': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.node-gyp-build-z3gBqs8u',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-gyp-build-TVKjLbKH',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-gyp-build.cmd-LApJ9pgP',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-gyp-build.ps1-0oTqkfXT',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-optional': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-gyp-build-optional-wdp0V4ya',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-optional.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-gyp-build-optional.cmd-2ssRP3nV',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-optional.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-gyp-build-optional.ps1-Jyr5ZoMP',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-test': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-gyp-build-test-yOePUwJo',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-test.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-gyp-build-test.cmd-HqEGe6zr',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-gyp-build-test.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-gyp-build-test.ps1-Qgp6CeEJ',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\path-browserify': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.path-browserify-y0WszhjR',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\punycode': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.punycode-cU25MZmg',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\queue-microtask': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.queue-microtask-XDkJOqXp',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\require-from-string': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.require-from-string-9buyy40w',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\reusify': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.reusify-RaCKxkeL',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\rolldown': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.rolldown-N0CV3SF3',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\rolldown': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.rolldown-IBln0lAd',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\rolldown.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.rolldown.cmd-ePJlEYwf',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\rolldown.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.rolldown.ps1-xPx7FT7v',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\run-parallel': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.run-parallel-JM1GOoOE',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\srvx': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.srvx-45TjoZjz',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\srvx': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.srvx-8A6TzxEj',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\srvx.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.srvx.cmd-Asft5qCn',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\srvx.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.srvx.ps1-Drjv6PFc',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\to-regex-range': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.to-regex-range-oZj9BWp8',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\tree-kill': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.tree-kill-aeAf3FAF',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tree-kill': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.tree-kill-o0cXno2P',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tree-kill.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.tree-kill.cmd-MlSUbrNg',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tree-kill.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.tree-kill.ps1-JxnXM9b4',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\tsx': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.tsx-ntfTNe9b',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tsx': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.tsx-31jJXF9n',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tsx.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.tsx.cmd-3kaBSz8X',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\tsx.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.tsx.ps1-A7B0ozEk',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\uri-js': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.uri-js-pjlKrpiR',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\which': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.which-Q6vuKEMw',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-which': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-which-WfYcGJXD',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-which.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-which.cmd-Ze6UVRCW',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-which.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-which.ps1-z3B2AxzL',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@emnapi\\core': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@emnapi\\.core-y97Ama1y',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@emnapi\\runtime': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@emnapi\\.runtime-B137Pm2q',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@emnapi\\wasi-threads': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@emnapi\\.wasi-threads-7UMUsjHg',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@fastify\\busboy': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@fastify\\.busboy-G3eCuDqn',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@mapbox\\node-pre-gyp': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@mapbox\\.node-pre-gyp-jeqjjnul',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-pre-gyp': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-pre-gyp-Sszwr3Dt',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-pre-gyp.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-pre-gyp.cmd-dE40gCbG',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\node-pre-gyp.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.node-pre-gyp.ps1-Z1NJvZ2v',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@nodelib\\fs.scandir': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@nodelib\\.fs.scandir-g52PPbES',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@nodelib\\fs.stat': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@nodelib\\.fs.stat-AnBAMNt1',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@nodelib\\fs.walk': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@nodelib\\.fs.walk-SSbmITYm',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@tybys\\wasm-util': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@tybys\\.wasm-util-xKOq5ArD',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\cervel': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\.cervel-dL3ZMZEx',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\cervel': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.cervel-OaSeMOrO',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\cervel.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.cervel.cmd-dGVoj2CM',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\cervel.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.cervel.ps1-tinkpZv3',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\nft': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\.nft-BdBV1v3n',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nft': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.nft-dIyOftDC',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nft.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.nft.cmd-Z5IRObwO',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\nft.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\.bin\\.nft.ps1-WiDJHt5l',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\semver': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.semver-hkj94F4Y',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.bin\\semver': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.bin\\.semver-DtIWdhrE',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.bin\\semver.cmd': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.bin\\.semver.cmd-7l7z3Bgq',
+127 silly reify   'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.bin\\semver.ps1': 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\redwood\\node_modules\\.bin\\.semver.ps1-p3Kv3vJ3'
+127 silly reify }
+128 silly audit bulk request {
+128 silly audit   yallist: [ '5.0.0', '4.0.0' ],
+128 silly audit   'lru-cache': [ '11.3.2', '7.18.3', '6.0.0' ],
+128 silly audit   minimatch: [ '10.2.5', '10.1.1' ],
+128 silly audit   'path-to-regexp': [ '8.3.0', '6.3.0', '6.1.0', '8.2.0' ],
+128 silly audit   abbrev: [ '3.0.1' ],
+128 silly audit   acorn: [ '8.16.0' ],
+128 silly audit   'acorn-import-attributes': [ '1.9.5' ],
+128 silly audit   'agent-base': [ '7.1.4' ],
+128 silly audit   'any-promise': [ '1.3.0' ],
+128 silly audit   arg: [ '4.1.0' ],
+128 silly audit   argparse: [ '2.0.1' ],
+128 silly audit   'ast-types': [ '0.13.4' ],
+128 silly audit   'async-listen': [ '1.2.0', '3.0.1', '3.0.0' ],
+128 silly audit   'async-retry': [ '1.3.3' ],
+128 silly audit   asynckit: [ '0.4.0' ],
+128 silly audit   'async-sema': [ '3.1.1' ],
+128 silly audit   'balanced-match': [ '4.0.4' ],
+128 silly audit   'basic-ftp': [ '5.2.0' ],
+128 silly audit   bindings: [ '1.5.0' ],
+128 silly audit   'brace-expansion': [ '5.0.5' ],
+128 silly audit   'buffer-crc32': [ '0.2.13' ],
+128 silly audit   bytes: [ '3.1.0' ],
+128 silly audit   'call-bind-apply-helpers': [ '1.0.2' ],
+128 silly audit   chokidar: [ '4.0.0' ],
+128 silly audit   chownr: [ '3.0.0' ],
+128 silly audit   'cjs-module-lexer': [ '1.2.3' ],
+128 silly audit   'code-block-writer': [ '10.1.1' ],
+128 silly audit   'combined-stream': [ '1.0.8' ],
+128 silly audit   consola: [ '3.4.2' ],
+128 silly audit   'content-type': [ '1.0.4' ],
+128 silly audit   'convert-hrtime': [ '3.0.0' ],
+128 silly audit   'cookie-es': [ '2.0.1' ],
+128 silly audit   'cross-spawn': [ '7.0.6' ],
+128 silly audit   'data-uri-to-buffer': [ '6.0.2' ],
+128 silly audit   debug: [ '4.3.4' ],
+128 silly audit   ms: [ '2.1.2', '2.1.1' ],
+128 silly audit   degenerator: [ '5.0.1' ],
+128 silly audit   'delayed-stream': [ '1.0.0' ],
+128 silly audit   depd: [ '1.1.2' ],
+128 silly audit   'detect-libc': [ '2.1.2' ],
+128 silly audit   'dunder-proto': [ '1.0.1' ],
+128 silly audit   'edge-runtime': [ '2.5.9' ],
+128 silly audit   'end-of-stream': [ '1.4.5', '1.1.0' ],
+128 silly audit   'es-define-property': [ '1.0.1' ],
+128 silly audit   'es-errors': [ '1.3.0' ],
+128 silly audit   'es-module-lexer': [ '1.5.0', '1.4.1' ],
+128 silly audit   'es-object-atoms': [ '1.1.1' ],
+128 silly audit   'es-set-tostringtag': [ '2.1.0' ],
+128 silly audit   esbuild: [ '0.27.0' ],
+128 silly audit   escodegen: [ '2.1.0' ],
+128 silly audit   esprima: [ '4.0.1' ],
+128 silly audit   estraverse: [ '5.3.0' ],
+128 silly audit   'estree-walker': [ '2.0.2' ],
+128 silly audit   esutils: [ '2.0.3' ],
+128 silly audit   etag: [ '1.8.1' ],
+128 silly audit   'events-intercept': [ '2.0.0' ],
+128 silly audit   execa: [ '3.2.0', '5.1.1' ],
+128 silly audit   'signal-exit': [ '3.0.7', '4.0.2' ],
+128 silly audit   'fd-slicer': [ '1.1.0' ],
+128 silly audit   'file-uri-to-path': [ '1.0.0' ],
+128 silly audit   'form-data': [ '4.0.5' ],
+128 silly audit   'fs-extra': [ '11.1.0', '11.1.1' ],
+128 silly audit   'function-bind': [ '1.1.2' ],
+128 silly audit   'generic-pool': [ '3.4.2' ],
+128 silly audit   'get-intrinsic': [ '1.3.0' ],
+128 silly audit   'get-proto': [ '1.0.1' ],
+128 silly audit   'get-stream': [ '5.2.0', '6.0.1' ],
+128 silly audit   'get-tsconfig': [ '4.13.7' ],
+128 silly audit   'get-uri': [ '6.0.5' ],
+128 silly audit   glob: [ '13.0.6' ],
+128 silly audit   gopd: [ '1.2.0' ],
+128 silly audit   'graceful-fs': [ '4.2.11' ],
+128 silly audit   'has-symbols': [ '1.1.0' ],
+128 silly audit   'has-tostringtag': [ '1.0.2' ],
+128 silly audit   hasown: [ '2.0.2' ],
+128 silly audit   'http-errors': [ '1.7.3' ],
+128 silly audit   'http-proxy-agent': [ '7.0.2' ],
+128 silly audit   'https-proxy-agent': [ '7.0.6' ],
+128 silly audit   'human-signals': [ '1.1.1', '2.1.0' ],
+128 silly audit   'iconv-lite': [ '0.4.24' ],
+128 silly audit   inherits: [ '2.0.4' ],
+128 silly audit   'is-buffer': [ '2.0.5' ],
+128 silly audit   'ip-address': [ '10.1.0' ],
+128 silly audit   'is-node-process': [ '1.2.0' ],
+128 silly audit   'is-stream': [ '2.0.1' ],
+128 silly audit   isexe: [ '2.0.0' ],
+128 silly audit   'js-yaml': [ '4.1.1' ],
+128 silly audit   'json-schema-to-ts': [ '1.6.4' ],
+128 silly audit   jsonfile: [ '6.2.0' ],
+128 silly audit   'math-intrinsics': [ '1.1.0' ],
+128 silly audit   'merge-stream': [ '2.0.0' ],
+128 silly audit   micro: [ '9.3.5-canary.3' ],
+128 silly audit   picomatch: [ '4.0.4' ],
+128 silly audit   'mime-db': [ '1.52.0' ],
+128 silly audit   'mime-types': [ '2.1.35' ],
+128 silly audit   'mimic-fn': [ '2.1.0' ],
+128 silly audit   minipass: [ '7.1.3' ],
+128 silly audit   mri: [ '1.2.0' ],
+128 silly audit   minizlib: [ '3.1.0' ],
+128 silly audit   netmask: [ '2.1.0' ],
+128 silly audit   'node-fetch': [ '2.6.7', '2.6.9' ],
+128 silly audit   'node-gyp-build': [ '4.8.4' ],
+128 silly audit   nopt: [ '8.1.0' ],
+128 silly audit   'npm-run-path': [ '4.0.1' ],
+128 silly audit   once: [ '1.4.0', '1.3.3' ],
+128 silly audit   onetime: [ '5.1.2' ],
+128 silly audit   'os-paths': [ '4.4.0' ],
+128 silly audit   'oxc-transform': [ '0.111.0' ],
+128 silly audit   'p-finally': [ '2.0.1' ],
+128 silly audit   'pac-proxy-agent': [ '7.2.0' ],
+128 silly audit   'pac-resolver': [ '7.0.1' ],
+128 silly audit   'parse-ms': [ '2.1.0' ],
+128 silly audit   'path-key': [ '3.1.1' ],
+128 silly audit   'path-scurry': [ '2.0.2' ],
+128 silly audit   pend: [ '1.2.0' ],
+128 silly audit   picocolors: [ '1.0.0' ],
+128 silly audit   'pretty-ms': [ '7.0.1' ],
+128 silly audit   promisepipe: [ '3.0.0' ],
+128 silly audit   'proxy-agent': [ '6.4.0' ],
+128 silly audit   'proxy-from-env': [ '1.1.0' ],
+128 silly audit   pump: [ '3.0.4' ],
+128 silly audit   'raw-body': [ '2.4.1' ],
+128 silly audit   readdirp: [ '4.1.2' ],
+128 silly audit   'resolve-from': [ '5.0.0' ],
+128 silly audit   'resolve-pkg-maps': [ '1.0.0' ],
+128 silly audit   'resolve.exports': [ '2.0.3' ],
+128 silly audit   retry: [ '0.13.1' ],
+128 silly audit   rolldown: [ '1.0.0-rc.1' ],
+128 silly audit   'safer-buffer': [ '2.1.2' ],
+128 silly audit   setprototypeof: [ '1.1.1' ],
+128 silly audit   'shebang-command': [ '2.0.0' ],
+128 silly audit   'shebang-regex': [ '3.0.0' ],
+128 silly audit   'smart-buffer': [ '4.2.0' ],
+128 silly audit   'smol-toml': [ '1.5.2' ],
+128 silly audit   socks: [ '2.8.7' ],
+128 silly audit   'socks-proxy-agent': [ '8.0.5' ],
+128 silly audit   'source-map': [ '0.6.1' ],
+128 silly audit   srvx: [ '0.8.9' ],
+128 silly audit   'stat-mode': [ '0.3.0' ],
+128 silly audit   statuses: [ '1.5.0' ],
+128 silly audit   'stream-to-array': [ '2.3.0' ],
+128 silly audit   'stream-to-promise': [ '2.2.0' ],
+128 silly audit   'strip-final-newline': [ '2.0.0' ],
+128 silly audit   'time-span': [ '4.0.0' ],
+128 silly audit   throttleit: [ '2.1.0' ],
+128 silly audit   tinyexec: [ '0.3.2' ],
+128 silly audit   toidentifier: [ '1.0.0' ],
+128 silly audit   tr46: [ '0.0.3' ],
+128 silly audit   'tree-kill': [ '1.2.2' ],
+128 silly audit   'ts-toolbelt': [ '6.15.5' ],
+128 silly audit   'ts-morph': [ '12.0.0' ],
+128 silly audit   tslib: [ '2.8.1' ],
+128 silly audit   tsx: [ '4.21.0' ],
+128 silly audit   'uid-promise': [ '1.0.0' ],
+128 silly audit   'undici-types': [ '5.26.5' ],
+128 silly audit   universalify: [ '2.0.1' ],
+128 silly audit   unpipe: [ '1.0.0' ],
+128 silly audit   'web-vitals': [ '0.2.4' ],
+128 silly audit   'webidl-conversions': [ '3.0.1' ],
+128 silly audit   'whatwg-url': [ '5.0.0' ],
+128 silly audit   which: [ '2.0.2' ],
+128 silly audit   wrappy: [ '1.0.2' ],
+128 silly audit   'xdg-app-paths': [ '5.1.0' ],
+128 silly audit   'xdg-portable': [ '7.3.0' ],
+128 silly audit   yauzl: [ '2.10.0' ],
+128 silly audit   'yauzl-clone': [ '1.0.4' ],
+128 silly audit   'yauzl-promise': [ '2.1.3' ],
+128 silly audit   zod: [ '3.22.4' ],
+128 silly audit   '@bytecodealliance/preview2-shim': [ '0.17.6' ],
+128 silly audit   '@edge-runtime/format': [ '2.2.1' ],
+128 silly audit   '@edge-runtime/node-utils': [ '2.3.0' ],
+128 silly audit   '@edge-runtime/primitives': [ '4.1.0' ],
+128 silly audit   '@edge-runtime/ponyfill': [ '2.4.2' ],
+128 silly audit   '@edge-runtime/vm': [ '3.2.0' ],
+128 silly audit   '@isaacs/balanced-match': [ '4.0.1' ],
+128 silly audit   '@isaacs/brace-expansion': [ '5.0.1' ],
+128 silly audit   '@isaacs/fs-minipass': [ '4.0.1' ],
+128 silly audit   '@mapbox/node-pre-gyp': [ '2.0.3' ],
+128 silly audit   '@oxc-project/types': [ '0.110.0' ],
+128 silly audit   '@oxc-transform/binding-win32-x64-msvc': [ '0.111.0' ],
+128 silly audit   '@renovatebot/pep440': [ '4.2.1' ],
+128 silly audit   '@rolldown/binding-win32-x64-msvc': [ '1.0.0-rc.1' ],
+128 silly audit   '@rolldown/pluginutils': [ '1.0.0-rc.1' ],
+128 silly audit   '@rollup/pluginutils': [ '5.3.0' ],
+128 silly audit   '@sinclair/typebox': [ '0.25.24' ],
+128 silly audit   '@tootallnate/once': [ '2.0.0' ],
+128 silly audit   '@tootallnate/quickjs-emscripten': [ '0.23.0' ],
+128 silly audit   '@types/estree': [ '1.0.8' ],
+128 silly audit   '@types/json-schema': [ '7.0.15' ],
+128 silly audit   '@types/node': [ '20.11.0' ],
+128 silly audit   '@vercel/backends': [ '0.0.55' ],
+128 silly audit   '@vercel/blob': [ '2.3.0' ],
+128 silly audit   '@vercel/cervel': [ '0.0.42' ],
+128 silly audit   '@vercel/detect-agent': [ '1.2.1' ],
+128 silly audit   '@vercel/elysia': [ '0.1.58' ],
+128 silly audit   '@vercel/error-utils': [ '2.0.3' ],
+128 silly audit   '@vercel/express': [ '0.1.68' ],
+128 silly audit   '@vercel/fastify': [ '0.1.61' ],
+128 silly audit   '@vercel/gatsby-plugin-vercel-analytics': [ '1.0.11' ],
+128 silly audit   '@vercel/gatsby-plugin-vercel-builder': [ '2.1.8' ],
+128 silly audit   '@vercel/go': [ '3.4.7' ],
+128 silly audit   '@vercel/h3': [ '0.1.67' ],
+128 silly audit   '@vercel/hono': [ '0.2.61' ],
+128 silly audit   '@vercel/hydrogen': [ '1.3.6' ],
+128 silly audit   '@vercel/koa': [ '0.1.41' ],
+128 silly audit   '@vercel/nestjs': [ '0.2.62' ],
+128 silly audit   '@vercel/next': [ '4.16.5' ],
+128 silly audit   '@vercel/nft': [ '1.5.0' ],
+128 silly audit   '@vercel/node': [ '5.7.0' ],
+128 silly audit   '@vercel/prepare-flags-definitions': [ '0.2.1' ],
+128 silly audit   '@vercel/python': [ '6.29.0' ],
+128 silly audit   '@vercel/python-analysis': [ '0.11.0' ],
+128 silly audit   '@vercel/redwood': [ '2.4.12' ],
+128 silly audit   semver: [ '6.3.1', '7.5.4' ],
+128 silly audit   '@vercel/remix-builder': [ '5.7.2' ],
+128 silly audit   '@vercel/rust': [ '1.0.6' ],
+128 silly audit   '@vercel/ruby': [ '2.3.2' ],
+128 silly audit   '@vercel/static-build': [ '2.9.8' ],
+128 silly audit   '@vercel/static-config': [ '3.2.0' ],
+128 silly audit   vercel: [ '50.40.0' ],
+128 silly audit   '@vercel/build-utils': [ '13.12.2' ],
+128 silly audit   '@vercel/fun': [ '1.3.0' ],
+128 silly audit   jose: [ '5.9.6' ],
+128 silly audit   luxon: [ '3.7.2' ],
+128 silly audit   tar: [ '7.5.7' ]
+128 silly audit }
+129 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fnft cache-miss
+130 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fcervel cache-miss
+131 silly packumentCache corgi:https://registry.npmjs.org/@mapbox%2fnode-pre-gyp cache-miss
+132 silly packumentCache corgi:https://registry.npmjs.org/which cache-miss
+133 silly packumentCache corgi:https://registry.npmjs.org/tsx cache-miss
+134 silly packumentCache corgi:https://registry.npmjs.org/tree-kill cache-miss
+135 silly packumentCache corgi:https://registry.npmjs.org/srvx cache-miss
+136 silly packumentCache corgi:https://registry.npmjs.org/node-gyp-build cache-miss
+137 silly packumentCache corgi:https://registry.npmjs.org/nopt cache-miss
+138 silly packumentCache corgi:https://registry.npmjs.org/rolldown cache-miss
+139 silly packumentCache corgi:https://registry.npmjs.org/micro cache-miss
+140 silly packumentCache corgi:https://registry.npmjs.org/js-yaml cache-miss
+141 silly packumentCache corgi:https://registry.npmjs.org/esprima cache-miss
+142 silly packumentCache corgi:https://registry.npmjs.org/escodegen cache-miss
+143 silly packumentCache corgi:https://registry.npmjs.org/esbuild cache-miss
+144 silly packumentCache corgi:https://registry.npmjs.org/edge-runtime cache-miss
+145 silly packumentCache corgi:https://registry.npmjs.org/acorn cache-miss
+146 http cache @vercel/fun@https://registry.npmjs.org/@vercel/fun/-/fun-1.3.0.tgz 0ms (cache hit)
+147 http cache @vercel/build-utils@https://registry.npmjs.org/@vercel/build-utils/-/build-utils-13.12.2.tgz 0ms (cache hit)
+148 http cache luxon@https://registry.npmjs.org/luxon/-/luxon-3.7.2.tgz 0ms (cache hit)
+149 http cache vercel@https://registry.npmjs.org/vercel/-/vercel-50.40.0.tgz 0ms (cache hit)
+150 http cache jose@https://registry.npmjs.org/jose/-/jose-5.9.6.tgz 0ms (cache hit)
+151 http cache lru-cache@https://registry.npmjs.org/lru-cache/-/lru-cache-6.0.0.tgz 0ms (cache hit)
+152 silly packumentCache corgi:https://registry.npmjs.org/semver cache-miss
+153 http cache yallist@https://registry.npmjs.org/yallist/-/yallist-4.0.0.tgz 0ms (cache hit)
+154 http cache tar@https://registry.npmjs.org/tar/-/tar-7.5.7.tgz 0ms (cache hit)
+155 http cache semver@https://registry.npmjs.org/semver/-/semver-7.5.4.tgz 0ms (cache hit)
+156 http cache path-to-regexp@https://registry.npmjs.org/path-to-regexp/-/path-to-regexp-8.2.0.tgz 0ms (cache hit)
+157 silly tarball no local data for @vercel/build-utils@https://registry.npmjs.org/@vercel/build-utils/-/build-utils-13.12.2.tgz. Extracting by manifest.
+158 silly tarball no local data for luxon@https://registry.npmjs.org/luxon/-/luxon-3.7.2.tgz. Extracting by manifest.
+159 silly tarball no local data for vercel@https://registry.npmjs.org/vercel/-/vercel-50.40.0.tgz. Extracting by manifest.
+160 silly tarball no local data for jose@https://registry.npmjs.org/jose/-/jose-5.9.6.tgz. Extracting by manifest.
+161 silly tarball no local data for tar@https://registry.npmjs.org/tar/-/tar-7.5.7.tgz. Extracting by manifest.
+162 http cache https://registry.npmjs.org/srvx 261ms (cache hit)
+163 silly packumentCache corgi:https://registry.npmjs.org/srvx set size:86505 disposed:false
+164 http cache https://registry.npmjs.org/srvx/-/srvx-0.8.9.tgz 26ms (cache hit)
+165 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 385ms
+166 silly audit report {
+166 silly audit report   minimatch: [
+166 silly audit report     {
+166 silly audit report       id: 1113466,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-3ppc-4f35-3m26',
+166 silly audit report       title: 'minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern',
+166 silly audit report       severity: 'high',
+166 silly audit report       vulnerable_versions: '>=10.0.0 <10.2.1',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     },
+166 silly audit report     {
+166 silly audit report       id: 1113545,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-7r86-cg39-jmmj',
+166 silly audit report       title: 'minimatch has ReDoS: matchOne() combinatorial backtracking via multiple non-adjacent GLOBSTAR segments',
+166 silly audit report       severity: 'high',
+166 silly audit report       vulnerable_versions: '>=10.0.0 <10.2.3',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     },
+166 silly audit report     {
+166 silly audit report       id: 1113553,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-23c5-xmqv-rm74',
+166 silly audit report       title: 'minimatch ReDoS: nested *() extglobs generate catastrophically backtracking regular expressions',
+166 silly audit report       severity: 'high',
+166 silly audit report       vulnerable_versions: '>=10.0.0 <10.2.3',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     }
+166 silly audit report   ],
+166 silly audit report   'path-to-regexp': [
+166 silly audit report     {
+166 silly audit report       id: 1101846,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-9wv6-86v2-598j',
+166 silly audit report       title: 'path-to-regexp outputs backtracking regular expressions',
+166 silly audit report       severity: 'high',
+166 silly audit report       vulnerable_versions: '>=4.0.0 <6.3.0',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     },
+166 silly audit report     {
+166 silly audit report       id: 1115573,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-j3q9-mxjg-w52f',
+166 silly audit report       title: 'path-to-regexp vulnerable to Denial of Service via sequential optional groups',
+166 silly audit report       severity: 'high',
+166 silly audit report       vulnerable_versions: '>=8.0.0 <8.4.0',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     },
+166 silly audit report     {
+166 silly audit report       id: 1115582,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-27v5-c462-wpq7',
+166 silly audit report       title: 'path-to-regexp vulnerable to Regular Expression Denial of Service via multiple wildcards',
+166 silly audit report       severity: 'moderate',
+166 silly audit report       vulnerable_versions: '>=8.0.0 <8.4.0',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     }
+166 silly audit report   ],
+166 silly audit report   'smol-toml': [
+166 silly audit report     {
+166 silly audit report       id: 1115393,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-v3rj-xjv7-4jmq',
+166 silly audit report       title: 'smol-toml: Denial of Service via TOML documents containing thousands of consecutive commented lines',
+166 silly audit report       severity: 'moderate',
+166 silly audit report       vulnerable_versions: '<1.6.1',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     }
+166 silly audit report   ],
+166 silly audit report   srvx: [
+166 silly audit report     {
+166 silly audit report       id: 1115537,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-p36q-q72m-gchr',
+166 silly audit report       title: 'srvx is vulnerable to middleware bypass via absolute URI in request line ',
+166 silly audit report       severity: 'moderate',
+166 silly audit report       vulnerable_versions: '<0.11.13',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     }
+166 silly audit report   ],
+166 silly audit report   '@tootallnate/once': [
+166 silly audit report     {
+166 silly audit report       id: 1113977,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-vpq2-c234-7xj6',
+166 silly audit report       title: '@tootallnate/once vulnerable to Incorrect Control Flow Scoping',
+166 silly audit report       severity: 'low',
+166 silly audit report       vulnerable_versions: '<3.0.1',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     }
+166 silly audit report   ],
+166 silly audit report   tar: [
+166 silly audit report     {
+166 silly audit report       id: 1113375,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-83g3-92jg-28cx',
+166 silly audit report       title: 'Arbitrary File Read/Write via Hardlink Target Escape Through Symlink Chain in node-tar Extraction',
+166 silly audit report       severity: 'high',
+166 silly audit report       vulnerable_versions: '<7.5.8',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     },
+166 silly audit report     {
+166 silly audit report       id: 1114200,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-qffp-2rhf-9h96',
+166 silly audit report       title: 'tar has Hardlink Path Traversal via Drive-Relative Linkpath',
+166 silly audit report       severity: 'high',
+166 silly audit report       vulnerable_versions: '<=7.5.9',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     },
+166 silly audit report     {
+166 silly audit report       id: 1114302,
+166 silly audit report       url: 'https://github.com/advisories/GHSA-9ppj-qmqm-q256',
+166 silly audit report       title: 'node-tar Symlink Path Traversal via Drive-Relative Linkpath',
+166 silly audit report       severity: 'high',
+166 silly audit report       vulnerable_versions: '<=7.5.10',
+166 silly audit report       cwe: [Array],
+166 silly audit report       cvss: [Object]
+166 silly audit report     }
+166 silly audit report   ]
+166 silly audit report }
+167 silly packumentCache corgi:https://registry.npmjs.org/minimatch cache-miss
+168 silly packumentCache corgi:https://registry.npmjs.org/path-to-regexp cache-miss
+169 silly packumentCache corgi:https://registry.npmjs.org/smol-toml cache-miss
+170 silly packumentCache corgi:https://registry.npmjs.org/srvx cache-hit
+171 silly packumentCache corgi:https://registry.npmjs.org/@tootallnate%2fonce cache-miss
+172 silly packumentCache corgi:https://registry.npmjs.org/tar cache-miss
+173 http cache https://registry.npmjs.org/smol-toml 50ms (cache hit)
+174 silly packumentCache corgi:https://registry.npmjs.org/smol-toml set size:21871 disposed:false
+175 http cache https://registry.npmjs.org/minimatch 53ms (cache hit)
+176 silly packumentCache corgi:https://registry.npmjs.org/minimatch set size:168441 disposed:false
+177 http cache https://registry.npmjs.org/@tootallnate%2fonce 54ms (cache hit)
+178 silly packumentCache corgi:https://registry.npmjs.org/@tootallnate%2fonce set size:10818 disposed:false
+179 http cache https://registry.npmjs.org/tar 56ms (cache hit)
+180 silly packumentCache corgi:https://registry.npmjs.org/tar set size:199254 disposed:false
+181 http cache https://registry.npmjs.org/path-to-regexp 74ms (cache hit)
+182 silly packumentCache corgi:https://registry.npmjs.org/path-to-regexp set size:66575 disposed:false
+183 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fpython-analysis cache-miss
+184 http fetch GET 200 https://registry.npmjs.org/js-yaml 530ms (cache miss)
+185 silly packumentCache corgi:https://registry.npmjs.org/js-yaml set size:undefined disposed:false
+186 http cache https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.1.tgz 39ms (cache hit)
+187 http fetch GET 200 https://registry.npmjs.org/micro 997ms (cache miss)
+188 silly packumentCache corgi:https://registry.npmjs.org/micro set size:undefined disposed:false
+189 http cache https://registry.npmjs.org/micro/-/micro-9.3.5-canary.3.tgz 15ms (cache hit)
+190 http fetch GET 200 https://registry.npmjs.org/tsx 1018ms (cache miss)
+191 silly packumentCache corgi:https://registry.npmjs.org/tsx set size:undefined disposed:false
+192 http fetch GET 200 https://registry.npmjs.org/which 1038ms (cache miss)
+193 silly packumentCache corgi:https://registry.npmjs.org/which set size:undefined disposed:false
+194 http cache https://registry.npmjs.org/tsx/-/tsx-4.21.0.tgz 33ms (cache hit)
+195 http cache https://registry.npmjs.org/which/-/which-2.0.2.tgz 29ms (cache hit)
+196 http fetch GET 200 https://registry.npmjs.org/semver 1085ms (cache miss)
+197 silly packumentCache corgi:https://registry.npmjs.org/semver set size:undefined disposed:false
+198 http cache https://registry.npmjs.org/semver/-/semver-6.3.1.tgz 18ms (cache hit)
+199 http fetch GET 200 https://registry.npmjs.org/nopt 1318ms (cache miss)
+200 silly packumentCache corgi:https://registry.npmjs.org/nopt set size:undefined disposed:false
+201 http fetch GET 200 https://registry.npmjs.org/@mapbox%2fnode-pre-gyp 1341ms (cache miss)
+202 silly packumentCache corgi:https://registry.npmjs.org/@mapbox%2fnode-pre-gyp set size:undefined disposed:false
+203 http cache https://registry.npmjs.org/nopt/-/nopt-8.1.0.tgz 29ms (cache hit)
+204 http fetch GET 200 https://registry.npmjs.org/@mapbox/node-pre-gyp/-/node-pre-gyp-2.0.3.tgz 1043ms (cache revalidated)
+205 http fetch GET 200 https://registry.npmjs.org/acorn 2384ms (cache miss)
+206 silly packumentCache corgi:https://registry.npmjs.org/acorn set size:undefined disposed:false
+207 http fetch GET 200 https://registry.npmjs.org/edge-runtime 2388ms (cache miss)
+208 silly packumentCache corgi:https://registry.npmjs.org/edge-runtime set size:undefined disposed:false
+209 http fetch GET 200 https://registry.npmjs.org/tree-kill 2408ms (cache miss)
+210 silly packumentCache corgi:https://registry.npmjs.org/tree-kill set size:undefined disposed:false
+211 http fetch GET 200 https://registry.npmjs.org/@vercel%2fcervel 2476ms (cache miss)
+212 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fcervel set size:undefined disposed:false
+213 http fetch GET 200 https://registry.npmjs.org/@vercel%2fpython-analysis 2036ms (cache miss)
+214 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fpython-analysis set size:undefined disposed:false
+215 http fetch GET 200 https://registry.npmjs.org/escodegen 2495ms (cache miss)
+216 silly packumentCache corgi:https://registry.npmjs.org/escodegen set size:undefined disposed:false
+217 http fetch GET 200 https://registry.npmjs.org/esprima 2537ms (cache miss)
+218 silly packumentCache corgi:https://registry.npmjs.org/esprima set size:undefined disposed:false
+219 http fetch GET 200 https://registry.npmjs.org/node-gyp-build 2601ms (cache miss)
+220 silly packumentCache corgi:https://registry.npmjs.org/node-gyp-build set size:undefined disposed:false
+221 http cache https://registry.npmjs.org/acorn/-/acorn-8.16.0.tgz 225ms (cache hit)
+222 http cache https://registry.npmjs.org/edge-runtime/-/edge-runtime-2.5.9.tgz 222ms (cache hit)
+223 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fnode cache-miss
+224 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fremix-builder cache-miss
+225 http cache https://registry.npmjs.org/tree-kill/-/tree-kill-1.2.2.tgz 330ms (cache hit)
+226 http cache https://registry.npmjs.org/esprima/-/esprima-4.0.1.tgz 242ms (cache hit)
+227 http cache https://registry.npmjs.org/escodegen/-/escodegen-2.1.0.tgz 306ms (cache hit)
+228 http cache https://registry.npmjs.org/node-gyp-build/-/node-gyp-build-4.8.4.tgz 668ms (cache hit)
+229 http cache https://registry.npmjs.org/@vercel%2fnode 778ms (cache hit)
+230 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fnode set size:804236 disposed:false
+231 http cache https://registry.npmjs.org/@vercel%2fremix-builder 786ms (cache hit)
+232 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fremix-builder set size:135534 disposed:false
+233 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fbackends cache-miss
+234 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fexpress cache-miss
+235 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fhono cache-miss
+236 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2ffun cache-miss
+237 http fetch GET 200 https://registry.npmjs.org/@vercel%2fnft 3510ms (cache miss)
+238 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fnft set size:undefined disposed:false
+239 http fetch GET 200 https://registry.npmjs.org/@vercel/cervel/-/cervel-0.0.42.tgz 1121ms (cache revalidated)
+240 http fetch GET 200 https://registry.npmjs.org/rolldown 3803ms (cache miss)
+241 silly packumentCache corgi:https://registry.npmjs.org/rolldown set size:undefined disposed:false
+242 http fetch GET 200 https://registry.npmjs.org/@vercel/nft/-/nft-1.5.0.tgz 448ms (cache revalidated)
+243 http fetch GET 200 https://registry.npmjs.org/@vercel%2ffun 514ms (cache miss)
+244 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2ffun set size:undefined disposed:false
+245 http fetch GET 200 https://registry.npmjs.org/esbuild 4024ms (cache miss)
+246 silly packumentCache corgi:https://registry.npmjs.org/esbuild set size:undefined disposed:false
+247 http fetch GET 200 https://registry.npmjs.org/@vercel%2fbackends 531ms (cache miss)
+248 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fbackends set size:undefined disposed:false
+249 http fetch GET 200 https://registry.npmjs.org/@vercel%2fexpress 534ms (cache miss)
+250 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fexpress set size:undefined disposed:false
+251 http cache https://registry.npmjs.org/esbuild/-/esbuild-0.27.0.tgz 155ms (cache hit)
+252 http fetch GET 200 https://registry.npmjs.org/@vercel%2fhono 949ms (cache miss)
+253 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fhono set size:undefined disposed:false
+254 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2frust cache-miss
+255 http fetch GET 200 https://registry.npmjs.org/@vercel/build-utils/-/build-utils-13.12.2.tgz 5045ms (cache miss)
+256 http fetch GET 200 https://registry.npmjs.org/@vercel%2frust 567ms (cache miss)
+257 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2frust set size:undefined disposed:false
+258 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fpython cache-miss
+259 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fbuild-utils cache-miss
+260 http fetch GET 200 https://registry.npmjs.org/luxon/-/luxon-3.7.2.tgz 5308ms (cache miss)
+261 http fetch GET 200 https://registry.npmjs.org/rolldown/-/rolldown-1.0.0-rc.1.tgz 1564ms (cache miss)
+262 http fetch GET 200 https://registry.npmjs.org/@vercel%2fpython 1224ms (cache miss)
+263 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fpython set size:undefined disposed:false
+264 http fetch GET 200 https://registry.npmjs.org/@vercel%2fbuild-utils 1378ms (cache miss)
+265 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fbuild-utils set size:undefined disposed:false
+266 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2felysia cache-miss
+267 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2ffastify cache-miss
+268 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fh3 cache-miss
+269 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fkoa cache-miss
+270 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fnestjs cache-miss
+271 silly packumentCache corgi:https://registry.npmjs.org/vercel cache-miss
+272 http cache https://registry.npmjs.org/vercel 369ms (cache hit)
+273 silly packumentCache corgi:https://registry.npmjs.org/vercel set size:4083295 disposed:false
+274 http fetch GET 200 https://registry.npmjs.org/@vercel%2fkoa 906ms (cache miss)
+275 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fkoa set size:undefined disposed:false
+276 http fetch GET 200 https://registry.npmjs.org/@vercel%2ffastify 982ms (cache miss)
+277 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2ffastify set size:undefined disposed:false
+278 http fetch GET 200 https://registry.npmjs.org/@vercel%2felysia 985ms (cache miss)
+279 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2felysia set size:undefined disposed:false
+280 http fetch GET 200 https://registry.npmjs.org/@vercel%2fnestjs 1007ms (cache miss)
+281 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fnestjs set size:undefined disposed:false
+282 http fetch GET 200 https://registry.npmjs.org/@vercel%2fh3 1052ms (cache miss)
+283 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fh3 set size:undefined disposed:false
+284 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fcervel cache-miss
+285 http cache https://registry.npmjs.org/@vercel%2fcervel 38ms (cache hit)
+286 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fcervel set size:36366 disposed:false
+287 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fgatsby-plugin-vercel-builder cache-miss
+288 http fetch GET 200 https://registry.npmjs.org/@vercel%2fgatsby-plugin-vercel-builder 1614ms (cache miss)
+289 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fgatsby-plugin-vercel-builder set size:undefined disposed:false
+290 http fetch GET 200 https://registry.npmjs.org/vercel/-/vercel-50.40.0.tgz 11941ms (cache miss)
+291 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fstatic-build cache-miss
+292 http fetch GET 200 https://registry.npmjs.org/@vercel%2fstatic-build 805ms (cache miss)
+293 silly packumentCache corgi:https://registry.npmjs.org/@vercel%2fstatic-build set size:undefined disposed:false
+294 http fetch GET 200 https://registry.npmjs.org/tar/-/tar-7.5.7.tgz 16406ms (cache miss)
+295 warn deprecated tar@7.5.7: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+296 http fetch GET 200 https://registry.npmjs.org/jose/-/jose-5.9.6.tgz 19037ms (cache miss)
+297 info run esbuild@0.27.0 postinstall node_modules/esbuild node install.js
+298 info run esbuild@0.27.0 postinstall { code: 1, signal: null }
+299 warn cleanup Failed to remove some directories [
+299 warn cleanup   [
+299 warn cleanup     'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\vercel',
+299 warn cleanup     [Error: EPERM: operation not permitted, rmdir 'K:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\67eb4586ca667318\node_modules\vercel\dist\commands\list'] {
+299 warn cleanup       errno: -4048,
+299 warn cleanup       code: 'EPERM',
+299 warn cleanup       syscall: 'rmdir',
+299 warn cleanup       path: 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\vercel\\dist\\commands\\list'
+299 warn cleanup     }
+299 warn cleanup   ],
+299 warn cleanup   [
+299 warn cleanup     '\\\\?\\K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\fun',
+299 warn cleanup     [Error: EPERM: operation not permitted, rmdir 'K:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\67eb4586ca667318\node_modules\@vercel\fun\dist\src\runtimes\nodejs14.x'] {
+299 warn cleanup       errno: -4048,
+299 warn cleanup       code: 'EPERM',
+299 warn cleanup       syscall: 'rmdir',
+299 warn cleanup       path: 'K:\\التعديلات الجديدة\\Rahma Al Muhdah\\.codex-temp\\npm-cache\\_npx\\67eb4586ca667318\\node_modules\\@vercel\\fun\\dist\\src\\runtimes\\nodejs14.x'
+299 warn cleanup     }
+299 warn cleanup   ]
+299 warn cleanup ]
+300 verbose stack Error: Lock compromised
+300 verbose stack     at AbortSignal.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\libnpmexec\lib\with-lock.js:52:30)
+300 verbose stack     at [nodejs.internal.kHybridDispatch] (node:internal/event_target:845:20)
+300 verbose stack     at AbortSignal.dispatchEvent (node:internal/event_target:778:26)
+300 verbose stack     at runAbort (node:internal/abort_controller:488:10)
+300 verbose stack     at abortSignal (node:internal/abort_controller:459:3)
+300 verbose stack     at AbortController.abort (node:internal/abort_controller:507:5)
+300 verbose stack     at Timeout.touchLock (C:\Program Files\nodejs\node_modules\npm\node_modules\libnpmexec\lib\with-lock.js:161:18)
+301 error code ECOMPROMISED
+302 error Lock compromised
+303 silly unfinished npm timer reify 1775519106941
+304 silly unfinished npm timer reify:build 1775519127259
+305 silly unfinished npm timer build 1775519127260
+306 silly unfinished npm timer build:deps 1775519127260
+307 silly unfinished npm timer build:run:postinstall 1775519128788
+308 silly unfinished npm timer build:run:postinstall:node_modules/esbuild 1775519128805
+309 silly unfinished npm timer reify:rollback:retireShallow 1775519135113
+310 verbose cwd K:\التعديلات الجديدة\Rahma Al Muhdah
+311 verbose os Windows_NT 10.0.26100
+312 verbose node v24.13.0
+313 verbose npm  v11.6.2
+314 notice
+314 notice New minor version of npm available! 11.6.2 -> 11.12.1
+314 notice Changelog: https://github.com/npm/cli/releases/tag/v11.12.1
+314 notice To update run: npm install -g npm@11.12.1
+314 notice  { force: true, Symbol(proc-log.meta): true }
+315 verbose exit 1
+316 verbose code 1
+317 error A complete log of this run can be found in: K:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_logs\2026-04-06T23_43_41_170Z-debug-0.log

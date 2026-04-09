@@ -97,7 +97,7 @@ const envFirebaseConfig: FirebaseRuntimeConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID?.trim() || '',
 };
 
-function getRuntimeFirebaseConfig(): FirebaseRuntimeConfig {
+export function getFirebaseRuntimeConfig(): FirebaseRuntimeConfig {
   const runtimeConfig =
     typeof window !== 'undefined' && window.__RAHMA_FIREBASE_CONFIG__ && typeof window.__RAHMA_FIREBASE_CONFIG__ === 'object'
       ? window.__RAHMA_FIREBASE_CONFIG__
@@ -115,7 +115,7 @@ function getRuntimeFirebaseConfig(): FirebaseRuntimeConfig {
 }
 
 export function hasFirebaseConfig() {
-  const firebaseConfig = getRuntimeFirebaseConfig();
+  const firebaseConfig = getFirebaseRuntimeConfig();
   return Boolean(firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId && firebaseConfig.appId);
 }
 
@@ -128,7 +128,7 @@ export async function getFirebaseServices(): Promise<FirebaseServices | null> {
 
   if (!firebaseServicesPromise) {
     firebaseServicesPromise = Promise.resolve().then(() => {
-      const firebaseConfig = getRuntimeFirebaseConfig();
+      const firebaseConfig = getFirebaseRuntimeConfig();
       const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);

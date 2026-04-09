@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>توظيف شركات | دليل الشركات النشطة والفرص الحالية | الرحمة المهداه للتوظيف</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
+  <link rel="icon" type="image/png" href="logo-mark.png"/>
+  <link rel="stylesheet" href="site.css?v=20260407-2"/>
+  <script src="firebase-site-config.js" defer></script>
+  <script src="site.js?v=20260407-2" defer></script>
+  <!-- RAHMA SEO START -->
+  <meta name="description" content="دليل توظيف شركات يعرض الشركات النشطة والفرص الحالية بشكل منظم مع الوصول السريع إلى التفاصيل والوظائف المرتبطة.">
+  <meta name="keywords" content="توظيف شركات, شركات في مصر, وظائف الشركات, دليل الشركات, فرص عمل, شركات القاهرة">
+  <meta name="robots" content="index,follow">
+  <meta property="og:site_name" content="الرحمة المهداه للتوظيف">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="توظيف شركات | دليل الشركات النشطة والفرص الحالية | الرحمة المهداه للتوظيف">
+  <meta property="og:description" content="دليل توظيف شركات يعرض الشركات النشطة والفرص الحالية بشكل منظم مع الوصول السريع إلى التفاصيل والوظائف المرتبطة.">
+  <meta property="og:url" content="/companies.html">
+  <meta property="og:image" content="/logo-mark.png">
+  <meta property="og:locale" content="ar_EG">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="توظيف شركات | دليل الشركات النشطة والفرص الحالية | الرحمة المهداه للتوظيف">
+  <meta name="twitter:description" content="دليل توظيف شركات يعرض الشركات النشطة والفرص الحالية بشكل منظم مع الوصول السريع إلى التفاصيل والوظائف المرتبطة.">
+  <meta name="twitter:image" content="/logo-mark.png">
+  <link rel="canonical" href="/companies.html">
+<!-- RAHMA SEO END -->
+</head>
+<body class="page-compact antialiased">
+  <header class="glass-nav site-topbar fixed top-0 w-full z-50">
+    <div class="container mx-auto px-5 lg:px-6">
+      <div class="site-header__inner">
+        <a class="site-brand" href="index.html" aria-label="الرحمة المهداه للتوظيف">
+          <span class="site-brand__mark">
+            <img alt="شعار الرحمة المهداه للتوظيف" class="site-logo" src="logo-mark.png"/>
+          </span>
+          <span class="site-brand__copy">
+            <strong class="site-name">الرحمة المهداه للتوظيف</strong>
+          </span>
+        </a>
+
+        <nav class="site-nav hidden lg:flex" aria-label="التنقل الرئيسي">
+          <a class="site-nav__link" href="index.html">الرئيسية</a>
+          <a class="site-nav__link" href="jobs.html">الوظائف</a>
+          <a class="site-nav__link is-active" href="companies.html">الشركات</a>
+          <a class="site-nav__link" href="about.html">من نحن</a>
+        </nav>
+
+        <div class="site-header__actions">
+          <a class="site-action site-action--ghost" href="track-application.html">متابعة الطلب</a>
+          <a class="site-action site-action--ghost" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
+          <a class="site-action site-action--primary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="product-shell">
+    <section class="page-section page-section--hero">
+      <div class="container mx-auto px-5 lg:px-6">
+        <div class="page-card hero-card hero-card--light">
+          <span class="section-eyebrow">الشركات النشطة</span>
+          <h1>اعرف الشركة قبل ما تقدم</h1>
+          <p class="hero-card__copy">
+            تصفح الشركات المنشورة حاليًا وتعرّف على مجالاتها ووسائل التواصل المتاحة قبل التقديم.
+          </p>
+
+          <div class="directory-filters">
+            <label class="directory-filters__field">
+              <span><i class="fa-solid fa-magnifying-glass"></i></span>
+              <input data-companies-search placeholder="ابحث باسم الشركة أو القطاع أو الموقع" type="text"/>
+            </label>
+
+            <label class="directory-filters__field">
+              <span><i class="fa-solid fa-layer-group"></i></span>
+              <select data-companies-sector>
+                <option value="">كل القطاعات</option>
+                <option>تقنية المعلومات</option>
+                <option>الرعاية الصحية</option>
+                <option>التجارة والتوزيع</option>
+                <option>النقل والخدمات اللوجستية</option>
+                <option>الصناعة</option>
+                <option>خدمة العملاء</option>
+              </select>
+            </label>
+
+            <label class="directory-filters__field">
+              <span><i class="fa-solid fa-location-dot"></i></span>
+              <select data-companies-location>
+                <option value="">كل المدن</option>
+                <option>القاهرة</option>
+                <option>القاهرة الجديدة</option>
+                <option>الجيزة</option>
+                <option>الإسكندرية</option>
+                <option>المنصورة</option>
+                <option>العاشر من رمضان</option>
+              </select>
+            </label>
+
+            <button data-companies-filter type="button">عرض النتائج</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section page-section--tight">
+      <div class="container mx-auto px-5 lg:px-6">
+        <div class="section-head section-head--inline">
+          <div>
+            <span class="section-eyebrow">الدليل</span>
+            <h2 class="section-title">نتائج الشركات</h2>
+            <p class="section-copy">فلتر بسرعة ثم افتح التفاصيل أو الوظائف الخاصة بكل شركة.</p>
+          </div>
+          <span class="request-chip" data-companies-count>0 شركات</span>
+        </div>
+
+        <div class="company-directory-grid" data-companies-grid></div>
+
+        <div class="page-card company-directory-empty" data-companies-empty>
+          <h3>لا توجد شركات معتمدة حاليًا</h3>
+          <p>أول شركة معتمدة من لوحة التحكم ستظهر هنا مباشرة مع التفاصيل الخاصة بها.</p>
+        </div>
+
+        <div class="mt-8 flex justify-center gap-2" data-companies-pagination data-page-size="6">
+          <button class="size-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 disabled:cursor-not-allowed disabled:opacity-40" type="button" data-page-prev aria-label="الصفحة السابقة"><i class="fa-solid fa-angle-right"></i></button>
+          <div class="flex justify-center gap-2" data-pagination-pages></div>
+          <button class="size-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 disabled:cursor-not-allowed disabled:opacity-40" type="button" data-page-next aria-label="الصفحة التالية"><i class="fa-solid fa-angle-left"></i></button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="public-footer">
+    <div class="container mx-auto px-5 lg:px-6">
+      <div class="public-footer__grid">
+        <div class="public-footer__brand">
+          <div class="site-brand">
+            <span class="site-brand__mark">
+              <img alt="شعار الرحمة المهداه للتوظيف" class="site-logo" src="logo-mark.png"/>
+            </span>
+            <span class="site-brand__copy">
+              <strong class="site-name">الرحمة المهداه للتوظيف</strong>
+            </span>
+          </div>
+          <p>صفحة تجمع الشركات النشطة وتعرض أهم المعلومات قبل الدخول على الوظائف أو التقديم.</p>
+        </div>
+
+        <div class="public-footer__links">
+          <h3>الروابط</h3>
+          <a href="index.html">الرئيسية</a>
+          <a href="jobs.html">الوظائف</a>
+          <a href="about.html">من نحن</a>
+          <a href="contact.html">تواصل معنا</a>
+        </div>
+
+        <div class="public-footer__links">
+          <h3>مباشر</h3>
+          <a href="companies.html">الشركات</a>
+          <a href="track-application.html">متابعة الطلب</a>
+          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+        </div>
+      </div>
+
+      <div class="public-footer__bottom">
+        <p><span dir="ltr">© 2026</span> الرحمة المهداه للتوظيف</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,29 @@
+{
+  "settings": {
+    "userRegistration": true,
+    "companyRegistration": true,
+    "jobApplications": true,
+    "fileUploads": true,
+    "maintenanceMode": false,
+    "maintenanceReason": "",
+    "maintenanceUntil": "",
+    "maxFileSizeMb": 5,
+    "allowedFileTypes": [
+      "pdf",
+      "doc",
+      "docx",
+      "png",
+      "jpg",
+      "jpeg",
+      "webp",
+      "gif",
+      "avif"
+    ],
+    "systemMessage": "",
+    "liveChat": true
+  },
+  "content": {},
+  "jobs": [],
+  "companies": [],
+  "applications": []
+}

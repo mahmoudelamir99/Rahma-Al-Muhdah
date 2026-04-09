@@ -107,23 +107,23 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
     <PortalShell
       screenLabel="فتح حساب شركة"
       badge="إنشاء حساب جديد"
-      title="أنشئ ملف شركتك مرة واحدة وابدأ إدارة الوظائف من لوحة منظمة."
-      description="املأ البيانات الأساسية فقط، وبعدها تنتقل مباشرة إلى لوحة الشركة لمتابعة الوظائف، مراجعة الطلبات، وتحديث معلومات المؤسسة."
-      sideLabel="بدء التشغيل"
-      sideTitle="واجهة أخف للشركات من أول تسجيل وحتى أول وظيفة منشورة."
-      sideDescription="الحساب الجديد يجهز ملف الشركة، يربطه باللوحة، ويضع بين يديك تجربة أسرع وأوضح بدون ازدحام بصري."
+      title="انضم إلى شبكة شركائنا"
+      description="أنشئ حسابًا لشركتك وابدأ في نشر وظائفك واستقطاب المواهب اليوم."
+      sideLabel="حساب شركة"
+      sideTitle="ابدأ تجهيز ملف شركتك وخطة التوظيف."
+      sideDescription="بعد إنشاء الحساب ستتمكن من نشر الوظائف، متابعة الطلبات، وتحديث بيانات الشركة من لوحة واحدة."
       sideHighlights={[
         {
-          title: 'نموذج مختصر',
-          description: 'الحقول الأساسية فقط: اسم الشركة، المجال، الدولة، المدينة، وبيانات التواصل الأساسية.',
+          title: 'البيانات',
+          description: 'أدخل بيانات شركتك الأساسية مرة واحدة ليتم تجهيز الملف والحساب مباشرة.',
         },
         {
-          title: 'انتقال مباشر',
-          description: 'بعد نجاح التسجيل تنتقل مباشرة لمتابعة الوظائف والمتقدمين من نفس الحساب.',
+          title: 'الوظائف',
+          description: 'ابدأ في نشر الوظائف ومراجعة الطلبات من نفس الحساب بدون خطوات إضافية.',
         },
         {
-          title: 'تجربة متجاوبة',
-          description: 'التصميم مضبوط لسطح المكتب، اللابتوب، الأجهزة اللوحية، والهواتف بدون تضخم.',
+          title: 'التواصل',
+          description: 'أضف وسائل التواصل المناسبة حتى تصل المواهب إلى شركتك بسهولة.',
         },
       ]}
       status={status ? <StatusMessage tone={status.tone} message={status.message} /> : null}
@@ -228,19 +228,17 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
               <span className="portal-field-icon">
                 <Users className="h-4 w-4" />
               </span>
-              <select
+              <input
                 required
-                className="portal-select portal-input--with-right"
+                type="number"
+                min="1"
+                step="1"
+                inputMode="numeric"
+                className="portal-input portal-input--with-right"
+                placeholder="مثال: 35"
                 value={teamSize}
-                onChange={(event) => setTeamSize(event.target.value)}
-              >
-                <option value="">اختر الحجم</option>
-                <option value="1-10">1 - 10</option>
-                <option value="11-25">11 - 25</option>
-                <option value="26-50">26 - 50</option>
-                <option value="51-100">51 - 100</option>
-                <option value="100+">أكثر من 100</option>
-              </select>
+                onChange={(event) => setTeamSize(event.target.value.replace(/[^\d]/g, ''))}
+              />
             </div>
           </label>
 

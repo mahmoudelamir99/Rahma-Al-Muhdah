@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="utf-8"/>
@@ -10,9 +10,10 @@
   <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
   <link rel="icon" type="image/png" href="logo-mark.png"/>
-  <link rel="stylesheet" href="site.css?v=20260406-2"/>
+  <link rel="stylesheet" href="site.css?v=20260408-1"/>
   <script src="firebase-site-config.js" defer></script>
-  <script src="site.js?v=20260406-2" defer></script>
+  <script src="assets/vendor/vanilla-tilt/vanilla-tilt.min.js?v=20260408-1" defer></script>
+  <script src="site.js?v=20260408-1" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="اعثر على وظائف في مصر وفرص عمل حقيقية وتوظيف شركات من منصة عربية منظمة تعرض الوظائف المنشورة فعليًا وتسهّل التقديم والمتابعة.">
   <meta name="keywords" content="وظائف في مصر, فرص عمل, توظيف شركات, وظائف شاغرة, تقديم وظائف, وظائف القاهرة, وظائف العاشر من رمضان">
@@ -31,7 +32,7 @@
   <link rel="canonical" href="/">
 <!-- RAHMA SEO END -->
 </head>
-<body class="page-compact antialiased">
+<body class="page-compact page-home antialiased">
   <header class="glass-nav site-topbar fixed top-0 w-full z-50">
     <div class="container mx-auto px-5 lg:px-6">
       <div class="site-header__inner">
@@ -63,7 +64,7 @@
   <main class="product-shell">
     <section class="product-hero" data-purpose="hero-section">
       <div class="container mx-auto px-5 lg:px-6">
-        <div class="product-hero__grid product-hero__grid--single">
+        <div class="product-hero__grid home-cinematic-hero">
           <div class="product-hero__copy">
             <span class="section-eyebrow">وظائف وشركات</span>
             <h1>وظائف منشورة فعليًا وتقديم مباشر برقم طلب واضح.</h1>
@@ -83,11 +84,6 @@
               </div>
 
               <div class="home-search-card__field">
-                <span><i class="fa-solid fa-globe"></i></span>
-                <select data-home-country></select>
-              </div>
-
-              <div class="home-search-card__field hidden" data-home-governorate-wrap>
                 <span><i class="fa-solid fa-location-dot"></i></span>
                 <select data-home-governorate></select>
               </div>
@@ -106,13 +102,13 @@
             <div class="home-live-strip" aria-label="إحصائيات وتشغيل المنصة">
               <article class="home-live-card">
                 <span class="home-live-card__label">الوظائف المعروضة الآن</span>
-                <strong data-home-live-stat="jobs">0</strong>
+                <strong data-home-live-stat="jobs" data-countup>0</strong>
                 <p>يُعرض هنا عدد الوظائف المعتمدة والمفتوحة فقط.</p>
               </article>
 
               <article class="home-live-card">
                 <span class="home-live-card__label">الشركات النشطة</span>
-                <strong data-home-live-stat="companies">0</strong>
+                <strong data-home-live-stat="companies" data-countup>0</strong>
                 <p>العداد يرتبط بالشركات المعتمدة الظاهرة للجمهور فقط.</p>
               </article>
 
@@ -126,6 +122,33 @@
               </article>
             </div>
           </div>
+
+          <div class="home-cinematic-visual">
+            <article class="home-cinematic-visual__panel">
+              <span class="home-cinematic-visual__eyebrow">تجربة توظيف أكثر حيوية</span>
+              <div class="home-cinematic-visual__logo">
+                <img alt="شعار الرحمة المهداه للتوظيف" src="logo-mark.png"/>
+              </div>
+              <div class="home-cinematic-visual__copy">
+                <strong>واجهة واضحة بصريًا وسريعة عمليًا</strong>
+                <p>بحث مباشر، متابعة واضحة، وحركة محسوبة تجعل تجربة التصفح أكثر سلاسة وعمقًا.</p>
+              </div>
+              <div class="home-cinematic-visual__signals">
+                <article>
+                  <span>بطاقات تفاعلية</span>
+                  <strong>Glow + Tilt</strong>
+                </article>
+                <article>
+                  <span>نتائج أسرع</span>
+                  <strong>Search First</strong>
+                </article>
+                <article>
+                  <span>متابعة أوضح</span>
+                  <strong>Request Flow</strong>
+                </article>
+              </div>
+            </article>
+          </div>
         </div>
       </div>
     </section>
@@ -137,20 +160,30 @@
           <h2 class="section-title">كل خطوة في المنصة لها وظيفة واضحة</h2>
         </div>
 
-        <div class="compact-grid compact-grid--three">
-          <article class="page-card">
+        <div class="bento-grid bento-grid--home">
+          <article class="page-card bento-card bento-card--feature">
+            <h3>رحلة توظيف أسرع من أول ضغطة</h3>
+            <p>الموقع العام مصمم ليقود المستخدم بسرعة من البحث إلى التفاصيل ثم إلى التقديم والمتابعة بدون ازدحام بصري أو خطوات مشتتة.</p>
+            <div class="bento-card__meta">
+              <span>بحث مباشر</span>
+              <span>تقديم فوري</span>
+              <span>متابعة واضحة</span>
+            </div>
+          </article>
+
+          <article class="page-card bento-card">
             <h3>للتقديم</h3>
             <p>كل وظيفة لها تفاصيل أساسية ونموذج تقديم واضح، وبعد الإرسال يظهر رقم طلب للمتابعة.</p>
             <a class="site-action site-action--secondary" href="jobs.html">عرض الوظائف</a>
           </article>
 
-          <article class="page-card">
+          <article class="page-card bento-card bento-card--tall">
             <h3>للشركات</h3>
             <p>حساب شركة واحد يكفي لنشر الوظائف، استقبال الطلبات، ومراجعة الحالات من لوحة واحدة.</p>
             <a class="site-action site-action--secondary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">تسجيل شركة</a>
           </article>
 
-          <article class="page-card">
+          <article class="page-card bento-card">
             <h3>للمتابعة</h3>
             <p>صفحة المتابعة تعرض حالة الطلب مباشرة: قيد المراجعة أو تمت الموافقة أو تم الرفض مع السبب عند توفره.</p>
             <a class="site-action site-action--secondary" href="track-application.html">متابعة الطلب</a>
@@ -202,6 +235,8 @@
   </footer>
 </body>
 </html>
+
+
 
 
 

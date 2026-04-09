@@ -237,7 +237,8 @@ export type CompanyRecord = {
   status: 'approved' | 'pending' | 'restricted' | 'archived';
   verified: boolean;
   notes: NoteRecord[];
-  deletedBy: 'admin' | null;
+  deletedBy: 'admin' | 'company' | null;
+  deletionReason?: string;
   deletedStatusSnapshot: 'approved' | 'pending' | 'restricted' | 'archived' | null;
   deletedAt: string | null;
 };
@@ -1030,7 +1031,8 @@ function normalizeCompanyRecordData(company: CompanyRecord): CompanyRecord {
     openings: Number(company.openings || 0),
     verified: Boolean(company.verified),
     notes: Array.isArray(company.notes) ? company.notes : [],
-    deletedBy: company.deletedBy === 'admin' ? 'admin' : null,
+    deletedBy: company.deletedBy === 'company' || company.deletedBy === 'admin' ? company.deletedBy : null,
+    deletionReason: String(company.deletionReason || '').trim(),
     deletedStatusSnapshot:
       company.deletedStatusSnapshot === 'approved' ||
       company.deletedStatusSnapshot === 'pending' ||
@@ -1215,6 +1217,7 @@ function mergeCompanyRecords(current: CompanyRecord, incoming: CompanyRecord): C
     openings: Math.max(Number(current.openings || 0), Number(incoming.openings || 0)),
     verified: current.verified || incoming.verified,
     deletedBy: incoming.deletedBy || current.deletedBy || null,
+    deletionReason: pickPreferredText(incoming.deletionReason || '', current.deletionReason || ''),
     deletedStatusSnapshot: incoming.deletedStatusSnapshot || current.deletedStatusSnapshot || null,
     status:
       (incoming.status === 'approved' || current.status === 'approved'
@@ -2485,6 +2488,7 @@ function buildPublicRuntime(state: AdminState) {
       status: job.status,
       featured: job.featured,
       notes: job.notes,
+      deletedBy: job.deletedBy,
       deletedAt: job.deletedAt,
     })),
     companies: cleanState.companies.map((company) => ({
@@ -2502,6 +2506,8 @@ function buildPublicRuntime(state: AdminState) {
       status: company.status,
       verified: company.verified,
       notes: company.notes,
+      deletedBy: company.deletedBy,
+      deletionReason: company.deletionReason || '',
       deletedAt: company.deletedAt,
     })),
     applications: cleanState.applications.map((application) => ({
@@ -2825,7 +2831,13 @@ function mapFirebaseCompanyToAdmin(entry: Record<string, unknown>): CompanyRecor
             : 'approved',
     verified: Boolean(entry.verified),
     notes: sanitizeRemoteNotes(entry.notes),
-    deletedBy: String(entry.deletedBy || '').trim() === 'admin' ? 'admin' : null,
+    deletedBy:
+      String(entry.deletedBy || '').trim() === 'company'
+        ? 'company'
+        : String(entry.deletedBy || '').trim() === 'admin'
+          ? 'admin'
+          : null,
+    deletionReason: String(entry.deletionReason || entry.deleteReason || '').trim(),
     deletedStatusSnapshot:
       String(entry.deletedStatusSnapshot || '').trim() === 'approved'
         ? 'approved'
@@ -3399,6 +3411,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
               openings: company.openings,
               notes: company.notes || [],
               deletedBy: company.deletedBy || null,
+              deletionReason: company.deletionReason || '',
               deletedStatusSnapshot: company.deletedStatusSnapshot || null,
               deletedAt: company.deletedAt || null,
               createdAt: new Date().toISOString(),
@@ -3981,6 +3994,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
               ...company,
               deletedAt: null,
               deletedBy: null,
+              deletionReason: '',
               status: company.deletedStatusSnapshot || 'approved',
               deletedStatusSnapshot: null,
             }
@@ -3989,7 +4003,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       jobs: current.jobs.map((job) => {
         const company = current.companies.find((item) => item.id === companyId);
         if (!company) return job;
-        return normalize(job.companyName) === normalize(company.name) && job.deletedBy === 'admin'
+        return (
+          normalize(job.companyName) === normalize(company.name) &&
+          job.deletedAt &&
+          (job.deletedBy === 'admin' || job.deletedBy === 'company')
+        )
           ? {
               ...job,
               deletedAt: null,
@@ -4031,6 +4049,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
     const nextCompanyId =
       existingCompany?.id ||
+      String(companyId || '').trim() ||
       `company-${normalize(trimmedName).replace(/[^a-z0-9]/g, '-') || createId('company')}`;
     const nextStatus = draft.status || existingCompany?.status || 'pending';
     const nextVerified = draft.verified ?? existingCompany?.verified ?? false;

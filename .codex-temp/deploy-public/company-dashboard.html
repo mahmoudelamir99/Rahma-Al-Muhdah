@@ -1,0 +1,675 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>لوحة الشركة | إدارة الوظائف والطلبات | الرحمة المهداه للتوظيف</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+  <link rel="stylesheet" href="site.css?v=20260407-2"/>
+  <script src="firebase-site-config.js" defer></script>
+  <script src="site.js?v=20260407-2" defer></script>
+  <!-- RAHMA SEO START -->
+  <meta name="description" content="لوحة الشركة الداخلية لإدارة الوظائف والطلبات وتحديث بيانات الشركة داخل منصة التوظيف بشكل مباشر وآمن.">
+  <meta name="keywords" content="لوحة الشركة, إدارة الوظائف, إدارة الطلبات, توظيف شركات">
+  <meta name="robots" content="noindex,nofollow">
+  <meta property="og:site_name" content="الرحمة المهداه للتوظيف">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="لوحة الشركة | إدارة الوظائف والطلبات | الرحمة المهداه للتوظيف">
+  <meta property="og:description" content="لوحة الشركة الداخلية لإدارة الوظائف والطلبات وتحديث بيانات الشركة داخل منصة التوظيف بشكل مباشر وآمن.">
+  <meta property="og:url" content="/company-dashboard.html">
+  <meta property="og:image" content="/logo-mark.png">
+  <meta property="og:locale" content="ar_EG">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="لوحة الشركة | إدارة الوظائف والطلبات | الرحمة المهداه للتوظيف">
+  <meta name="twitter:description" content="لوحة الشركة الداخلية لإدارة الوظائف والطلبات وتحديث بيانات الشركة داخل منصة التوظيف بشكل مباشر وآمن.">
+  <meta name="twitter:image" content="/logo-mark.png">
+  <link rel="canonical" href="/company-dashboard.html">
+<!-- RAHMA SEO END -->
+</head>
+<body class="page-company-dashboard antialiased">
+  <div class="dashboard-loading-screen" data-company-dashboard-loading>
+    <div class="dashboard-loading-screen__card">
+      <span class="dashboard-inline-spinner" aria-hidden="true"></span>
+      <strong data-company-dashboard-loading-title>جارٍ تجهيز لوحة الشركة</strong>
+      <p data-company-dashboard-loading-message>نحمّل بيانات الوظائف والطلبات وملف الشركة الآن.</p>
+    </div>
+  </div>
+  <div class="dashboard-shell">
+    <button class="dashboard-mobile-backdrop" data-company-sidebar-close type="button" aria-label="إغلاق القائمة"></button>
+
+    <aside class="dashboard-sidebar" data-company-sidebar>
+      <div class="dashboard-brand-card">
+        <div class="dashboard-brand-card__top site-brand">
+          <div class="w-11 h-11 flex items-center justify-center">
+            <img alt="شعار الرحمة المهداه للتوظيف" class="w-9 h-9 object-contain site-logo" src="logo-mark.png"/>
+          </div>
+          <div>
+            <h1 class="site-name">الرحمة المهداه للتوظيف</h1>
+            <p>لوحة تنفيذية لصاحب العمل</p>
+          </div>
+        </div>
+        <div class="dashboard-brand-card__meta">
+          <span>جاهز للنشر والمتابعة</span>
+          <strong>إدارة التوظيف من مكان واحد</strong>
+        </div>
+      </div>
+
+      <nav class="dashboard-nav">
+        <a class="dashboard-nav__link is-active" href="company-dashboard.html">
+          <i class="fa-solid fa-table-cells-large dashboard-inline-icon" aria-hidden="true"></i>
+          <span>لوحة القيادة</span>
+        </a>
+        <a class="dashboard-nav__link" href="#company-jobs">
+          <i class="fa-solid fa-briefcase dashboard-inline-icon" aria-hidden="true"></i>
+          <span>وظائفي</span>
+        </a>
+        <a class="dashboard-nav__link" href="#company-applications">
+          <i class="fa-solid fa-users dashboard-inline-icon" aria-hidden="true"></i>
+          <span>المتقدمون</span>
+        </a>
+        <a class="dashboard-nav__link" href="#company-actions">
+          <i class="fa-solid fa-bolt dashboard-inline-icon" aria-hidden="true"></i>
+          <span>إجراءات سريعة</span>
+        </a>
+        <a class="dashboard-nav__link" href="#company-profile">
+          <i class="fa-solid fa-building dashboard-inline-icon" aria-hidden="true"></i>
+          <span>ملف الشركة</span>
+        </a>
+      </nav>
+
+      <div class="dashboard-sidebar__footer">
+        <button class="dashboard-cta-button" data-company-job-open="true" type="button">
+          <i class="fa-solid fa-circle-plus dashboard-inline-icon" aria-hidden="true"></i>
+          <span>نشر وظيفة جديدة</span>
+        </button>
+        <a class="dashboard-logout-link" data-logout="true" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">
+          <i class="fa-solid fa-right-from-bracket dashboard-inline-icon" aria-hidden="true"></i>
+          <span>تسجيل الخروج</span>
+        </a>
+      </div>
+    </aside>
+
+    <main class="dashboard-content">
+      <header class="dashboard-topbar">
+        <div class="dashboard-topbar__cluster">
+          <button class="dashboard-mobile-toggle" data-company-sidebar-toggle type="button" aria-label="فتح القائمة">
+            <i class="fa-solid fa-bars dashboard-inline-icon" aria-hidden="true"></i>
+          </button>
+
+          <label class="dashboard-search">
+            <i class="fa-solid fa-magnifying-glass dashboard-inline-icon" aria-hidden="true"></i>
+            <input data-company-dashboard-search placeholder="ابحث عن وظيفة أو مرشح" type="search"/>
+          </label>
+        </div>
+
+        <div class="dashboard-topbar__actions">
+          <div class="dashboard-profile-chip">
+            <div class="dashboard-profile-chip__avatar">
+              <img data-company-dashboard-avatar-img src="logo-mark.png" alt="شعار الشركة"/>
+            </div>
+            <div>
+              <small>الحساب الحالي</small>
+              <strong data-company-dashboard-name>الحساب الحالي</strong>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="dashboard-hero dashboard-hero--company">
+        <div class="dashboard-hero__content">
+          <span class="dashboard-kicker">لوحة الشركة</span>
+          <h2 data-company-dashboard-greeting>مرحباً بك مجدداً</h2>
+          <p>من هنا تراجع الوظائف الحالية، تتابع الطلبات الواردة، وتحدّث بيانات الشركة بدون التنقل بين صفحات كثيرة.</p>
+          <div class="dashboard-hero__actions">
+            <button class="dashboard-pill-button dashboard-pill-button--primary" data-company-job-open="true" type="button">نشر وظيفة</button>
+          </div>
+        </div>
+
+        <div class="dashboard-hero__side">
+          <article class="dashboard-highlight-card">
+            <small>المسار اليومي</small>
+            <strong>حدّث بيانات الشركة، انشر الوظيفة، ثم راجع الطلبات الجديدة</strong>
+            <span>البيانات الأساسية والطلبات كلها مجمعة هنا بشكل مباشر وواضح.</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="dashboard-stat-grid">
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-card__icon dashboard-stat-card__icon--blue">
+            <i class="fa-solid fa-circle-check dashboard-inline-icon" aria-hidden="true"></i>
+          </div>
+          <div>
+            <small>وظائف نشطة</small>
+            <strong data-company-stat="jobs">0</strong>
+          </div>
+          <span class="dashboard-stat-card__badge">مباشر</span>
+        </article>
+
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-card__icon dashboard-stat-card__icon--mint">
+            <i class="fa-solid fa-file-lines dashboard-inline-icon" aria-hidden="true"></i>
+          </div>
+          <div>
+            <small>إجمالي الطلبات</small>
+            <strong data-company-stat="applications">0</strong>
+          </div>
+          <span class="dashboard-stat-card__badge">إجمالي</span>
+        </article>
+
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-card__icon dashboard-stat-card__icon--amber">
+            <i class="fa-solid fa-hourglass-half dashboard-inline-icon" aria-hidden="true"></i>
+          </div>
+          <div>
+            <small>قيد المراجعة</small>
+            <strong data-company-stat="pending">0</strong>
+          </div>
+          <span class="dashboard-stat-card__badge dashboard-stat-card__badge--warning">تحتاج متابعة</span>
+        </article>
+
+        <article class="dashboard-stat-card">
+          <div class="dashboard-stat-card__icon dashboard-stat-card__icon--violet">
+            <i class="fa-solid fa-user-group dashboard-inline-icon" aria-hidden="true"></i>
+          </div>
+          <div>
+            <small>مقابلات</small>
+            <strong data-company-stat="interviews">0</strong>
+          </div>
+          <span class="dashboard-stat-card__badge">جاهزة</span>
+        </article>
+      </section>
+
+      <section class="dashboard-panel dashboard-panel--company-profile" id="company-profile">
+        <div class="dashboard-panel__header">
+          <div>
+            <span class="section-eyebrow">ملف الشركة</span>
+            <h3>تعديل بيانات الشركة والصور</h3>
+          </div>
+        </div>
+
+        <div class="dashboard-company-profile">
+          <div class="dashboard-company-profile__preview">
+            <div class="dashboard-company-profile__cover">
+              <img data-company-profile-cover-preview src="assets/company-placeholder.svg" alt="معاينة غلاف الشركة"/>
+            </div>
+
+            <div class="dashboard-company-profile__identity">
+              <div class="dashboard-company-profile__avatar">
+                <img data-company-profile-logo-preview src="logo-mark.png" alt="شعار الشركة"/>
+              </div>
+              <div class="dashboard-company-profile__identity-copy">
+                <strong data-company-profile-name>الحساب الحالي</strong>
+                <p data-company-profile-sector>القطاع</p>
+                <span data-company-profile-city>المدينة</span>
+              </div>
+            </div>
+
+            <div class="dashboard-company-profile__meta">
+              <div class="dashboard-company-profile__meta-row">
+                <span>الموبايل</span>
+                <strong data-company-profile-phone>غير محدد</strong>
+              </div>
+              <div class="dashboard-company-profile__meta-row" data-company-profile-landline-row hidden>
+                <span>الخط الأرضي</span>
+                <strong data-company-profile-landline>غير محدد</strong>
+              </div>
+              <div class="dashboard-company-profile__meta-row">
+                <span>الموقع الإلكتروني</span>
+                <a data-company-profile-website href="company-details.html" rel="noopener noreferrer" target="_blank">أضف الموقع الإلكتروني</a>
+              </div>
+              <div class="dashboard-company-profile__socials" data-company-profile-socials hidden>
+                <span>وسائل التواصل</span>
+            <div class="dashboard-company-profile__social-list">
+              <a data-company-profile-social="facebook" href="#" hidden rel="noopener noreferrer" target="_blank">فيسبوك</a>
+              <a data-company-profile-social="instagram" href="#" hidden rel="noopener noreferrer" target="_blank">إنستجرام</a>
+              <a data-company-profile-social="linkedin" href="#" hidden rel="noopener noreferrer" target="_blank">لينكدإن</a>
+              <a data-company-profile-social="x" href="#" hidden rel="noopener noreferrer" target="_blank">إكس</a>
+            </div>
+          </div>
+              <p data-company-profile-description>أضف نبذة واضحة تعرّف بالشركة وتوضح طبيعة عملها.</p>
+            </div>
+          </div>
+
+          <form class="dashboard-company-profile__form" data-company-profile-form="true">
+            <div class="dashboard-job-form__grid">
+              <label class="dashboard-job-field">
+                <span>اسم الشركة</span>
+                <input name="company_name" type="text" placeholder="اسم الشركة" autocomplete="organization" required/>
+              </label>
+
+              <label class="dashboard-job-field">
+                <span>القطاع</span>
+                <input name="company_sector" type="text" placeholder="مثال: تصنيع - مبيعات - خدمات" required/>
+              </label>
+            </div>
+
+            <div class="dashboard-job-form__grid">
+              <label class="dashboard-job-field">
+                <span>المدينة</span>
+                <input name="company_city" type="text" placeholder="المدينة" required/>
+              </label>
+
+              <label class="dashboard-job-field">
+                <span>الموبايل</span>
+                <input name="company_phone" type="tel" placeholder="01xxxxxxxxx" autocomplete="tel"/>
+              </label>
+            </div>
+
+            <div class="dashboard-job-form__grid">
+              <label class="dashboard-job-field">
+                <span>الخط الأرضي</span>
+                <input name="company_landline" type="tel" placeholder="02xxxxxxxx" autocomplete="tel-national"/>
+              </label>
+
+              <label class="dashboard-job-field">
+                <span>البريد الإلكتروني</span>
+                <input name="company_email" type="email" placeholder="البريد الإلكتروني" autocomplete="email" required/>
+              </label>
+            </div>
+
+            <div class="dashboard-job-form__grid">
+
+              <label class="dashboard-job-field">
+                <span>الموقع الإلكتروني</span>
+                <input name="company_website" type="url" placeholder="https://example.com"/>
+              </label>
+
+              <label class="dashboard-job-field">
+                <span>حجم الفريق</span>
+                <input
+                  name="team_size"
+                  type="number"
+                  min="1"
+                  step="1"
+                  inputmode="numeric"
+                  placeholder="اكتب عدد الموظفين"
+                  required
+                />
+              </label>
+            </div>
+
+            <div class="dashboard-job-form__grid">
+              <label class="dashboard-job-field">
+                <span>فيسبوك</span>
+                <input name="company_facebook" type="url" placeholder="https://facebook.com/your-page"/>
+              </label>
+
+              <label class="dashboard-job-field">
+                <span>إنستجرام</span>
+                <input name="company_instagram" type="url" placeholder="https://instagram.com/your-page"/>
+              </label>
+            </div>
+
+            <div class="dashboard-job-form__grid">
+              <label class="dashboard-job-field">
+                <span>لينكدإن</span>
+                <input name="company_linkedin" type="url" placeholder="https://linkedin.com/company/your-page"/>
+              </label>
+
+              <label class="dashboard-job-field">
+                <span>إكس</span>
+                <input name="company_x" type="url" placeholder="https://x.com/your-page"/>
+              </label>
+            </div>
+
+            <label class="dashboard-job-field">
+              <span>نبذة الشركة</span>
+              <textarea name="company_description" rows="5" placeholder="اكتب وصفاً واضحاً ومختصراً يعرّف بالشركة وطبيعة العمل..."></textarea>
+            </label>
+
+            <div class="dashboard-job-form__grid">
+              <label class="dashboard-job-field">
+                <span>صورة الغلاف</span>
+                <input name="company_cover" type="file" accept="image/*"/>
+              </label>
+
+              <label class="dashboard-job-field">
+                <span>شعار الشركة</span>
+                <input name="company_logo" type="file" accept="image/*"/>
+              </label>
+
+              <div class="dashboard-company-profile__note">
+                <strong>ملاحظة</strong>
+                <span>يفضل أن تكون الصور أقل من 2MB وبنسبة أبعاد واضحة حتى تظهر بشكل أفضل في الموقع واللوحة.</span>
+              </div>
+            </div>
+
+            <div class="dashboard-company-profile__actions">
+              <button class="site-action site-action--primary" type="submit">حفظ بيانات الشركة</button>
+            </div>
+
+            <div class="dashboard-company-danger-zone">
+              <div class="dashboard-company-danger-zone__copy">
+                <strong>طلب حذف الحساب</strong>
+                <p>سيختفي ملف الشركة ووظائفها من الموقع فورًا، ثم ينتقل الطلب إلى مراجعة الأدمن ليستطيع استعادة الشركة أو حذفها نهائيًا.</p>
+              </div>
+              <button class="site-action site-action--danger" data-company-account-delete="true" type="button">إرسال طلب حذف الشركة</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="application-status hidden" data-company-visibility-note></div>
+        <div class="application-status hidden" data-company-profile-feedback></div>
+      </section>
+
+      <section class="dashboard-panel dashboard-panel--actions" id="company-actions">
+        <div class="dashboard-panel__header">
+          <div>
+            <span class="section-eyebrow">إجراءات واضحة</span>
+            <h3>أوامر سريعة داخل لوحة الشركة</h3>
+          </div>
+          <span class="dashboard-inline-link">بدون الخروج من الحساب</span>
+        </div>
+
+        <div class="dashboard-actions-strip">
+          <button class="dashboard-action-tile" data-company-job-open="true" type="button">
+            <i class="fa-solid fa-square-plus dashboard-inline-icon" aria-hidden="true"></i>
+            <strong>نشر وظيفة جديدة</strong>
+            <small>انزل مباشرة إلى النموذج وانشر الوظيفة أو عدّلها من نفس اللوحة.</small>
+          </button>
+          <a class="dashboard-action-tile dashboard-action-tile--link" href="#company-jobs">
+            <i class="fa-solid fa-briefcase dashboard-inline-icon" aria-hidden="true"></i>
+            <strong>مراجعة الوظائف الحالية</strong>
+            <small>تابع الوظائف المنشورة وحالتها وعدد المتقدمين.</small>
+          </a>
+        </div>
+      </section>
+
+      <section class="dashboard-main-grid">
+        <div class="dashboard-panel dashboard-panel--table" id="company-jobs">
+          <div class="dashboard-panel__header">
+            <div>
+              <span class="section-eyebrow">وظائفك الحالية</span>
+              <h3>إدارة وظائف الشركة</h3>
+            </div>
+            <a class="dashboard-inline-link" href="#company-jobs">عرض الكل</a>
+          </div>
+          <div class="dashboard-table-wrap">
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th>مسمى الوظيفة</th>
+                  <th>تاريخ النشر</th>
+                  <th>المتقدمون</th>
+                  <th>الحالة</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody data-company-jobs-body>
+                <tr>
+                  <td colspan="5">لا توجد وظائف مرتبطة بحسابك بعد. أول وظيفة تنشرها ستظهر هنا.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="dashboard-side-stack">
+          <div class="dashboard-panel" id="company-applications">
+            <div class="dashboard-panel__header">
+              <div>
+                <span class="section-eyebrow">المتقدمون</span>
+                <h3>إدارة المتقدمين</h3>
+                <p class="dashboard-panel__hint" data-company-applicants-summary>راجع كل الطلبات وحدد حالتها مباشرة من هنا.</p>
+              </div>
+            </div>
+            <div class="dashboard-applicants-toolbar">
+              <label class="dashboard-job-field">
+                <span>فلترة حسب الحالة</span>
+                <select data-company-applicants-status-filter>
+                  <option value="all">كل الحالات</option>
+                  <option value="review">تحت المراجعة</option>
+                  <option value="interview">مقابلة</option>
+                  <option value="approved">مقبول</option>
+                  <option value="rejected">مرفوض</option>
+                </select>
+              </label>
+              <label class="dashboard-job-field">
+                <span>فلترة حسب الوظيفة</span>
+                <select data-company-applicants-job-filter>
+                  <option value="all">كل الوظائف</option>
+                </select>
+              </label>
+              <label class="dashboard-job-field">
+                <span>فلترة حسب التمييز</span>
+                <select data-company-applicants-tag-filter>
+                  <option value="all">كل التمييزات</option>
+                  <option value="strong">مناسب</option>
+                  <option value="contact">يحتاج تواصل</option>
+                  <option value="reserve">احتياطي</option>
+                  <option value="not-fit">غير مناسب</option>
+                </select>
+              </label>
+              <div class="dashboard-applicants-toolbar__actions">
+                <button class="site-action site-action--ghost" data-company-applicants-export type="button">تصدير CSV</button>
+                <span class="dashboard-applicants-toolbar__summary" data-company-applicants-count>0 طلب ظاهر</span>
+              </div>
+            </div>
+            <div class="dashboard-list" data-company-applicants>
+              <div class="dashboard-empty-card">
+                لا توجد طلبات تقديم حقيقية مرتبطة بحساب شركتك حتى الآن.
+              </div>
+            </div>
+            <div class="application-status hidden" data-company-applications-feedback></div>
+          </div>
+
+          <div class="dashboard-panel">
+          <div class="dashboard-panel__header">
+            <div>
+              <span class="section-eyebrow">إجراءات سريعة</span>
+              <h3 data-company-job-panel-title>نشر وظيفة جديدة</h3>
+            </div>
+            <button
+              class="site-action site-action--primary dashboard-panel__submit-shortcut"
+              data-company-job-submit-shortcut
+              form="company-job-form"
+              type="submit"
+            >
+              نشر الوظيفة
+            </button>
+          </div>
+          <div id="company-job-composer"></div>
+          <form class="dashboard-job-form" data-company-job-form="true" id="company-job-form">
+            <input name="job_id" type="hidden"/>
+            <div class="dashboard-job-form__grid">
+              <label class="dashboard-job-field">
+                <span>مسمى الوظيفة</span>
+                  <input name="job_title" type="text" placeholder="مثال: مندوب مبيعات" required/>
+                </label>
+
+                <label class="dashboard-job-field">
+                  <span>المدينة</span>
+                  <input name="job_city" type="text" placeholder="مثال: القاهرة" required/>
+                </label>
+              </div>
+
+              <div class="dashboard-job-form__grid">
+                <label class="dashboard-job-field">
+                  <span>نوع العمل</span>
+                  <select name="job_type" required>
+                    <option value="دوام كامل">دوام كامل</option>
+                    <option value="دوام جزئي">دوام جزئي</option>
+                    <option value="عن بعد">عن بعد</option>
+                    <option value="عقد مؤقت">عقد مؤقت</option>
+                  </select>
+                </label>
+
+                <label class="dashboard-job-field">
+                  <span>الراتب</span>
+                  <input name="job_salary" type="text" placeholder="مثال: 7000 - 9000 جنيه"/>
+                </label>
+              </div>
+
+              <div class="dashboard-job-form__grid">
+                <label class="dashboard-job-field">
+                  <span>عدد المطلوب في الوظيفة</span>
+                  <input name="job_positions" type="number" min="1" step="1" value="1" placeholder="1" required/>
+                </label>
+              </div>
+
+              <label class="dashboard-feature-toggle">
+                <input name="job_featured" type="checkbox"/>
+                <span class="dashboard-feature-toggle__copy">
+                  <strong>وظيفة مميزة</strong>
+                  <small>تظهر أعلى نتائج الوظائف داخل الموقع مع علامة واضحة.</small>
+                </span>
+              </label>
+
+              <label class="dashboard-job-field">
+                <span>وصف الوظيفة</span>
+                <textarea name="job_description" rows="5" placeholder="اكتب وصف واضح ومباشر للوظيفة..." required></textarea>
+              </label>
+
+              <div class="dashboard-job-form__actions">
+                <button class="site-action site-action--primary" data-company-job-submit-label type="submit">نشر الوظيفة الآن</button>
+                <button class="site-action site-action--ghost hidden" data-company-job-reset type="button" hidden>إلغاء التعديل</button>
+              </div>
+            </form>
+
+            <div class="application-status hidden" data-company-job-feedback></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <section class="application-modal hidden" data-company-review-modal aria-hidden="true">
+    <div class="application-modal__backdrop" data-company-review-close></div>
+    <div class="application-modal__dialog company-review-modal">
+      <div class="application-modal__body">
+        <div class="application-modal__header">
+          <div>
+            <h2>إدارة المتقدم</h2>
+            <p>حدّث حالة المرشح وأضف ملاحظاتك الداخلية وجدول المقابلة من نفس المكان.</p>
+          </div>
+          <button class="site-action site-action--ghost application-modal__close" data-company-review-close type="button">إغلاق</button>
+        </div>
+
+        <form class="dashboard-job-form" data-company-review-form="true">
+          <input name="application_id" type="hidden"/>
+          <div class="dashboard-job-form__grid">
+            <label class="dashboard-job-field">
+              <span>الحالة</span>
+              <select name="application_status" required>
+                <option value="review">تحت المراجعة</option>
+                <option value="interview">مقابلة</option>
+                <option value="approved">مقبول</option>
+                <option value="rejected">مرفوض</option>
+              </select>
+            </label>
+            <label class="dashboard-job-field">
+              <span>التمييز</span>
+              <select name="application_tag">
+                <option value="">بدون تمييز</option>
+                <option value="strong">مناسب</option>
+                <option value="contact">يحتاج تواصل</option>
+                <option value="reserve">احتياطي</option>
+                <option value="not-fit">غير مناسب</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="dashboard-job-form__grid">
+            <label class="dashboard-job-field">
+              <span>موعد المقابلة</span>
+              <input name="interview_scheduled_at" type="datetime-local"/>
+            </label>
+            <label class="dashboard-job-field">
+              <span>نوع المقابلة</span>
+              <select name="interview_mode">
+                <option value="">غير محدد</option>
+                <option value="onsite">حضوري</option>
+                <option value="phone">هاتف</option>
+                <option value="online">أونلاين</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="dashboard-job-field">
+            <span>مكان أو رابط المقابلة</span>
+            <input name="interview_location" type="text" placeholder="مثال: فرع مدينة نصر أو رابط Google Meet"/>
+          </label>
+
+          <label class="dashboard-job-field">
+            <span>ملاحظة داخلية للشركة</span>
+            <textarea name="application_note" rows="4" placeholder="ملاحظة خاصة بفريق الشركة فقط..."></textarea>
+          </label>
+
+          <label class="dashboard-job-field">
+            <span>سبب الرفض</span>
+            <textarea name="application_rejection_reason" rows="3" placeholder="يظهر فقط عند اختيار حالة مرفوض"></textarea>
+          </label>
+
+          <div class="dashboard-job-form__actions">
+            <button class="site-action site-action--primary" type="submit">حفظ التحديث</button>
+          </div>
+        </form>
+
+        <div class="application-status hidden" data-company-review-feedback></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="application-modal hidden" data-company-delete-modal aria-hidden="true">
+    <div class="application-modal__backdrop" data-company-delete-close></div>
+    <div class="application-modal__dialog company-review-modal">
+      <div class="application-modal__body">
+        <div class="application-modal__header">
+          <div>
+            <h2>طلب حذف الحساب</h2>
+            <p data-company-delete-target>سيختفي ملف الشركة ووظائفها من الموقع فورًا، ثم يراجع الأدمن الطلب قبل الحذف النهائي أو الاستعادة.</p>
+          </div>
+          <button class="site-action site-action--ghost application-modal__close" data-company-delete-close type="button">إغلاق</button>
+        </div>
+
+        <form class="dashboard-job-form" data-company-delete-form="true">
+          <label class="dashboard-job-field">
+            <span>سبب الحذف</span>
+            <textarea
+              name="delete_reason"
+              rows="5"
+              placeholder="اكتب سبب طلب الحذف بشكل واضح حتى يراجعه الأدمن قبل اتخاذ القرار النهائي..."
+            ></textarea>
+          </label>
+
+          <p class="dashboard-panel__hint">
+            بعد الإرسال ستختفي الشركة من الموقع ولوحة الشركة، وسيظهر الطلب داخل لوحة الأدمن لاتخاذ قرار الاستعادة أو الحذف النهائي.
+          </p>
+
+          <div class="application-status hidden" data-company-delete-feedback></div>
+
+          <div class="dashboard-job-form__actions">
+            <button class="site-action site-action--ghost" data-company-delete-close type="button">إلغاء</button>
+            <button class="site-action site-action--danger" data-company-delete-confirm type="submit">إرسال طلب الحذف</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

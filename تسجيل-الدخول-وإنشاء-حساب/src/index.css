@@ -151,11 +151,12 @@ img {
 .portal-mobile-brand {
   display: none;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .portal-mobile-brand-copy {
   text-align: right;
+  min-width: 0;
 }
 
 .portal-mobile-title {
@@ -452,23 +453,24 @@ img {
 }
 
 .portal-logo-frame {
-  width: 4.35rem;
-  height: 4.35rem;
+  width: clamp(4.85rem, 4.45rem + 0.9vw, 5.35rem);
+  height: clamp(4.85rem, 4.45rem + 0.9vw, 5.35rem);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.96);
-  padding: 0.75rem;
-  box-shadow: 0 16px 30px rgba(8, 24, 30, 0.16);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.97);
+  padding: 0.8rem;
+  box-shadow: 0 18px 34px rgba(8, 24, 30, 0.17);
+  flex-shrink: 0;
 }
 
 .portal-logo-frame--compact {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 16px;
-  padding: 0.5rem;
-  box-shadow: 0 12px 20px rgba(8, 24, 30, 0.12);
+  width: 3.3rem;
+  height: 3.3rem;
+  border-radius: 18px;
+  padding: 0.56rem;
+  box-shadow: 0 14px 24px rgba(8, 24, 30, 0.13);
 }
 
 .portal-logo-image {
@@ -650,6 +652,17 @@ img {
     display: inline-flex;
   }
 
+  .portal-logo-frame {
+    width: 4.5rem;
+    height: 4.5rem;
+    padding: 0.72rem;
+  }
+
+  .portal-logo-frame--compact {
+    width: 3.15rem;
+    height: 3.15rem;
+  }
+
   .portal-copy-top {
     flex-direction: column;
     align-items: flex-start;
@@ -691,6 +704,20 @@ img {
   .portal-mobile-brand {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  .portal-logo-frame {
+    width: 4.15rem;
+    height: 4.15rem;
+    border-radius: 20px;
+    padding: 0.66rem;
+  }
+
+  .portal-logo-frame--compact {
+    width: 2.95rem;
+    height: 2.95rem;
+    border-radius: 16px;
+    padding: 0.5rem;
   }
 
   .portal-phone {

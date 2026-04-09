@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin-login.html
+Disallow: /admin-panel.html
+Disallow: /portal/
+Disallow: /company-dashboard.html
+Disallow: /messages.html
+Disallow: /تسجيل-الدخول-وإنشاء-حساب/
+Disallow: /تسجيل-الدخول-وإنشاء-حساب/dist/
+Disallow: /al-rahma-recruitment-admin/
+Disallow: /al-rahma-recruitment-admin/dist/
+
+Sitemap: https://rahma-al-muhdah-c0430.web.app/sitemap.xml
