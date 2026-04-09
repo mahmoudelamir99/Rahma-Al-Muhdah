@@ -1893,6 +1893,8 @@
     };
   };
   const refreshPublicPagesFromFirebaseCache = () => {
+    syncMaintenanceShell();
+    syncSystemBanner();
     initHomeRuntimeContent();
     initHomeUsefulStats();
     renderPublicJobsPage();

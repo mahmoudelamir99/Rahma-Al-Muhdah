@@ -100,11 +100,8 @@ html[data-maintenance-mode='true'] body > :not(#rahma-maintenance-shell) {
   z-index: 9998;
   display: grid;
   place-items: center;
-  padding: 24px;
-  background:
-    radial-gradient(circle at top right, rgba(110, 132, 204, 0.16), transparent 28%),
-    radial-gradient(circle at bottom left, rgba(242, 143, 44, 0.14), transparent 26%),
-    linear-gradient(180deg, rgba(253, 247, 239, 0.98), rgba(241, 245, 252, 0.98));
+  padding: clamp(1rem, 5vw, 2rem);
+  background: var(--bg-soft);
 }
 
 #rahma-maintenance-shell[hidden] {
@@ -11734,18 +11731,17 @@ body.page-about .product-shell::after {
   height: 100%;
 }
 
- / *   O v e r r i d e s   f o r   B e n t o   G r i d   r e f e r e n c e   m a t c h   * / 
- . b e n t o - c a r d   { 
-     b a c k g r o u n d :   v a r ( - - s u r f a c e )   ! i m p o r t a n t ; 
-     b o r d e r - r a d i u s :   v a r ( - - r a d i u s - 3 x l )   ! i m p o r t a n t ; 
-     p a d d i n g :   c l a m p ( 2 r e m ,   5 v w ,   3 r e m )   ! i m p o r t a n t ; 
-     b o r d e r :   1 p x   s o l i d   r g b a ( 0 ,   0 ,   0 ,   0 . 0 3 )   ! i m p o r t a n t ; 
-     b o x - s h a d o w :   v a r ( - - s h a d o w - s o f t )   ! i m p o r t a n t ; 
-     t r a n s i t i o n :   t r a n s f o r m   0 . 3 s   c u b i c - b e z i e r ( 0 . 1 6 ,   1 ,   0 . 3 ,   1 ) ,   b o x - s h a d o w   0 . 3 s   c u b i c - b e z i e r ( 0 . 1 6 ,   1 ,   0 . 3 ,   1 )   ! i m p o r t a n t ; 
- } 
- . b e n t o - c a r d : h o v e r   { 
-     t r a n s f o r m :   t r a n s l a t e Y ( - 4 p x )   ! i m p o r t a n t ; 
-     b o x - s h a d o w :   v a r ( - - s h a d o w )   ! i m p o r t a n t ; 
- } 
-  
- 
+
+/* Overrides for Bento Grid reference match */
+.bento-card {
+  background: var(--surface) !important;
+  border-radius: var(--radius-3xl) !important;
+  padding: clamp(2rem, 5vw, 3rem) !important;
+  border: 1px solid rgba(0, 0, 0, 0.03) !important;
+  box-shadow: var(--shadow-soft) !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.bento-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow) !important;
+}
