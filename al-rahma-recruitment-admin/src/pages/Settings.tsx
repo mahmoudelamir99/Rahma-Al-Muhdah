@@ -103,6 +103,7 @@ export default function Settings() {
   const [maintenanceMinute, setMaintenanceMinute] = useState(maintenanceParts.minute);
   const [maintenancePeriod, setMaintenancePeriod] = useState<'AM' | 'PM'>(maintenanceParts.period);
   const [videoBusy, setVideoBusy] = useState(false);
+  const [videoUploadProgress, setVideoUploadProgress] = useState(0);
 
   useEffect(() => setSettingsDraft(state.settings), [state.settings]);
   useEffect(() => setContentDraft(state.content), [state.content]);
@@ -206,16 +207,50 @@ export default function Settings() {
       return;
     }
     setVideoBusy(true);
+    setVideoUploadProgress(0);
     try {
       const services = await getFirebaseServices();
       if (!services) throw new Error('firebase');
       const safeName = file.name.replace(/[^\w.-]+/g, '-');
       const path = `site/home-hero/${Date.now()}-${safeName}`;
       const storageRef = services.storageModule.ref(services.storage, path);
-      await services.storageModule.uploadBytes(storageRef, file, {
+      const metadata = {
         contentType: file.type || 'video/mp4',
         cacheControl: 'public,max-age=3600,s-maxage=3600',
-      });
+      };
+      const storageModule = services.storageModule as unknown as {
+        uploadBytes: (ref: unknown, data: File, meta: Record<string, string>) => Promise<unknown>;
+        uploadBytesResumable?: (
+          ref: unknown,
+          data: File,
+          meta: Record<string, string>,
+        ) => {
+          on: (
+            event: 'state_changed',
+            next: (snapshot: { bytesTransferred: number; totalBytes: number }) => void,
+            error: (error: unknown) => void,
+            complete: () => void,
+          ) => void;
+        };
+      };
+
+      if (typeof storageModule.uploadBytesResumable === 'function') {
+        await new Promise<void>((resolve, reject) => {
+          const task = storageModule.uploadBytesResumable!(storageRef, file, metadata);
+          task.on(
+            'state_changed',
+            (snapshot) => {
+              const ratio = snapshot.totalBytes > 0 ? snapshot.bytesTransferred / snapshot.totalBytes : 0;
+              setVideoUploadProgress(Math.max(0, Math.min(100, Math.round(ratio * 100))));
+            },
+            reject,
+            resolve,
+          );
+        });
+      } else {
+        await storageModule.uploadBytes(storageRef, file, metadata);
+        setVideoUploadProgress(100);
+      }
       const url = await services.storageModule.getDownloadURL(storageRef);
       setContentDraft((current) => ({ ...current, homeHeroVideoUrl: url }));
       setFeedback({ tone: 'success', text: 'تم رفع الفيديو. اضغط «حفظ المحتوى» لنشره على الموقع العام.' });
@@ -223,8 +258,11 @@ export default function Settings() {
       setFeedback({ tone: 'danger', text: 'تعذر الرفع. راجع قواعد التخزين أو جرّب رابط URL عام.' });
     } finally {
       setVideoBusy(false);
+      setVideoUploadProgress(0);
     }
   };
+
+  const videoUploadLabel = videoBusy ? `جارٍ الرفع… ${videoUploadProgress}%` : 'رفع فيديو من الجهاز';
 
   return (
     <>
@@ -329,7 +367,7 @@ export default function Settings() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="flex cursor-pointer items-center justify-center gap-2 rounded-[1rem] border border-dashed border-[rgba(24,37,63,0.14)] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#4d5f6d] transition hover:border-[#005dac]/40">
                     <Film size={18} className="text-[#005dac]" />
-                    <span>{videoBusy ? 'جارٍ الرفع…' : 'رفع فيديو من الجهاز'}</span>
+                    <span>{videoUploadLabel}</span>
                     <input
                       type="file"
                       accept="video/mp4,video/webm"
@@ -440,7 +478,7 @@ export default function Settings() {
               >
                 <label className="flex cursor-pointer flex-col gap-2 rounded-[1.1rem] border border-dashed border-[rgba(24,37,63,0.14)] bg-[#f8fafc] px-4 py-6 text-center text-sm font-bold text-[#4d5f6d] transition hover:border-[#005dac]/40">
                   <Film className="mx-auto text-[#005dac]" size={22} />
-                  <span>{videoBusy ? 'جارٍ الرفع…' : 'اختر فيديو من الجهاز'}</span>
+                  <span>{videoBusy ? `جارٍ الرفع… ${videoUploadProgress}%` : 'اختر فيديو من الجهاز'}</span>
                   <input
                     type="file"
                     accept="video/mp4,video/webm"
