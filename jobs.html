@@ -73,8 +73,8 @@
             الصفحة تعرض الوظائف المنشورة فعليًا فقط. لو مفيش بيانات معتمدة حاليًا، هتظهر لك رسالة واضحة بدل أي محتوى وهمي.
           </p>
 
-          <form action="jobs.html" class="jobs-search-panel jobs-search-panel--light" data-jobs-search-form method="get">
-            <label class="jobs-search-panel__field">
+          <form action="jobs.html" class="jobs-search-panel jobs-search-panel--light home-search-card" data-jobs-search-form method="get">
+            <label class="jobs-search-panel__field home-search-card__field">
               <span><i class="fa-solid fa-magnifying-glass"></i></span>
               <input data-jobs-keyword name="q" placeholder="ابحث باسم الوظيفة أو الشركة" type="text"/>
             </label>
@@ -87,7 +87,8 @@
 
     <section class="page-section page-section--tight">
       <div class="container mx-auto px-5 lg:px-6">
-        <div class="jobs-coverflow-shell hidden" data-jobs-swiper-shell hidden>
+        <div class="page-card hidden" data-jobs-swiper-shell hidden>
+          <div class="jobs-coverflow-shell">
           <div class="section-head section-head--inline jobs-coverflow-shell__head">
             <div>
               <span class="section-eyebrow">استعراض سينمائي</span>
@@ -108,12 +109,14 @@
             <div class="swiper-wrapper" data-jobs-swiper-wrapper></div>
             <div class="jobs-coverflow__pagination" data-jobs-swiper-pagination></div>
           </div>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="page-section page-section--tight">
       <div class="container mx-auto px-5 lg:px-6">
+        <div class="page-card">
         <div class="section-head section-head--inline jobs-results__head">
           <div>
             <span class="section-eyebrow">النتائج</span>
@@ -133,6 +136,7 @@
           <button aria-label="الصفحة السابقة" class="w-10 h-10 rounded-full border border-gray-200 text-gray-600 hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40" data-page-prev type="button"><i class="fa-solid fa-angle-right"></i></button>
           <div class="flex items-center justify-center gap-3" data-pagination-pages></div>
           <button aria-label="الصفحة التالية" class="w-10 h-10 rounded-full border border-gray-200 text-gray-600 hover:border-brand-blue hover:text-brand-blue disabled:cursor-not-allowed disabled:opacity-40" data-page-next type="button"><i class="fa-solid fa-angle-left"></i></button>
+        </div>
         </div>
       </div>
     </section>
