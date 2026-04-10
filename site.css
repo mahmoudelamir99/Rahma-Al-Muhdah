@@ -11855,3 +11855,18 @@ body.page-jobs .jobs-results__badge {
   padding: 0 0.85rem;
   font-size: 0.78rem;
 }
+
+@media (max-width: 480px) {
+  body.page-jobs .listing-job-card__actions {
+    gap: 0.35rem;
+  }
+
+  body.page-jobs .listing-job-card__actions a,
+  body.page-jobs .listing-job-card__actions button {
+    min-height: 2.05rem;
+    padding: 0 0.68rem;
+    border-radius: 0.72rem;
+    font-size: 0.72rem;
+    letter-spacing: -0.01em;
+  }
+}
