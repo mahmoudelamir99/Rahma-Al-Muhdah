@@ -21,3 +21,4 @@ temp_admin/
 *private-key*.json
 **/firebase-site-config.js
 **/supabase-site-config.js
+.vercel

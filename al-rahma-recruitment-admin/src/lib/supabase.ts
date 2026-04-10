@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { hasRahmaSupabaseConfig, resolveRahmaSupabaseConfig, type RahmaSupabaseRuntimeConfig } from '../../../shared/supabase-config.ts';
+import { hasRahmaSupabaseConfig, resolveRahmaSupabaseConfig, type RahmaSupabaseRuntimeConfig } from './supabase-config';
 
 export type AdminSupabaseConfig = RahmaSupabaseRuntimeConfig;
 

@@ -197,7 +197,14 @@ function legacyChunkCompatPlugin(): Plugin {
     apply: 'build',
     async closeBundle() {
       const distAssetsPath = path.resolve(__dirname, 'dist', 'assets');
-      const distAssetFiles = await fs.readdir(distAssetsPath);
+      let distAssetFiles: string[] = [];
+      try {
+        distAssetFiles = await fs.readdir(distAssetsPath);
+      } catch {
+        // Vercel can finish vite build without emitting legacy assets path in some runs.
+        // Skip bridge generation instead of failing the whole deployment.
+        return;
+      }
 
       for (const { legacyFile, prefix } of legacyChunkAliases) {
         const modernFile = resolveModernChunk(distAssetFiles, prefix);
