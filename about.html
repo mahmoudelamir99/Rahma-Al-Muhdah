@@ -10,9 +10,10 @@
   <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
   <link rel="icon" type="image/png" href="logo-mark.png"/>
-  <link rel="stylesheet" href="site.css?v=20260406-2"/>
+  <link rel="stylesheet" href="site.css?v=20260410-2"/>
   <script src="firebase-site-config.js" defer></script>
-  <script src="site.js?v=20260406-2" defer></script>
+  <script src="assets/vendor/vanilla-tilt/vanilla-tilt.min.js?v=20260408-1" defer></script>
+  <script src="site.js?v=20260410-2" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="تعرف على منصة الرحمة المهداه للتوظيف وكيف نعرض وظائف في مصر وفرص عمل وتوظيف شركات داخل تجربة عربية واضحة وسريعة.">
   <meta name="keywords" content="من نحن, وظائف في مصر, توظيف شركات, فرص عمل, الرحمة المهداه للتوظيف">
@@ -31,7 +32,7 @@
   <link rel="canonical" href="/about.html">
 <!-- RAHMA SEO END -->
 </head>
-<body class="page-compact antialiased">
+<body class="page-compact page-about antialiased">
   <header class="glass-nav site-topbar fixed top-0 w-full z-50">
     <div class="container mx-auto px-5 lg:px-6">
       <div class="site-header__inner">
@@ -53,8 +54,8 @@
 
         <div class="site-header__actions">
           <a class="site-action site-action--ghost" href="track-application.html">متابعة الطلب</a>
-          <a class="site-action site-action--ghost" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
-          <a class="site-action site-action--primary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+          <a class="site-action site-action--ghost" href="login.html">دخول</a>
+          <a class="site-action site-action--primary" href="register.html">سجل شركتك</a>
         </div>
       </div>
     </div>
@@ -63,7 +64,7 @@
   <main class="product-shell">
     <section class="page-section page-section--hero" id="overview">
       <div class="container mx-auto px-5 lg:px-6">
-        <div class="page-card hero-card">
+        <div class="page-card hero-card about-hero-card">
           <span class="section-eyebrow">من نحن</span>
           <h1 data-about-hero-title>من نحن</h1>
           <p class="hero-card__copy" data-about-hero-subtitle>
@@ -75,22 +76,32 @@
 
     <section class="page-section">
       <div class="container mx-auto px-5 lg:px-6">
-        <div class="compact-grid compact-grid--three">
-          <article class="page-card">
+        <div class="bento-grid bento-grid--about">
+          <article class="page-card bento-card bento-card--feature">
             <h2 data-about-overview-title>ماذا نقدم</h2>
             <p data-about-overview-text>
               نوفر للشركات مساحة واحدة لنشر الوظائف ومراجعة الطلبات، ونوفر للمتقدم رحلة تقديم واضحة تنتهي برقم طلب يمكن الرجوع إليه.
             </p>
+            <div class="bento-card__meta">
+              <span>وظائف حقيقية</span>
+              <span>إدارة مركزية</span>
+              <span>رحلة متابعة واضحة</span>
+            </div>
           </article>
 
-          <article class="page-card">
+          <article class="page-card bento-card">
             <h2>لمن هذه الخدمة</h2>
             <p>للشركات التي تحتاج وسيلة عملية لإدارة الوظائف والطلبات، ولمن يبحث عن فرصة عمل ويريد طريقة تقديم واضحة بدون خطوات مشتتة.</p>
           </article>
 
-          <article class="page-card">
+          <article class="page-card bento-card bento-card--tall">
             <h2>ما الذي نركز عليه</h2>
             <p>تقليل العشوائية في رحلة التقديم، وتوضيح حالة الطلب بدل الاعتماد على المتابعة اليدوية أو الرسائل العامة غير الدقيقة.</p>
+            <div class="bento-card__stack">
+              <span>وضوح</span>
+              <span>سرعة</span>
+              <span>قابلية متابعة</span>
+            </div>
           </article>
         </div>
       </div>
@@ -98,8 +109,8 @@
 
     <section class="page-section">
       <div class="container mx-auto px-5 lg:px-6">
-        <div class="compact-grid">
-          <article class="page-card">
+        <div class="bento-grid bento-grid--about-secondary">
+          <article class="page-card bento-card bento-card--wide">
             <span class="section-eyebrow">كيف نعمل</span>
             <h2 data-about-process-title>كيف يتم العمل</h2>
             <p data-about-process-text>
@@ -121,7 +132,7 @@
             </div>
           </article>
 
-          <article class="page-card">
+          <article class="page-card bento-card">
             <span class="section-eyebrow">استخدام مباشر</span>
             <h2 data-about-cta-heading>ابدأ من المكان المناسب</h2>
             <p data-about-cta-text>
@@ -129,7 +140,7 @@
             </p>
             <div class="page-actions">
               <a class="site-action site-action--primary" href="jobs.html">عرض الوظائف</a>
-              <a class="site-action site-action--secondary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">تسجيل شركة</a>
+              <a class="site-action site-action--secondary" href="register.html">تسجيل شركة</a>
             </div>
           </article>
         </div>
@@ -168,6 +179,8 @@
   </footer>
 </body>
 </html>
+
+
 
 
 

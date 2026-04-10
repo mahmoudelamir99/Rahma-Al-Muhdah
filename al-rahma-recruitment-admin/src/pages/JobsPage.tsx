@@ -7,7 +7,6 @@ import {
   Plus,
   RotateCcw,
   Search,
-  SlidersHorizontal,
   Sparkles,
   Trash2,
 } from 'lucide-react';
@@ -164,7 +163,7 @@ export default function JobsPage() {
   const companies = useMemo(
     () =>
       Array.from(new Set(state.companies.filter((company) => !company.deletedAt).map((company) => cleanAdminText(company.name)))).sort(
-        (first, second) => first.localeCompare(second, 'ar'),
+        (first, second) => String(first).localeCompare(String(second), 'ar'),
       ),
     [state.companies],
   );
@@ -357,12 +356,7 @@ export default function JobsPage() {
 
       <AdminDataShell
         toolbar={
-          <div className="grid gap-3 xl:grid-cols-[auto_180px_180px_220px_220px_minmax(0,1fr)_auto]">
-            <AdminButton variant="ghost" className="justify-center">
-              <SlidersHorizontal size={16} />
-              تصفية متقدمة
-            </AdminButton>
-
+          <div className="grid gap-3 xl:grid-cols-[180px_180px_220px_220px_minmax(0,1fr)_auto]">
             <AdminSelect value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
               <option value="latest">الأحدث أولاً</option>
               <option value="applicants">الأكثر متقدمين</option>
@@ -723,7 +717,7 @@ export default function JobsPage() {
               </AdminField>
               <AdminField label="نوع الوظيفة">
                 <AdminSelect value={formState.type} onChange={(event) => setFormState((current) => ({ ...current, type: event.target.value }))}>
-                  {['دوام كامل', 'دوام جزئي', 'هجين', 'عن بعد', 'عقد مؤقت'].map((option) => (
+                  {['دوام كامل', 'دوام جزئي', 'عن بعد', 'عقد مؤقت'].map((option) => (
                     <option key={option} value={option}>
                       {option}
                     </option>

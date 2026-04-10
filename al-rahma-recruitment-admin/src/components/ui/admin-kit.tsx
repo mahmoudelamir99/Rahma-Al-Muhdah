@@ -117,6 +117,15 @@ export function AdminPageHeader({
 
 export const AdminPageIntro = AdminPageHeader;
 
+export function AdminKeyValue({ label, value }: { label: string; value: ReactNode }) {
+  return (
+    <div className="rounded-xl bg-[#f8fafb] px-3 py-2.5 dark:bg-slate-800/60">
+      <div className="text-[0.72rem] font-bold text-[#667784] dark:text-slate-400">{label}</div>
+      <div className="mt-1 text-sm font-bold text-[#173349] dark:text-slate-100">{value}</div>
+    </div>
+  );
+}
+
 export function AdminPanel({
   title,
   description,
@@ -135,7 +144,7 @@ export function AdminPanel({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.32 }}
       className={cn(
-        'rounded-[1.8rem] border border-[rgba(196,206,218,0.7)] bg-white/92 p-5 shadow-[0_20px_45px_rgba(17,34,63,0.06)]',
+        'rounded-[1.8rem] border border-[rgba(196,206,218,0.65)] bg-white/75 p-5 shadow-[0_20px_45px_rgba(17,34,63,0.06)] backdrop-blur-xl dark:border-slate-600/35 dark:bg-slate-900/50',
         className,
       )}
     >
@@ -564,6 +573,8 @@ export function AdminDialog({
     </AnimatePresence>
   );
 }
+
+export { AdminDialog as AdminModal };
 
 export function AdminDrawer({
   open,

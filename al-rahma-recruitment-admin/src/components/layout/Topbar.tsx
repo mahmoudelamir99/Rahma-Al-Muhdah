@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bell, Check, LogOut, Menu, Search, Settings2, UserCircle2 } from 'lucide-react';
+import { Bell, Check, LogOut, Menu, Moon, Search, Settings2, Sun, UserCircle2 } from 'lucide-react';
 import { startTransition, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SITE_METADATA } from '../../lib/admin-data';
 import { cleanAdminText, getNotificationSummary } from '../../lib/admin-dashboard';
 import { getRouteMeta } from '../../lib/admin-navigation';
 import { useAdmin } from '../../lib/admin-store';
+import { getSupabaseClient, hasSupabaseConfig } from '../../lib/supabase';
 import { cn } from '../../lib/utils';
 import { AdminBadge, AdminIconButton } from '../ui/admin-kit';
 
@@ -14,15 +15,20 @@ type TopbarProps = {
 };
 
 const READ_NOTIFICATIONS_STORAGE_KEY = 'rahmaAdminReadNotifications.v1';
+const THEME_STORAGE_KEY = 'rahma-admin-theme';
 
 export default function Topbar({ onMenuClick }: TopbarProps) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentAdmin, currentRole, logout, searchEverywhere, state } = useAdmin();
+  const { currentAdmin, currentRole, logout, refreshFromSite, searchEverywhere, state } = useAdmin();
   const [searchValue, setSearchValue] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [darkUi, setDarkUi] = useState(() =>
+    typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : false,
+  );
+
   const [readNotifications, setReadNotifications] = useState<string[]>(() => {
     if (typeof window === 'undefined') return [];
 
@@ -68,6 +74,36 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
     }
   }, [readNotifications]);
 
+  useEffect(() => {
+    const table = import.meta.env.VITE_SUPABASE_REALTIME_TABLE?.trim();
+    if (!table || !hasSupabaseConfig()) return;
+    const client = getSupabaseClient();
+    if (!client) return;
+
+    const channel = client
+      .channel('rahma-admin-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table }, () => {
+        refreshFromSite();
+      })
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') return;
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          console.warn('[Realtime]', table, status, err?.message ?? err ?? '');
+        }
+      });
+
+    return () => {
+      void client.removeChannel(channel);
+    };
+  }, [refreshFromSite]);
+
+  const toggleDarkMode = () => {
+    const next = !document.documentElement.classList.contains('dark');
+    document.documentElement.classList.toggle('dark', next);
+    window.localStorage.setItem(THEME_STORAGE_KEY, next ? 'dark' : 'light');
+    setDarkUi(next);
+  };
+
   const goTo = (path: string) => {
     startTransition(() => navigate(path));
     setSearchOpen(false);
@@ -81,7 +117,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[rgba(133,155,179,0.12)] bg-[rgba(255,255,255,0.92)] backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-[rgba(133,155,179,0.12)] bg-[rgba(255,255,255,0.88)] backdrop-blur-xl dark:border-slate-700/40 dark:bg-slate-900/85">
       <div className="flex items-center gap-2.5 px-3 py-2.5 sm:px-4 lg:px-5 lg:pr-[20.5rem] xl:pr-[21rem]">
         <AdminIconButton className="lg:hidden" onClick={onMenuClick} aria-label="فتح القائمة">
           <Menu size={18} />
@@ -142,6 +178,9 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
         </div>
 
         <div className="mr-auto flex items-center gap-2">
+          <AdminIconButton onClick={toggleDarkMode} aria-label={darkUi ? 'الوضع النهاري' : 'الوضع الليلي'}>
+            {darkUi ? <Sun size={18} /> : <Moon size={18} />}
+          </AdminIconButton>
           <div className="relative">
             <AdminIconButton
               onClick={() => {

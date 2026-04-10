@@ -10,9 +10,9 @@
   <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
   <link rel="icon" type="image/png" href="logo-mark.png"/>
-  <link rel="stylesheet" href="site.css?v=20260406-2"/>
+  <link rel="stylesheet" href="site.css?v=20260410-2"/>
   <script src="firebase-site-config.js" defer></script>
-  <script src="site.js?v=20260406-2" defer></script>
+  <script src="site.js?v=20260410-2" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="اعرف تفاصيل الوظيفة والمتطلبات والراتب وطريقة التقديم المباشر على فرص عمل حقيقية داخل منصة وظائف في مصر.">
   <meta name="keywords" content="تفاصيل الوظيفة, وظائف في مصر, فرص عمل, تقديم وظائف, وظائف شاغرة, توظيف شركات">
@@ -53,8 +53,8 @@
 
         <div class="site-header__actions">
           <a class="site-action site-action--ghost" href="track-application.html">متابعة الطلب</a>
-          <a class="site-action site-action--ghost" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
-          <a class="site-action site-action--primary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+          <a class="site-action site-action--ghost" href="login.html">دخول</a>
+          <a class="site-action site-action--primary" href="register.html">سجل شركتك</a>
         </div>
       </div>
     </div>
@@ -86,7 +86,7 @@
           </div>
 
           <div class="product-hero__actions">
-            <a class="site-action site-action--primary" data-apply-current="true" href="?apply=1">قدم الآن</a>
+            <a class="site-action site-action--primary job-apply-cta" data-apply-current="true" href="?apply=1" aria-label="قدم الآن على الوظيفة الحالية">قدم الآن</a>
             <button class="site-action site-action--secondary" data-bookmark-job="true" type="button">حفظ الوظيفة</button>
             <button class="site-action site-action--ghost" data-copy-job-link="true" type="button">نسخ الرابط</button>
           </div>
@@ -262,7 +262,16 @@
 
             <label>
               <span>المرتب</span>
-              <select name="expectedSalary" data-application-salary required></select>
+              <input
+                name="expectedSalary"
+                data-application-salary
+                type="number"
+                min="1"
+                step="1"
+                inputmode="numeric"
+                placeholder="اكتب الراتب المتوقع"
+                required
+              />
             </label>
           </div>
 
@@ -359,7 +368,7 @@
           <h3>الدعم</h3>
           <a href="contact.html">تواصل معنا</a>
           <a href="companies.html">الشركات</a>
-          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+          <a href="register.html">سجل شركتك</a>
         </div>
       </div>
 
@@ -370,6 +379,8 @@
   </footer>
 </body>
 </html>
+
+
 
 
 

@@ -294,7 +294,7 @@ async function main() {
       sector: 'خدمات التوظيف',
       city: 'القاهرة',
       location: 'القاهرة',
-      teamSize: '11-50',
+      teamSize: '50',
       phone: companyPhone,
       email: companyEmail,
       website: '',

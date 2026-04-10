@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>انضم إلى شبكة شركائنا | الرحمة المهداه للتوظيف</title>
+  </head>
+  <body>
+    <script>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect');
+        const target = new URL('./تسجيل-الدخول-وإنشاء-حساب/dist/index.html', window.location.href);
+        target.searchParams.set('view', 'register');
+        if (redirect) {
+          target.searchParams.set('redirect', redirect);
+        }
+        window.location.replace(target.toString());
+      })();
+    </script>
+  </body>
+</html>

@@ -55,7 +55,7 @@ export default function Login({ onNavigate, redirectTo }: LoginProps) {
     } catch (error) {
       setStatus({
         tone: 'error',
-        message: error instanceof Error ? error.message : 'تعذر تسجيل الدخول حاليًا. حاول مرة أخرى بعد قليل.',
+        message: error instanceof Error ? error.message : 'تعذر تسجيل الدخول الآن. حاول مرة أخرى بعد قليل.',
       });
     } finally {
       setIsSubmitting(false);
@@ -66,29 +66,29 @@ export default function Login({ onNavigate, redirectTo }: LoginProps) {
     <PortalShell
       screenLabel="بوابة الشركات"
       badge="تسجيل الدخول"
-      title="ادخل إلى حساب شركتك وابدأ المتابعة من لوحة واحدة."
-      description="سجّل الدخول بحساب الشركة لمراجعة الوظائف المنشورة، متابعة الطلبات، وتحديث بيانات المؤسسة بدون خطوات معقدة."
-      sideLabel="جلسة تشغيل آمنة"
-      sideTitle="واجهة أخف وأوضح لفرق التوظيف داخل الشركات."
-      sideDescription="كل العناصر الأساسية قدامك بشكل مرتب: تسجيل دخول سريع، حفظ الجلسة عند الحاجة، ومسار واضح لاستعادة كلمة المرور."
+      title="مرحبًا بعودتك"
+      description="سجّل الدخول لإدارة وظائفك والوصول إلى أفضل الكفاءات."
+      sideLabel="لوحة الشركة"
+      sideTitle="كل ما تحتاجه لإدارة التوظيف في مكان واحد."
+      sideDescription="بعد تسجيل الدخول يمكنك متابعة الوظائف المنشورة، مراجعة الطلبات، وتحديث ملف شركتك بسهولة."
       sideHighlights={[
         {
-          title: 'دخول سريع',
-          description: 'أدخل البريد وكلمة المرور وابدأ مباشرة في إدارة الوظائف والمتقدمين.',
+          title: 'الوظائف',
+          description: 'راجع الوظائف المنشورة وحدد ما تريد تحديثه أو متابعته من اللوحة مباشرة.',
         },
         {
-          title: 'جلسة مستقرة',
-          description: 'يمكنك تذكر هذا الجهاز لتقليل تكرار تسجيل الدخول على نفس المتصفح.',
+          title: 'الطلبات',
+          description: 'تابع الطلبات الجديدة واعرف حالة كل متقدم أولًا بأول.',
         },
         {
-          title: 'استعادة آمنة',
-          description: 'لو نسيت كلمة المرور ستصلك رسالة رسمية بها رابط آمن لإعادة التعيين.',
+          title: 'ملف الشركة',
+          description: 'حدّث بيانات شركتك وروابط التواصل من نفس الحساب بدون خطوات إضافية.',
         },
       ]}
       status={status ? <StatusMessage tone={status.tone} message={status.message} /> : null}
       footer={
         <div className="portal-note">
-          لا يوجد لديك حساب شركة حتى الآن؟{' '}
+          ليس لديك حساب شركة حتى الآن؟{' '}
           <button type="button" onClick={() => onNavigate('register')} className="portal-inline-link">
             أنشئ حسابًا جديدًا
           </button>

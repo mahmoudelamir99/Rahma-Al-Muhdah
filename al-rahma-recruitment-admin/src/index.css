@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Manrope:wght@500;700;800&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Manrope", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
@@ -43,12 +45,17 @@
     background:
       radial-gradient(circle at top right, rgba(20, 42, 75, 0.08), transparent 22%),
       radial-gradient(circle at bottom left, rgba(184, 143, 71, 0.1), transparent 20%),
-      linear-gradient(180deg, #f7f9fc 0%, #eef3f8 100%);
+      linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
     color: var(--rm-ink);
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+  }
+
+  .dark body {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
   }
 
   button,

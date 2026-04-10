@@ -8,3 +8,16 @@ pnpm-debug.log*
 firebase-debug.log
 tmp_*.log
 tmp_public_repo/
+.codex-temp/
+temp_admin/
+.firebase/
+.env
+.env.*
+!.env.example
+*secret*.json
+*secrets*.json
+*credential*.json
+*service-account*.json
+*private-key*.json
+**/firebase-site-config.js
+**/supabase-site-config.js

@@ -4,6 +4,7 @@ import {
   Building2,
   ExternalLink,
   Eye,
+  EyeOff,
   Globe,
   Mail,
   NotebookPen,
@@ -26,7 +27,16 @@ import {
   getCompanyStatusLabel,
   getJobStatusLabel,
 } from '../lib/admin-dashboard';
-import { getFirebaseServices, hasFirebaseConfig } from '../lib/firebase';
+import { deleteApp, initializeApp } from 'firebase/app';
+import {
+  browserSessionPersistence,
+  createUserWithEmailAndPassword,
+  getAuth,
+  setPersistence,
+  signOut as signOutSecondaryAuth,
+  updateProfile,
+} from 'firebase/auth';
+import { getFirebaseRuntimeConfig, getFirebaseServices, hasFirebaseConfig } from '../lib/firebase';
 import type { CompanyDraft, CompanyRecord, CompanySocialLinks } from '../lib/admin-store';
 import { useAdmin } from '../lib/admin-store';
 import {
@@ -63,11 +73,22 @@ type CompanyFormState = {
   restrictionAttachmentUrl: string | null;
   restrictionAttachmentName: string;
   imageUrl: string;
+  loginPassword: string;
+  confirmLoginPassword: string;
 };
 
 type FeedbackState = { tone: 'success' | 'danger'; text: string } | null;
+type CompanyPasswordFormState = {
+  password: string;
+  confirmPassword: string;
+};
 
 const EMPTY_SOCIAL_LINKS: CompanySocialLinks = { facebook: '', instagram: '', linkedin: '', x: '' };
+const COMPANY_IMAGE_MAX_BYTES = 2 * 1024 * 1024;
+const EMPTY_PASSWORD_FORM: CompanyPasswordFormState = {
+  password: '',
+  confirmPassword: '',
+};
 const EMPTY_FORM: CompanyFormState = {
   name: '',
   email: '',
@@ -86,7 +107,48 @@ const EMPTY_FORM: CompanyFormState = {
   restrictionAttachmentUrl: null,
   restrictionAttachmentName: '',
   imageUrl: '',
+  loginPassword: '',
+  confirmLoginPassword: '',
 };
+
+function PasswordInputControl({
+  value,
+  onChange,
+  showPassword,
+  onTogglePassword,
+  placeholder = '••••••••',
+  autoComplete = 'new-password',
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  showPassword: boolean;
+  onTogglePassword: () => void;
+  placeholder?: string;
+  autoComplete?: string;
+}) {
+  return (
+    <div className="relative">
+      <AdminInput
+        type={showPassword ? 'text' : 'password'}
+        dir="ltr"
+        autoComplete={autoComplete}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="pl-[3.4rem]"
+        placeholder={placeholder}
+      />
+      <span className="pointer-events-none absolute bottom-2 left-[2.8rem] top-2 w-px bg-[rgba(131,147,166,0.18)]" />
+      <button
+        type="button"
+        onClick={onTogglePassword}
+        className="absolute left-1.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md border border-[rgba(24,37,63,0.08)] bg-[#f8fafc] text-[#687b91] transition hover:border-[rgba(24,37,63,0.14)] hover:bg-white hover:text-[#10213d]"
+        aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
+      >
+        {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+      </button>
+    </div>
+  );
+}
 
 function normalizeText(value: string) {
   return cleanAdminText(value).trim().toLowerCase();
@@ -127,6 +189,82 @@ function getActionErrorText(error: unknown, fallback: string) {
   return fallback;
 }
 
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('تعذر قراءة الصورة المحددة.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function optimizeImageDataUrl(
+  dataUrl: string,
+  options: { maxWidth?: number; maxHeight?: number; quality?: number; mimeType?: string } = {},
+) {
+  const rawDataUrl = String(dataUrl || '').trim();
+  if (!/^data:image\//i.test(rawDataUrl)) {
+    return Promise.resolve(rawDataUrl);
+  }
+
+  const {
+    maxWidth = 720,
+    maxHeight = 720,
+    quality = 0.9,
+    mimeType = 'image/png',
+  } = options;
+
+  return new Promise<string>((resolve) => {
+    const image = new Image();
+    image.onload = () => {
+      const originalWidth = Number(image.naturalWidth || image.width || 0);
+      const originalHeight = Number(image.naturalHeight || image.height || 0);
+      if (!originalWidth || !originalHeight) {
+        resolve(rawDataUrl);
+        return;
+      }
+
+      const scale = Math.min(1, maxWidth / originalWidth, maxHeight / originalHeight);
+      const targetWidth = Math.max(1, Math.round(originalWidth * scale));
+      const targetHeight = Math.max(1, Math.round(originalHeight * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const context = canvas.getContext('2d');
+
+      if (!context) {
+        resolve(rawDataUrl);
+        return;
+      }
+
+      if (mimeType === 'image/jpeg') {
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, targetWidth, targetHeight);
+      }
+
+      context.drawImage(image, 0, 0, targetWidth, targetHeight);
+      const optimized = canvas.toDataURL(mimeType, quality);
+      resolve(optimized.length < rawDataUrl.length ? optimized : rawDataUrl);
+    };
+    image.onerror = () => resolve(rawDataUrl);
+    image.src = rawDataUrl;
+  });
+}
+
+async function buildInlineCompanyImage(file: File) {
+  const rawDataUrl = await readFileAsDataUrl(file);
+  if (String(file.type || '').trim().toLowerCase() === 'image/svg+xml') {
+    return rawDataUrl;
+  }
+
+  return optimizeImageDataUrl(rawDataUrl, {
+    maxWidth: 720,
+    maxHeight: 720,
+    quality: 0.9,
+    mimeType: 'image/png',
+  });
+}
+
 function getFormState(company?: CompanyRecord | null): CompanyFormState {
   if (!company) return EMPTY_FORM;
   return {
@@ -147,31 +285,59 @@ function getFormState(company?: CompanyRecord | null): CompanyFormState {
     },
     status: company.status,
     verified: company.verified,
-    siteMode: company.siteMode === 'landing' ? 'landing' : 'full',
+    siteMode: 'full',
     restrictionMessage: cleanAdminText(company.restrictionMessage),
     restrictionAttachmentUrl: company.restrictionAttachmentUrl || null,
     restrictionAttachmentName: cleanAdminText(company.restrictionAttachmentName),
     imageUrl: cleanAdminText(company.imageUrl || ''),
+    loginPassword: '',
+    confirmLoginPassword: '',
   };
+}
+
+function isCompanyDeletionRequest(company: CompanyRecord | null | undefined) {
+  return Boolean(company?.deletedAt && company?.deletedBy === 'company');
+}
+
+function getCompanyDisplayStatusLabel(company: CompanyRecord) {
+  if (isCompanyDeletionRequest(company)) return 'طلب حذف قيد المراجعة';
+  if (company.deletedAt) return 'محذوفة';
+  return getCompanyStatusLabel(company.status);
 }
 
 export default function Companies() {
   const navigate = useNavigate();
-  const { state, saveCompany, updateCompanyStatus, toggleCompanyVerified, softDeleteCompany, addNote, refreshFromSite } =
+  const {
+    state,
+    saveCompany,
+    updateCompanyStatus,
+    toggleCompanyVerified,
+    softDeleteCompany,
+    restoreCompany,
+    addNote,
+    refreshFromSite,
+  } =
     useAdmin();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [modeFilter, setModeFilter] = useState('all');
   const [selectedCompany, setSelectedCompany] = useState<CompanyRecord | null>(null);
   const [editingCompany, setEditingCompany] = useState<CompanyRecord | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [formState, setFormState] = useState<CompanyFormState>(EMPTY_FORM);
   const [noteDraft, setNoteDraft] = useState('');
   const [feedback, setFeedback] = useState<FeedbackState>(null);
+  const [passwordDialogCompany, setPasswordDialogCompany] = useState<CompanyRecord | null>(null);
+  const [passwordForm, setPasswordForm] = useState<CompanyPasswordFormState>(EMPTY_PASSWORD_FORM);
   const [sendingResetForCompanyId, setSendingResetForCompanyId] = useState<string | null>(null);
   const [uploadingAttachment, setUploadingAttachment] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [savingCompany, setSavingCompany] = useState(false);
+  const [savingCompanyPassword, setSavingCompanyPassword] = useState(false);
+  const [showCreatePassword, setShowCreatePassword] = useState(false);
+  const [showCreatePasswordConfirm, setShowCreatePasswordConfirm] = useState(false);
+  const [showPasswordDialogValue, setShowPasswordDialogValue] = useState(false);
+  const [showPasswordDialogConfirm, setShowPasswordDialogConfirm] = useState(false);
   const attachmentInputRef = useRef<HTMLInputElement | null>(null);
   const logoInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -238,10 +404,14 @@ export default function Companies() {
           : statusFilter === 'deleted'
             ? Boolean(company.deletedAt)
             : !company.deletedAt && company.status === statusFilter;
-      const matchesMode = modeFilter === 'all' ? true : company.siteMode === modeFilter;
-      return matchesQuery && matchesStatus && matchesMode;
+      return matchesQuery && matchesStatus;
     });
-  }, [modeFilter, query, state.companies, statusFilter]);
+  }, [query, state.companies, statusFilter]);
+
+  const companyDeletionRequests = useMemo(
+    () => state.companies.filter((company) => isCompanyDeletionRequest(company)),
+    [state.companies],
+  );
 
   const selectedJobs = selectedCompany ? companyJobsMap.get(selectedCompany.id) || [] : [];
   const selectedApplications = selectedCompany ? companyApplicationsMap.get(selectedCompany.id) || [] : [];
@@ -298,17 +468,49 @@ export default function Companies() {
     );
   };
 
+  const resetCompanyPasswordDialog = () => {
+    setPasswordDialogCompany(null);
+    setPasswordForm(EMPTY_PASSWORD_FORM);
+    setShowPasswordDialogValue(false);
+    setShowPasswordDialogConfirm(false);
+    setSavingCompanyPassword(false);
+  };
+
+  const openCompanyPasswordDialog = (company: CompanyRecord) => {
+    setPasswordDialogCompany(company);
+    setPasswordForm(EMPTY_PASSWORD_FORM);
+    setShowPasswordDialogValue(false);
+    setShowPasswordDialogConfirm(false);
+  };
+
   const uploadAsset = async (file: File, folder: 'logo' | 'restriction', companyName: string) => {
-    if (!hasFirebaseConfig()) return { ok: false as const, message: 'رفع الملفات يحتاج Firebase.' };
+    const canInlineLogo = folder === 'logo' && String(file.type || '').startsWith('image/');
+    const buildInlineLogoResult = async () => ({
+      ok: true as const,
+      url: await buildInlineCompanyImage(file),
+      name: file.name,
+      source: 'inline' as const,
+    });
+
+    if (canInlineLogo) {
+      return buildInlineLogoResult();
+    }
+
+    if (!hasFirebaseConfig()) {
+      return { ok: false as const, message: 'رفع الملفات يحتاج Firebase.' };
+    }
+
     try {
       const services = await getFirebaseServices();
-      if (!services) return { ok: false as const, message: 'تعذر تهيئة خدمة الرفع.' };
+      if (!services) {
+        return { ok: false as const, message: 'تعذر تهيئة خدمة الرفع.' };
+      }
       const extension = file.name.split('.').pop()?.toLowerCase() || 'bin';
       const path = `admin/company-assets/${folder}/${buildUploadSlug(companyName)}-${Date.now()}.${extension}`;
       const storageRef = services.storageModule.ref(services.storage, path);
       const uploaded = await services.storageModule.uploadBytes(storageRef, file, { contentType: file.type || undefined });
       const url = await services.storageModule.getDownloadURL(uploaded.ref);
-      return { ok: true as const, url, name: file.name };
+      return { ok: true as const, url, name: file.name, source: 'storage' as const };
     } catch {
       return { ok: false as const, message: 'فشل رفع الملف.' };
     }
@@ -321,7 +523,7 @@ export default function Companies() {
     const result = await uploadAsset(file, 'restriction', formState.name || editingCompany?.name || 'company');
     setUploadingAttachment(false);
     event.target.value = '';
-    if (!result.ok) {
+    if (result.ok === false) {
       setFeedback({ tone: 'danger', text: result.message });
       return;
     }
@@ -336,16 +538,32 @@ export default function Companies() {
   const handleLogoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    if (!String(file.type || '').startsWith('image/')) {
+      event.target.value = '';
+      setFeedback({ tone: 'danger', text: 'اختر ملف صورة صالحًا للشعار.' });
+      return;
+    }
+    if (file.size > COMPANY_IMAGE_MAX_BYTES) {
+      event.target.value = '';
+      setFeedback({ tone: 'danger', text: 'حجم الشعار أكبر من 2MB. اختر صورة أصغر.' });
+      return;
+    }
     setUploadingLogo(true);
     const result = await uploadAsset(file, 'logo', formState.name || editingCompany?.name || 'company');
     setUploadingLogo(false);
     event.target.value = '';
-    if (!result.ok) {
+    if (result.ok === false) {
       setFeedback({ tone: 'danger', text: result.message });
       return;
     }
     setFormState((current) => ({ ...current, imageUrl: result.url }));
-    setFeedback({ tone: 'success', text: 'تم رفع شعار الشركة.' });
+    setFeedback({
+      tone: 'success',
+      text:
+        result.source === 'inline'
+          ? 'تم تجهيز شعار الشركة وحفظه داخل الملف مباشرة.'
+          : 'تم رفع شعار الشركة.',
+    });
   };
 
   const sendCompanyPasswordReset = async (company: CompanyRecord) => {
@@ -383,7 +601,146 @@ export default function Companies() {
     }
   };
 
-  const submitForm = () => {
+  const getAuthenticatedAdminToken = async () => {
+    if (!hasFirebaseConfig()) {
+      throw new Error('تغيير كلمة المرور المباشر يحتاج تفعيل Firebase للأدمن.');
+    }
+
+    const services = await getFirebaseServices();
+    const currentUser = services?.auth.currentUser;
+    if (!services || !currentUser) {
+      throw new Error('سجّل دخول الأدمن من جديد ثم أعد المحاولة.');
+    }
+
+    return currentUser.getIdToken();
+  };
+
+  const updateCompanyLoginPassword = async () => {
+    const company = passwordDialogCompany;
+    if (!company) return;
+
+    const nextPassword = passwordForm.password.trim();
+    const nextConfirmPassword = passwordForm.confirmPassword.trim();
+    if (!nextPassword) {
+      setFeedback({ tone: 'danger', text: 'اكتب كلمة المرور الجديدة أولًا.' });
+      return;
+    }
+
+    if (nextPassword.length < 8) {
+      setFeedback({ tone: 'danger', text: 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.' });
+      return;
+    }
+
+    if (nextPassword !== nextConfirmPassword) {
+      setFeedback({ tone: 'danger', text: 'تأكيد كلمة المرور غير مطابق.' });
+      return;
+    }
+
+    setSavingCompanyPassword(true);
+
+    try {
+      const adminToken = await getAuthenticatedAdminToken();
+      const response = await fetch(new URL('/api/admin/set-company-password', window.location.origin).toString(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({
+          companyId: company.id,
+          companyName: company.name,
+          email: company.email,
+          password: nextPassword,
+        }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as { ok?: boolean; message?: string } | null;
+      if (!response.ok || !payload?.ok) {
+        throw new Error(cleanAdminText(payload?.message || 'تعذر تحديث كلمة مرور الشركة الآن.'));
+      }
+
+      addNote('companies', company.id, `تم تعيين / تحديث كلمة مرور دخول الشركة بواسطة الأدمن للبريد ${company.email}.`);
+      setFeedback({
+        tone: 'success',
+        text: cleanAdminText(payload.message || 'تم تحديث كلمة مرور الشركة بنجاح.'),
+      });
+      resetCompanyPasswordDialog();
+    } catch (error) {
+      setFeedback({
+        tone: 'danger',
+        text: getActionErrorText(error, 'تعذر تحديث كلمة مرور الشركة الآن.'),
+      });
+    } finally {
+      setSavingCompanyPassword(false);
+    }
+  };
+
+  const provisionCompanyLoginAccount = async (payload: {
+    companyName: string;
+    email: string;
+    password: string;
+  }) => {
+    if (!hasFirebaseConfig()) {
+      return {
+        ok: false as const,
+        message: 'إنشاء دخول الشركة يحتاج إعداد Firebase صحيح أولًا.',
+      };
+    }
+    const firebaseConfig = getFirebaseRuntimeConfig();
+    const secondaryApp = initializeApp(firebaseConfig, `rahma-company-provision-${Date.now()}`);
+    const secondaryAuth = getAuth(secondaryApp);
+    try {
+      await setPersistence(secondaryAuth, browserSessionPersistence);
+      const credential = await createUserWithEmailAndPassword(
+        secondaryAuth,
+        payload.email.trim().toLowerCase(),
+        payload.password,
+      );
+      await updateProfile(credential.user, {
+        displayName: payload.companyName.trim(),
+      });
+
+      return {
+        ok: true as const,
+        uid: credential.user.uid,
+        message: 'تم تجهيز دخول الشركة بنجاح.',
+      };
+    } catch (error) {
+      const code = cleanAdminText((error as { code?: string } | null)?.code || '').trim().toLowerCase();
+      if (code === 'auth/email-already-in-use' || code.includes('email-already-in-use')) {
+        return {
+          ok: false as const,
+          message: 'هذا البريد الإلكتروني مستخدم بالفعل في حساب شركة آخر.',
+        };
+      }
+
+      if (code === 'auth/weak-password' || code.includes('weak-password')) {
+        return {
+          ok: false as const,
+          message: 'كلمة المرور ضعيفة جدًا. استخدم 8 أحرف أو أكثر.',
+        };
+      }
+
+      return {
+        ok: false as const,
+        message: getActionErrorText(error, 'تعذر إنشاء حساب دخول الشركة الآن.'),
+      };
+    } finally {
+      try {
+        await signOutSecondaryAuth(secondaryAuth);
+      } catch {
+        // Ignore secondary auth cleanup failures.
+      }
+
+      try {
+        await deleteApp(secondaryApp);
+      } catch {
+        // Ignore secondary app cleanup failures.
+      }
+    }
+  };
+
+  const submitForm = async () => {
     if (!formState.name.trim() || !formState.email.trim() || !formState.phone.trim()) {
       setFeedback({ tone: 'danger', text: 'اسم الشركة والبريد والموبايل حقول أساسية.' });
       return;
@@ -396,10 +753,53 @@ export default function Companies() {
       setFeedback({ tone: 'danger', text: 'قبل إيقاف الشركة أضف سبب الإيقاف وتعليمات صاحب الموقع.' });
       return;
     }
-    saveCompany(
+    const nextPassword = formState.loginPassword;
+    const nextConfirmPassword = formState.confirmLoginPassword;
+    const nextCompanyEmail = formState.email.trim().toLowerCase();
+    const isCreatingCompany = !editingCompany;
+    const shouldProvisionLogin = isCreatingCompany && Boolean(nextPassword.trim());
+
+    if (isCreatingCompany && !nextPassword.trim()) {
+      setFeedback({ tone: 'danger', text: 'أدخل كلمة مرور الشركة حتى يصبح تسجيل الدخول متاحًا لها.' });
+      return;
+    }
+
+    if (shouldProvisionLogin && nextPassword.trim().length < 8) {
+      setFeedback({ tone: 'danger', text: 'كلمة مرور الشركة لازم تكون 8 أحرف على الأقل.' });
+      return;
+    }
+
+    if (shouldProvisionLogin && nextPassword !== nextConfirmPassword) {
+      setFeedback({ tone: 'danger', text: 'تأكيد كلمة مرور الشركة غير مطابق.' });
+      return;
+    }
+
+    setSavingCompany(true);
+
+    let preferredCompanyId: string | null = editingCompany?.id || null;
+    if (shouldProvisionLogin) {
+      const loginProvisionResult = await provisionCompanyLoginAccount({
+        companyName: formState.name.trim(),
+        email: nextCompanyEmail,
+        password: nextPassword,
+      });
+
+      if (!loginProvisionResult.ok) {
+        setSavingCompany(false);
+        setFeedback({
+          tone: 'danger',
+          text: `تعذر تجهيز دخول الشركة: ${loginProvisionResult.message}`,
+        });
+        return;
+      }
+
+      preferredCompanyId = loginProvisionResult.uid;
+    }
+
+    const companyId = saveCompany(
       {
         name: formState.name.trim(),
-        email: formState.email.trim(),
+        email: nextCompanyEmail,
         phone: formState.phone.trim(),
         landline: formState.landline.trim(),
         address: formState.address.trim(),
@@ -415,17 +815,34 @@ export default function Companies() {
         },
         status: formState.status,
         verified: formState.verified,
-        siteMode: formState.siteMode,
+        siteMode: 'full',
         restrictionMessage: formState.restrictionMessage.trim(),
         restrictionAttachmentUrl: formState.restrictionAttachmentUrl || null,
         restrictionAttachmentName: formState.restrictionAttachmentName.trim(),
         imageUrl: formState.imageUrl.trim(),
       },
-      editingCompany?.id || null,
+      preferredCompanyId,
     );
+
+    if (!companyId) {
+      setSavingCompany(false);
+      setFeedback({ tone: 'danger', text: 'تعذر حفظ ملف الشركة الآن.' });
+      return;
+    }
+
+    if (shouldProvisionLogin) {
+      setFeedback({
+        tone: 'success',
+        text: 'تم إنشاء الشركة وتجهيز دخولها بنجاح.',
+      });
+    } else {
+      setFeedback({ tone: 'success', text: editingCompany ? 'تم تحديث ملف الشركة.' : 'تم إنشاء ملف الشركة.' });
+    }
+
+    setSavingCompany(false);
     setFormOpen(false);
     setEditingCompany(null);
-    setFeedback({ tone: 'success', text: editingCompany ? 'تم تحديث ملف الشركة.' : 'تم إنشاء ملف الشركة.' });
+    setFormState(EMPTY_FORM);
   };
 
   const submitNote = () => {
@@ -461,8 +878,8 @@ export default function Companies() {
       <div className="space-y-5">
         <AdminPageHeader
           eyebrow="إدارة الشركات"
-          title="ملفات الشركات والتحكم في ظهورها"
-          description="بيانات الشركة، وضع ظهورها على الموقع، وروابط التواصل كلها من شاشة واحدة أخف وأسهل."
+          title="ملفات الشركات والتحكم فيها"
+          description="بيانات الشركة، وسائل التواصل، وحالة الاعتماد كلها من شاشة واحدة مباشرة وواضحة."
           actions={
             <>
               <AdminButton variant="soft" onClick={refreshFromSite}>
@@ -473,6 +890,8 @@ export default function Companies() {
                 onClick={() => {
                   setEditingCompany(null);
                   setFormState(EMPTY_FORM);
+                  setShowCreatePassword(false);
+                  setShowCreatePasswordConfirm(false);
                   setFormOpen(true);
                 }}
               >
@@ -483,17 +902,101 @@ export default function Companies() {
           }
         />
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <AdminStatCard label="نشطة" value={formatNumber(state.companies.filter((item) => !item.deletedAt && item.status === 'approved').length)} helper="ظاهرة على الموقع" icon={Building2} tone="primary" />
           <AdminStatCard label="مراجعة" value={formatNumber(state.companies.filter((item) => !item.deletedAt && item.status === 'pending').length)} helper="بانتظار الاعتماد" icon={ShieldCheck} tone="secondary" />
-          <AdminStatCard label="موقوفة" value={formatNumber(state.companies.filter((item) => !item.deletedAt && item.status === 'restricted').length)} helper="محجوبة من الظهور والدخول" icon={ShieldCheck} tone="accent" />
-          <AdminStatCard label="محذوفة" value={formatNumber(state.companies.filter((item) => item.deletedAt).length)} helper="سجلات قديمة قبل تفعيل الحذف النهائي" icon={Trash2} tone="accent" />
-          <AdminStatCard label="واجهة فقط" value={formatNumber(state.companies.filter((item) => !item.deletedAt && item.siteMode === 'landing').length)} helper="ملف تعريفي بدون وظائف عامة" icon={Globe} tone="success" />
+          <AdminStatCard label="موقوفة" value={formatNumber(state.companies.filter((item) => !item.deletedAt && item.status === 'restricted').length)} helper="تحتاج متابعة أو إعادة تفعيل" icon={ShieldCheck} tone="accent" />
+          <AdminStatCard label="طلبات حذف" value={formatNumber(companyDeletionRequests.length)} helper="بانتظار قرار الأدمن" icon={Trash2} tone="accent" />
         </div>
+
+        {companyDeletionRequests.length ? (
+          <section className="rounded-[1.6rem] border border-[rgba(177,79,79,0.14)] bg-[linear-gradient(180deg,#fff9f8_0%,#fff3f1_100%)] p-5 shadow-[0_18px_36px_rgba(177,79,79,0.08)]">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-xs font-black tracking-[0.18em] text-[#b14f4f]">صندوق طلبات حذف الشركات</div>
+                <h2 className="mt-2 text-[1.1rem] font-black text-[#10213c]">شركات اختفت من الموقع وتنتظر قرار الأدمن</h2>
+                <p className="mt-2 text-sm leading-7 text-[#6b7280]">
+                  كل شركة هنا طلبت حذف حسابها من لوحتها. يمكنك استعادتها فورًا، أو حذفها نهائيًا بدون رجعة.
+                </p>
+              </div>
+              <AdminStatusBadge status="rejected" label={`${formatNumber(companyDeletionRequests.length)} طلب مفتوح`} />
+            </div>
+
+            <div className="mt-4 grid gap-4 xl:grid-cols-2">
+              {companyDeletionRequests.map((company) => {
+                const jobsCount = (companyJobsMap.get(company.id) || []).length;
+                const applicationsCount = companyApplicationsMap.get(company.id)?.length || 0;
+
+                return (
+                  <article
+                    key={`delete-request-${company.id}`}
+                    className="rounded-[1.2rem] border border-[rgba(177,79,79,0.12)] bg-white/90 p-4 shadow-[0_14px_26px_rgba(177,79,79,0.06)]"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="truncate text-[1rem] font-black text-[#10213c]">{cleanAdminText(company.name)}</h3>
+                        <p className="mt-1 text-xs leading-6 text-[#7a5d5d]">
+                          {cleanAdminText(company.sector || 'بدون قطاع')} - {cleanAdminText(company.location || 'بدون موقع')}
+                        </p>
+                      </div>
+                      <AdminStatusBadge status="rejected" label="بانتظار قرار الحذف" />
+                    </div>
+
+                    <div className="mt-3 rounded-[1rem] border border-[rgba(177,79,79,0.08)] bg-[#fff8f7] px-3 py-2 text-sm leading-7 text-[#7a5d5d]">
+                      <div className="font-black text-[#9b4343]">سبب الطلب</div>
+                      <p className="mt-1">{cleanAdminText(company.deletionReason || 'لم تضف الشركة سببًا واضحًا.')}</p>
+                      <p className="mt-2 text-[12px] font-bold text-[#aa6a6a]">
+                        وقت الإرسال: {formatDateTime(company.deletedAt) || 'غير محدد'}
+                      </p>
+                    </div>
+
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      <div className="rounded-[1rem] bg-[#fdf1ee] px-3 py-2 text-center">
+                        <div className="text-xs font-bold text-[#8d6767]">الوظائف المرتبطة</div>
+                        <div className="mt-1 text-lg font-black text-[#10213c]">{formatNumber(jobsCount)}</div>
+                      </div>
+                      <div className="rounded-[1rem] bg-[#fdf1ee] px-3 py-2 text-center">
+                        <div className="text-xs font-bold text-[#8d6767]">الطلبات المرتبطة</div>
+                        <div className="mt-1 text-lg font-black text-[#10213c]">{formatNumber(applicationsCount)}</div>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <AdminButton
+                        variant="secondary"
+                        onClick={() => {
+                          restoreCompany(company.id);
+                          setFeedback({ tone: 'success', text: 'تمت استعادة الشركة وعودتها إلى الموقع.' });
+                        }}
+                      >
+                        <RefreshCcw size={15} />
+                        استعادة الشركة
+                      </AdminButton>
+                      <AdminButton
+                        variant="danger"
+                        onClick={() => {
+                          softDeleteCompany(company.id);
+                          setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا من النظام.' });
+                        }}
+                      >
+                        <Trash2 size={15} />
+                        حذف نهائي
+                      </AdminButton>
+                      <AdminButton variant="ghost" onClick={() => openDrawer(company)}>
+                        <Eye size={15} />
+                        عرض التفاصيل
+                      </AdminButton>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        ) : null}
 
         <AdminDataShell
           toolbar={
-            <div className="grid gap-3 xl:grid-cols-[minmax(0,2fr)_repeat(2,minmax(0,1fr))]">
+            <div className="grid gap-3 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
               <div className="relative">
                 <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#8a99ab]" size={16} />
                 <AdminInput
@@ -509,13 +1012,7 @@ export default function Companies() {
                 <option value="approved">نشطة</option>
                 <option value="pending">قيد المراجعة</option>
                 <option value="restricted">موقوفة</option>
-                <option value="deleted">محذوفة</option>
-              </AdminSelect>
-
-              <AdminSelect value={modeFilter} onChange={(event) => setModeFilter(event.target.value)}>
-                <option value="all">كل الأوضاع</option>
-                <option value="full">موقع كامل</option>
-                <option value="landing">واجهة تعريفية فقط</option>
+                <option value="deleted">طلبات حذف / محذوفة</option>
               </AdminSelect>
             </div>
           }
@@ -538,10 +1035,9 @@ export default function Companies() {
                           <h2 className="truncate text-[1.02rem] font-black text-[#10213c]">{cleanAdminText(company.name)}</h2>
                           <AdminStatusBadge
                             status={company.deletedAt ? 'rejected' : company.status}
-                            label={company.deletedAt ? 'محذوفة' : getCompanyStatusLabel(company.status)}
+                            label={getCompanyDisplayStatusLabel(company)}
                           />
                           {company.verified ? <AdminStatusBadge status="approved" label="موثقة" /> : null}
-                          {company.siteMode === 'landing' ? <AdminStatusBadge status="hidden" label="واجهة تعريفية" /> : null}
                         </div>
                         <p className="mt-1 text-xs leading-6 text-[#6a7d92]">
                           {cleanAdminText(company.sector || 'بدون قطاع')} - {cleanAdminText(company.location || 'بدون موقع')}
@@ -590,27 +1086,47 @@ export default function Companies() {
                       {cleanAdminText(company.summary || 'لا توجد نبذة مضافة حتى الآن.')}
                     </p>
 
+                    {isCompanyDeletionRequest(company) ? (
+                      <div className="mt-3 rounded-[1rem] border border-[rgba(177,79,79,0.12)] bg-[#fff6f4] px-3 py-2 text-sm leading-7 text-[#8f5555]">
+                        <div className="font-black text-[#a63f3f]">طلب حذف من الشركة</div>
+                        <p className="mt-1 line-clamp-2">{cleanAdminText(company.deletionReason || 'لا يوجد سبب مكتوب.')}</p>
+                      </div>
+                    ) : null}
+
                     <div className="mt-3 flex flex-wrap gap-2">
                       <AdminButton variant="ghost" onClick={() => openDrawer(company)}>
                         <Eye size={15} />
                         عرض
                       </AdminButton>
-                      <AdminButton
-                        variant="soft"
-                        onClick={() => {
-                          setEditingCompany(company);
-                          setFormState(getFormState(company));
-                          setFormOpen(true);
-                        }}
-                      >
-                        <PencilLine size={15} />
-                        تعديل
-                      </AdminButton>
+                      {isCompanyDeletionRequest(company) ? (
+                        <AdminButton
+                          variant="secondary"
+                          onClick={() => {
+                            restoreCompany(company.id);
+                            setFeedback({ tone: 'success', text: 'تمت استعادة الشركة وعودتها إلى الموقع.' });
+                          }}
+                        >
+                          <RefreshCcw size={15} />
+                          استعادة
+                        </AdminButton>
+                      ) : (
+                        <AdminButton
+                          variant="soft"
+                          onClick={() => {
+                            setEditingCompany(company);
+                            setFormState(getFormState(company));
+                            setFormOpen(true);
+                          }}
+                        >
+                          <PencilLine size={15} />
+                          تعديل
+                        </AdminButton>
+                      )}
                       <AdminButton
                         variant="danger"
                         onClick={() => {
                           softDeleteCompany(company.id);
-                          setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا.' });
+                          setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا من النظام.' });
                         }}
                       >
                         <Trash2 size={15} />
@@ -632,22 +1148,29 @@ export default function Companies() {
         onClose={() => {
           setFormOpen(false);
           setEditingCompany(null);
+          setFormState(EMPTY_FORM);
+          setShowCreatePassword(false);
+          setShowCreatePasswordConfirm(false);
         }}
         title={editingCompany ? 'تعديل ملف الشركة' : 'إضافة شركة جديدة'}
-        description="بيانات الشركة هنا مرتبطة بملفها العام، ووضع الظهور، وملاحظات صاحب الشركة."
+        description="بيانات الشركة هنا تظهر مباشرة في صفحة الشركة العامة، مع ملاحظات صاحب الشركة وحالة الاعتماد."
         size="lg"
         footer={
           <>
             <AdminButton
+              type="button"
               variant="ghost"
               onClick={() => {
                 setFormOpen(false);
                 setEditingCompany(null);
+                setFormState(EMPTY_FORM);
               }}
             >
               إلغاء
             </AdminButton>
-            <AdminButton onClick={submitForm}>حفظ</AdminButton>
+            <AdminButton type="button" onClick={() => void submitForm()} disabled={savingCompany}>
+              {savingCompany ? 'جارٍ الحفظ...' : 'حفظ'}
+            </AdminButton>
           </>
         }
       >
@@ -659,6 +1182,30 @@ export default function Companies() {
             <AdminField label="البريد الإلكتروني" required>
               <AdminInput type="email" value={formState.email} onChange={(event) => setFormState((current) => ({ ...current, email: event.target.value }))} />
             </AdminField>
+            {!editingCompany ? (
+              <>
+                <AdminField
+                  label="كلمة مرور دخول الشركة"
+                  required
+                  hint="هذه هي الكلمة التي ستستخدمها الشركة عند تسجيل الدخول لأول مرة."
+                >
+                  <PasswordInputControl
+                    value={formState.loginPassword}
+                    onChange={(value) => setFormState((current) => ({ ...current, loginPassword: value }))}
+                    showPassword={showCreatePassword}
+                    onTogglePassword={() => setShowCreatePassword((current) => !current)}
+                  />
+                </AdminField>
+                <AdminField label="تأكيد كلمة المرور" required>
+                  <PasswordInputControl
+                    value={formState.confirmLoginPassword}
+                    onChange={(value) => setFormState((current) => ({ ...current, confirmLoginPassword: value }))}
+                    showPassword={showCreatePasswordConfirm}
+                    onTogglePassword={() => setShowCreatePasswordConfirm((current) => !current)}
+                  />
+                </AdminField>
+              </>
+            ) : null}
             <AdminField label="رقم الموبايل" required>
               <AdminInput value={formState.phone} onChange={(event) => setFormState((current) => ({ ...current, phone: event.target.value }))} />
             </AdminField>
@@ -697,7 +1244,7 @@ export default function Companies() {
           </div>
         </AdminFormSection>
 
-        <AdminFormSection title="الظهور والتحكم" description="حالة الشركة ووضع الموقع وملاحظات صاحب الشركة." defaultOpen>
+        <AdminFormSection title="الحالة والتحكم" description="حالة الشركة وملاحظات صاحب الشركة." defaultOpen>
           <div className="grid gap-3 md:grid-cols-2">
             <AdminField label="حالة الشركة">
               <AdminSelect value={formState.status} onChange={(event) => setFormState((current) => ({ ...current, status: event.target.value as CompanyRecord['status'] }))}>
@@ -707,22 +1254,16 @@ export default function Companies() {
                 <option value="archived">مؤرشفة</option>
               </AdminSelect>
             </AdminField>
-            <AdminField label="وضع الموقع">
-              <AdminSelect value={formState.siteMode} onChange={(event) => setFormState((current) => ({ ...current, siteMode: event.target.value as CompanyRecord['siteMode'] }))}>
-                <option value="full">موقع كامل</option>
-                <option value="landing">واجهة تعريفية فقط</option>
-              </AdminSelect>
-            </AdminField>
             <label className="md:col-span-2 flex items-center gap-3 rounded-[1rem] border border-[rgba(19,53,91,0.08)] bg-[#fbfcfe] px-4 py-3 text-sm font-bold text-[#17355b]">
               <input type="checkbox" checked={formState.verified} onChange={(event) => setFormState((current) => ({ ...current, verified: event.target.checked }))} className="h-4 w-4" />
               الشركة موثقة
             </label>
-            {formState.siteMode === 'landing' || formState.status === 'restricted' ? (
+            {formState.status === 'restricted' ? (
               <>
-                <AdminField label={formState.status === 'restricted' ? 'سبب الإيقاف وتعليمات صاحب الشركة' : 'ملاحظات صاحب الشركة'} className="md:col-span-2">
+                <AdminField label="سبب الإيقاف وتعليمات صاحب الشركة" className="md:col-span-2">
                   <AdminTextarea value={formState.restrictionMessage} onChange={(event) => setFormState((current) => ({ ...current, restrictionMessage: event.target.value }))} />
                 </AdminField>
-                <AdminField label={formState.status === 'restricted' ? 'ملف مرفق لصاحب الشركة' : 'مرفق توضيحي'} className="md:col-span-2">
+                <AdminField label="ملف مرفق لصاحب الشركة" className="md:col-span-2">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <input ref={attachmentInputRef} type="file" className="hidden" onChange={(event) => void handleAttachmentUpload(event)} />
                     <AdminButton type="button" variant="ghost" onClick={() => attachmentInputRef.current?.click()} disabled={uploadingAttachment}>
@@ -756,6 +1297,45 @@ export default function Companies() {
         </AdminFormSection>
       </AdminDialog>
 
+      <AdminDialog
+        open={Boolean(passwordDialogCompany)}
+        onClose={resetCompanyPasswordDialog}
+        title={passwordDialogCompany ? `تغيير كلمة مرور ${cleanAdminText(passwordDialogCompany.name)}` : 'تغيير كلمة المرور'}
+        description="يمكنك من هنا تعيين كلمة مرور جديدة لدخول الشركة. إذا لم يكن للشركة حساب دخول بعد فسيتم إنشاؤه بنفس البريد الحالي."
+        footer={
+          <>
+            <AdminButton type="button" variant="ghost" onClick={resetCompanyPasswordDialog}>
+              إلغاء
+            </AdminButton>
+            <AdminButton type="button" onClick={() => void updateCompanyLoginPassword()} disabled={savingCompanyPassword}>
+              {savingCompanyPassword ? 'جارٍ الحفظ...' : 'حفظ كلمة المرور'}
+            </AdminButton>
+          </>
+        }
+      >
+        <div className="grid gap-4">
+          <AdminField label="بريد الشركة الحالي">
+            <AdminInput value={passwordDialogCompany?.email || ''} type="email" dir="ltr" readOnly />
+          </AdminField>
+          <AdminField label="كلمة المرور الجديدة" required>
+            <PasswordInputControl
+              value={passwordForm.password}
+              onChange={(value) => setPasswordForm((current) => ({ ...current, password: value }))}
+              showPassword={showPasswordDialogValue}
+              onTogglePassword={() => setShowPasswordDialogValue((current) => !current)}
+            />
+          </AdminField>
+          <AdminField label="تأكيد كلمة المرور" required>
+            <PasswordInputControl
+              value={passwordForm.confirmPassword}
+              onChange={(value) => setPasswordForm((current) => ({ ...current, confirmPassword: value }))}
+              showPassword={showPasswordDialogConfirm}
+              onTogglePassword={() => setShowPasswordDialogConfirm((current) => !current)}
+            />
+          </AdminField>
+        </div>
+      </AdminDialog>
+
       <AdminDrawer
         open={Boolean(selectedCompany)}
         onClose={closeDrawer}
@@ -763,34 +1343,17 @@ export default function Companies() {
         description={selectedCompany ? `${cleanAdminText(selectedCompany.sector || 'بدون قطاع')} - ${cleanAdminText(selectedCompany.location || 'بدون موقع')}` : undefined}
         footer={
           selectedCompany ? (
-            <>
-              <AdminButton
-                variant="soft"
-                onClick={() => {
-                  setEditingCompany(selectedCompany);
-                  setFormState(getFormState(selectedCompany));
-                  setFormOpen(true);
-                }}
-              >
-                <PencilLine size={15} />
-                تعديل
-              </AdminButton>
-              <AdminButton
-                variant={selectedCompany.siteMode === 'landing' ? 'secondary' : 'ghost'}
-                onClick={() => {
-                  persistCompanyPatch(selectedCompany, {
-                    siteMode: selectedCompany.siteMode === 'landing' ? 'full' : 'landing',
-                  });
-                  setFeedback({
-                    tone: 'success',
-                    text: selectedCompany.siteMode === 'landing' ? 'تم تحويل الشركة إلى موقع كامل.' : 'تم تحويل الشركة إلى واجهة تعريفية فقط.',
-                  });
-                }}
-              >
-                <Globe size={15} />
-                {selectedCompany.siteMode === 'landing' ? 'تحويل لموقع كامل' : 'تحويل لواجهة فقط'}
-              </AdminButton>
-            </>
+            <AdminButton
+              variant="soft"
+              onClick={() => {
+                setEditingCompany(selectedCompany);
+                setFormState(getFormState(selectedCompany));
+                setFormOpen(true);
+              }}
+            >
+              <PencilLine size={15} />
+              تعديل
+            </AdminButton>
           ) : null
         }
       >
@@ -805,25 +1368,45 @@ export default function Companies() {
                 <div>{cleanAdminText(selectedCompany.address || 'لا يوجد عنوان')}</div>
               </div>
             <div className="rounded-[1rem] border border-[rgba(19,53,91,0.08)] bg-[#fbfcfe] p-3 text-sm leading-7 text-[#5e7087]">
-              <div className="mb-2 font-black text-[#17355b]">الظهور</div>
-              <div>الحالة: {selectedCompany.deletedAt ? 'محذوفة' : getCompanyStatusLabel(selectedCompany.status)}</div>
-              <div>الوضع: {selectedCompany.siteMode === 'landing' ? 'واجهة تعريفية فقط' : 'موقع كامل'}</div>
+              <div className="mb-2 font-black text-[#17355b]">الحالة</div>
+              <div>الحالة: {getCompanyDisplayStatusLabel(selectedCompany)}</div>
               <div>التوثيق: {selectedCompany.verified ? 'موثقة' : 'غير موثقة'}</div>
               <div>الموقع: {selectedCompany.website ? cleanAdminText(selectedCompany.website) : 'غير مضاف'}</div>
             </div>
             </div>
 
+            {isCompanyDeletionRequest(selectedCompany) ? (
+              <div className="rounded-[1rem] border border-[#efc7c7] bg-[#fff7f6] p-3 text-sm leading-7 text-[#7a5252]">
+                <div className="font-black text-[#a63f3f]">طلب حذف قيد المراجعة</div>
+                <p className="mt-2">{cleanAdminText(selectedCompany.deletionReason || 'لم تضف الشركة سببًا مكتوبًا.')}</p>
+                <p className="mt-2 text-[12px] font-bold text-[#a56b6b]">
+                  أُرسل الطلب في: {formatDateTime(selectedCompany.deletedAt) || 'غير محدد'}
+                </p>
+              </div>
+            ) : null}
+
             <div className="rounded-[1rem] border border-[rgba(19,53,91,0.08)] bg-[#fbfcfe] p-3 text-sm leading-7 text-[#5e7087]">
               <div className="mb-2 font-black text-[#17355b]">صلاحيات الأدمن الجديدة</div>
               <ul className="space-y-1.5">
-                <li>تعديل حالة الشركة بين نشطة أو قيد المراجعة، مع حذف واضح ونهائي من لوحة الأدمن.</li>
-                <li>تحويل الشركة إلى واجهة تعريفية فقط بدون وظائف عامة.</li>
-                <li>إرسال رابط إعادة تعيين كلمة السر لبريد الشركة من داخل لوحة الأدمن.</li>
-                <li>استعادة الوظائف التي حذفتها الشركة إذا قرر الأدمن إرجاعها.</li>
+                <li>تعديل حالة الشركة بين نشطة أو قيد المراجعة، مع صندوق واضح لطلبات الحذف القادمة من الشركات.</li>
+                <li>تعيين كلمة مرور دخول الشركة أثناء الإنشاء أو تغييرها لاحقًا مباشرة من لوحة الأدمن.</li>
+                <li>استعادة الشركة ووظائفها إذا قرر الأدمن إرجاع الطلب بدل الحذف النهائي.</li>
               </ul>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
+              {isCompanyDeletionRequest(selectedCompany) ? (
+                <AdminButton
+                  variant="secondary"
+                  onClick={() => {
+                    restoreCompany(selectedCompany.id);
+                    setFeedback({ tone: 'success', text: 'تمت استعادة الشركة بنجاح.' });
+                  }}
+                >
+                  <RefreshCcw size={15} />
+                  استعادة الشركة
+                </AdminButton>
+              ) : null}
               <AdminButton
                 variant="secondary"
                 onClick={() => {
@@ -866,7 +1449,7 @@ export default function Companies() {
               </AdminButton>
               <AdminButton variant="danger" onClick={() => {
                   softDeleteCompany(selectedCompany.id);
-                  setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا.' });
+                  setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا من النظام.' });
               }}>
                 <Trash2 size={15} />
                 حذف الشركة نهائيًا
@@ -879,25 +1462,16 @@ export default function Companies() {
                 <RefreshCcw size={15} />
                 {sendingResetForCompanyId === selectedCompany.id ? 'جارٍ الإرسال...' : 'إرسال رابط إعادة تعيين'}
               </AdminButton>
-              <a href={`/company-details.html?id=${encodeURIComponent(selectedCompany.id)}`} target="_blank" rel="noreferrer" className="contents">
+              <AdminButton variant="secondary" onClick={() => openCompanyPasswordDialog(selectedCompany)}>
+                <PencilLine size={15} />
+                تعيين / تغيير كلمة المرور
+              </AdminButton>
+              <a href={`/jobs.html?keyword=${encodeURIComponent(selectedCompany.name)}`} target="_blank" rel="noreferrer" className="contents">
                 <AdminButton variant="ghost">
-                  <ExternalLink size={15} />
-                  فتح الملف العام
+                  <BriefcaseBusiness size={15} />
+                  فتح الوظائف العامة
                 </AdminButton>
               </a>
-              {selectedCompany.siteMode === 'landing' ? (
-                <div className="flex min-h-[46px] items-center justify-center gap-2 rounded-[1rem] border border-dashed border-[rgba(19,53,91,0.16)] bg-[#f7f9fc] px-3 text-sm font-bold text-[#6b7d92]">
-                  <BriefcaseBusiness size={15} />
-                  الوظائف العامة غير متاحة
-                </div>
-              ) : (
-                <a href={`/jobs.html?keyword=${encodeURIComponent(selectedCompany.name)}`} target="_blank" rel="noreferrer" className="contents">
-                  <AdminButton variant="ghost">
-                    <BriefcaseBusiness size={15} />
-                    فتح الوظائف العامة
-                  </AdminButton>
-                </a>
-              )}
             </div>
 
             {selectedCompany.restrictionMessage ? (

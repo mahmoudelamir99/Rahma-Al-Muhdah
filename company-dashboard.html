@@ -12,9 +12,9 @@
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
   </style>
-  <link rel="stylesheet" href="site.css?v=20260406-2"/>
+  <link rel="stylesheet" href="site.css?v=20260410-2"/>
   <script src="firebase-site-config.js" defer></script>
-  <script src="site.js?v=20260406-2" defer></script>
+  <script src="site.js?v=20260410-2" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="لوحة الشركة الداخلية لإدارة الوظائف والطلبات وتحديث بيانات الشركة داخل منصة التوظيف بشكل مباشر وآمن.">
   <meta name="keywords" content="لوحة الشركة, إدارة الوظائف, إدارة الطلبات, توظيف شركات">
@@ -89,7 +89,7 @@
           <i class="fa-solid fa-circle-plus dashboard-inline-icon" aria-hidden="true"></i>
           <span>نشر وظيفة جديدة</span>
         </button>
-        <a class="dashboard-logout-link" data-logout="true" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">
+        <a class="dashboard-logout-link" data-logout="true" href="login.html?redirect=company-dashboard.html">
           <i class="fa-solid fa-right-from-bracket dashboard-inline-icon" aria-hidden="true"></i>
           <span>تسجيل الخروج</span>
         </a>
@@ -110,9 +110,6 @@
         </div>
 
         <div class="dashboard-topbar__actions">
-          <button aria-label="معاينة الملف العام" class="dashboard-icon-button" data-company-profile-preview-open="true" type="button">
-            <i class="fa-solid fa-eye dashboard-inline-icon" aria-hidden="true"></i>
-          </button>
           <div class="dashboard-profile-chip">
             <div class="dashboard-profile-chip__avatar">
               <img data-company-dashboard-avatar-img src="logo-mark.png" alt="شعار الشركة"/>
@@ -132,7 +129,6 @@
           <p>من هنا تراجع الوظائف الحالية، تتابع الطلبات الواردة، وتحدّث بيانات الشركة بدون التنقل بين صفحات كثيرة.</p>
           <div class="dashboard-hero__actions">
             <button class="dashboard-pill-button dashboard-pill-button--primary" data-company-job-open="true" type="button">نشر وظيفة</button>
-            <button class="dashboard-pill-button dashboard-pill-button--ghost" data-company-profile-preview-open="true" type="button">معاينة الملف العام</button>
           </div>
         </div>
 
@@ -197,7 +193,6 @@
             <span class="section-eyebrow">ملف الشركة</span>
             <h3>تعديل بيانات الشركة والصور</h3>
           </div>
-          <button class="dashboard-inline-link dashboard-inline-link--button" data-company-profile-preview-open="true" type="button">عرض الملف العام</button>
         </div>
 
         <div class="dashboard-company-profile">
@@ -289,14 +284,14 @@
 
               <label class="dashboard-job-field">
                 <span>حجم الفريق</span>
-                <select name="team_size" required>
-                  <option value="">اختر الحجم</option>
-                  <option value="1-10">1 - 10</option>
-                  <option value="11-25">11 - 25</option>
-                  <option value="26-50">26 - 50</option>
-                  <option value="51-100">51 - 100</option>
-                  <option value="100+">أكثر من 100</option>
-                </select>
+                <input
+                  name="team_size"
+                  type="number"
+                  min="1"
+                  step="1"
+                  inputmode="numeric"
+                  placeholder="اكتب عدد الموظفين"
+                />
               </label>
             </div>
 
@@ -348,15 +343,14 @@
 
             <div class="dashboard-company-profile__actions">
               <button class="site-action site-action--primary" type="submit">حفظ بيانات الشركة</button>
-              <button class="site-action site-action--ghost" type="button" data-company-profile-preview-open="true">عرض الملف العام</button>
             </div>
 
             <div class="dashboard-company-danger-zone">
               <div class="dashboard-company-danger-zone__copy">
-                <strong>حذف الحساب نهائيًا</strong>
-                <p>سيتم حذف الشركة وكل الوظائف والطلبات التابعة لها نهائيًا من المنصة، ولن يمكن التراجع بعد التنفيذ.</p>
+                <strong>طلب حذف الحساب</strong>
+                <p>سيختفي ملف الشركة ووظائفها من الموقع فورًا، ثم ينتقل الطلب إلى مراجعة الأدمن ليستطيع استعادة الشركة أو حذفها نهائيًا.</p>
               </div>
-              <button class="site-action site-action--danger" data-company-account-delete="true" type="button">حذف الشركة نهائيًا</button>
+              <button class="site-action site-action--danger" data-company-account-delete="true" type="button">إرسال طلب حذف الشركة</button>
             </div>
           </form>
         </div>
@@ -378,12 +372,7 @@
           <button class="dashboard-action-tile" data-company-job-open="true" type="button">
             <i class="fa-solid fa-square-plus dashboard-inline-icon" aria-hidden="true"></i>
             <strong>نشر وظيفة جديدة</strong>
-            <small>انزل مباشرة إلى النموذج وأرسل الوظيفة للمراجعة.</small>
-          </button>
-          <button class="dashboard-action-tile" data-company-profile-preview-open="true" type="button">
-            <i class="fa-solid fa-eye dashboard-inline-icon" aria-hidden="true"></i>
-            <strong>معاينة الملف العام</strong>
-            <small>شاهد شكل صفحة شركتك كما ستظهر للزوار.</small>
+            <small>انزل مباشرة إلى النموذج وانشر الوظيفة أو عدّلها من نفس اللوحة.</small>
           </button>
           <a class="dashboard-action-tile dashboard-action-tile--link" href="#company-jobs">
             <i class="fa-solid fa-briefcase dashboard-inline-icon" aria-hidden="true"></i>
@@ -398,7 +387,7 @@
           <div class="dashboard-panel__header">
             <div>
               <span class="section-eyebrow">وظائفك الحالية</span>
-              <h3>إدارة الوظائف المنشورة</h3>
+              <h3>إدارة وظائف الشركة</h3>
             </div>
             <a class="dashboard-inline-link" href="#company-jobs">عرض الكل</a>
           </div>
@@ -415,7 +404,7 @@
               </thead>
               <tbody data-company-jobs-body>
                 <tr>
-                  <td colspan="5">لا توجد وظائف منشورة من حسابك بعد. أول وظيفة تنشئها ستظهر هنا.</td>
+                  <td colspan="5">لا توجد وظائف مرتبطة بحسابك بعد. أول وظيفة تنشرها ستظهر هنا.</td>
                 </tr>
               </tbody>
             </table>
@@ -472,18 +461,26 @@
           </div>
 
           <div class="dashboard-panel">
-            <div class="dashboard-panel__header">
-              <div>
-                <span class="section-eyebrow">إجراءات سريعة</span>
-                <h3>نشر وظيفة جديدة</h3>
-              </div>
-              <button class="site-action site-action--primary dashboard-panel__submit-shortcut" form="company-job-form" type="submit">نشر الوظيفة</button>
+          <div class="dashboard-panel__header">
+            <div>
+              <span class="section-eyebrow">إجراءات سريعة</span>
+              <h3 data-company-job-panel-title>نشر وظيفة جديدة</h3>
             </div>
-            <div id="company-job-composer"></div>
-            <form class="dashboard-job-form" data-company-job-form="true" id="company-job-form">
-              <div class="dashboard-job-form__grid">
-                <label class="dashboard-job-field">
-                  <span>مسمى الوظيفة</span>
+            <button
+              class="site-action site-action--primary dashboard-panel__submit-shortcut"
+              data-company-job-submit-shortcut
+              form="company-job-form"
+              type="submit"
+            >
+              نشر الوظيفة
+            </button>
+          </div>
+          <div id="company-job-composer"></div>
+          <form class="dashboard-job-form" data-company-job-form="true" id="company-job-form">
+            <input name="job_id" type="hidden"/>
+            <div class="dashboard-job-form__grid">
+              <label class="dashboard-job-field">
+                <span>مسمى الوظيفة</span>
                   <input name="job_title" type="text" placeholder="مثال: مندوب مبيعات" required/>
                 </label>
 
@@ -499,7 +496,6 @@
                   <select name="job_type" required>
                     <option value="دوام كامل">دوام كامل</option>
                     <option value="دوام جزئي">دوام جزئي</option>
-                    <option value="هجين">هجين</option>
                     <option value="عن بعد">عن بعد</option>
                     <option value="عقد مؤقت">عقد مؤقت</option>
                   </select>
@@ -532,7 +528,8 @@
               </label>
 
               <div class="dashboard-job-form__actions">
-                <button class="site-action site-action--primary" type="submit">نشر الوظيفة الآن</button>
+                <button class="site-action site-action--primary" data-company-job-submit-label type="submit">نشر الوظيفة الآن</button>
+                <button class="site-action site-action--ghost hidden" data-company-job-reset type="button" hidden>إلغاء التعديل</button>
               </div>
             </form>
 
@@ -542,69 +539,6 @@
       </section>
     </main>
   </div>
-
-  <section class="application-modal hidden" data-company-preview-modal aria-hidden="true">
-    <div class="application-modal__backdrop" data-company-preview-close></div>
-    <div class="application-modal__dialog company-preview-modal">
-      <div class="application-modal__body">
-        <div class="application-modal__header">
-          <div>
-            <h2>معاينة الملف العام</h2>
-            <p>نافذة سريعة لعرض شكل الملف العام بدون الخروج من لوحة الشركة.</p>
-          </div>
-          <button class="site-action site-action--ghost application-modal__close" data-company-preview-close type="button">إغلاق</button>
-        </div>
-
-        <div class="company-preview-sheet">
-          <div class="company-preview-sheet__hero">
-            <img data-company-preview-image src="assets/company-placeholder.svg" alt="صورة الشركة"/>
-            <div>
-              <strong data-company-preview-name>اسم الشركة</strong>
-              <p data-company-preview-sector>القطاع</p>
-              <span data-company-preview-location>المدينة</span>
-            </div>
-          </div>
-
-          <div class="company-preview-sheet__grid">
-            <div class="company-preview-sheet__item">
-              <span>الموبايل</span>
-              <strong data-company-preview-phone>غير محدد</strong>
-            </div>
-            <div class="company-preview-sheet__item" data-company-preview-landline-row hidden>
-              <span>الخط الأرضي</span>
-              <strong data-company-preview-landline>غير محدد</strong>
-            </div>
-            <div class="company-preview-sheet__item">
-              <span>الموقع الإلكتروني</span>
-              <a data-company-preview-website href="#" hidden rel="noopener noreferrer" target="_blank">زيارة الموقع</a>
-              <strong data-company-preview-website-empty>غير مضاف</strong>
-            </div>
-            <div class="company-preview-sheet__item">
-              <span>حالة العرض</span>
-              <strong data-company-preview-mode>موقع كامل</strong>
-            </div>
-          </div>
-
-          <div class="company-preview-sheet__socials" data-company-preview-socials hidden>
-            <span>وسائل التواصل</span>
-            <div class="dashboard-company-profile__social-list">
-              <a data-company-preview-social="facebook" href="#" hidden rel="noopener noreferrer" target="_blank">فيسبوك</a>
-              <a data-company-preview-social="instagram" href="#" hidden rel="noopener noreferrer" target="_blank">إنستجرام</a>
-              <a data-company-preview-social="linkedin" href="#" hidden rel="noopener noreferrer" target="_blank">لينكدإن</a>
-              <a data-company-preview-social="x" href="#" hidden rel="noopener noreferrer" target="_blank">إكس</a>
-            </div>
-          </div>
-
-          <p class="company-preview-sheet__summary" data-company-preview-summary>لا توجد نبذة مضافة بعد.</p>
-
-          <div class="page-actions page-actions--stack sm:flex-row sm:items-center">
-            <a class="site-action site-action--primary" data-company-preview-jobs href="jobs.html">الوظائف المرتبطة</a>
-            <a class="site-action site-action--secondary" data-company-preview-public-link href="company-details.html" target="_blank" rel="noopener noreferrer">فتح الملف العام</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <section class="application-modal hidden" data-company-review-modal aria-hidden="true">
     <div class="application-modal__backdrop" data-company-review-close></div>
@@ -682,8 +616,47 @@
       </div>
     </div>
   </section>
+
+  <section class="application-modal hidden" data-company-delete-modal aria-hidden="true">
+    <div class="application-modal__backdrop" data-company-delete-close></div>
+    <div class="application-modal__dialog company-review-modal">
+      <div class="application-modal__body">
+        <div class="application-modal__header">
+          <div>
+            <h2>طلب حذف الحساب</h2>
+            <p data-company-delete-target>سيختفي ملف الشركة ووظائفها من الموقع فورًا، ثم يراجع الأدمن الطلب قبل الحذف النهائي أو الاستعادة.</p>
+          </div>
+          <button class="site-action site-action--ghost application-modal__close" data-company-delete-close type="button">إغلاق</button>
+        </div>
+
+        <form class="dashboard-job-form" data-company-delete-form="true">
+          <label class="dashboard-job-field">
+            <span>سبب الحذف</span>
+            <textarea
+              name="delete_reason"
+              rows="5"
+              placeholder="اكتب سبب طلب الحذف بشكل واضح حتى يراجعه الأدمن قبل اتخاذ القرار النهائي..."
+            ></textarea>
+          </label>
+
+          <p class="dashboard-panel__hint">
+            بعد الإرسال ستختفي الشركة من الموقع ولوحة الشركة، وسيظهر الطلب داخل لوحة الأدمن لاتخاذ قرار الاستعادة أو الحذف النهائي.
+          </p>
+
+          <div class="application-status hidden" data-company-delete-feedback></div>
+
+          <div class="dashboard-job-form__actions">
+            <button class="site-action site-action--ghost" data-company-delete-close type="button">إلغاء</button>
+            <button class="site-action site-action--danger" data-company-delete-confirm type="submit">إرسال طلب الحذف</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
 </body>
 </html>
+
+
 
 
 

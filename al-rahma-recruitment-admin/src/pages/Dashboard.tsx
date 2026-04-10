@@ -9,7 +9,7 @@ import {
   RefreshCcw,
   UserCheck2,
 } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bar,
@@ -43,6 +43,30 @@ import {
   getTrendsSeries,
 } from '../lib/admin-dashboard';
 import { useAdmin } from '../lib/admin-store';
+
+function AnimatedCount({ value }: { value: number }) {
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    let frame = 0;
+    const duration = 520;
+    const start = performance.now();
+    const from = 0;
+    const to = Math.max(0, Math.round(value));
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - (1 - t) * (1 - t);
+      setDisplay(Math.round(from + (to - from) * eased));
+      if (t < 1) {
+        frame = requestAnimationFrame(tick);
+      }
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  return <>{formatNumber(display)}</>;
+}
 
 const STATUS_CARDS = [
   {
@@ -93,6 +117,12 @@ export default function Dashboard() {
       allowed: hasPermission('applications:view'),
     },
     {
+      id: 'candidates',
+      label: 'بيانات المرشحين',
+      path: '/candidates',
+      allowed: hasPermission('applications:view'),
+    },
+    {
       id: 'new-company',
       label: 'دعوة شركة جديدة',
       path: '/companies',
@@ -133,17 +163,17 @@ export default function Dashboard() {
         {[
           {
             label: 'إجمالي الشركات',
-            value: formatNumber(metrics.companiesCount),
+            value: <AnimatedCount value={metrics.companiesCount} />,
             icon: Building2,
           },
           {
             label: 'الوظائف النشطة',
-            value: formatNumber(metrics.activeJobsCount),
+            value: <AnimatedCount value={metrics.activeJobsCount} />,
             icon: BriefcaseBusiness,
           },
           {
             label: 'الطلبات الجديدة',
-            value: formatNumber(metrics.newApplicationsCount),
+            value: <AnimatedCount value={metrics.newApplicationsCount} />,
             icon: FileText,
           },
           {

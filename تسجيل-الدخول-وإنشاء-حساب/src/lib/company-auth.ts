@@ -185,12 +185,102 @@ export function getStoredCompanySession(): CompanySession | null {
   return session;
 }
 
+function normalizeEasternArabicDigits(value: string) {
+  return String(value || '')
+    .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 1632))
+    .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776));
+}
+
+function normalizePositiveIntegerString(value: string, options: { allowLegacyRange?: boolean } = {}) {
+  const normalizedValue = normalizeEasternArabicDigits(String(value || '')).trim();
+  if (/^[1-9]\d*$/.test(normalizedValue)) {
+    return normalizedValue;
+  }
+
+  if (!options.allowLegacyRange) {
+    return '';
+  }
+
+  const rangeMatch = normalizedValue.match(/(\d+)\s*[-–]\s*(\d+)/);
+  if (rangeMatch) {
+    return rangeMatch[2];
+  }
+
+  const plusMatch = normalizedValue.match(/(\d+)\s*\+$/);
+  if (plusMatch) {
+    return plusMatch[1];
+  }
+
+  return '';
+}
+
+const DISPOSABLE_EMAIL_DOMAINS = new Set([
+  '10minutemail.com',
+  '10minutemail.net',
+  '10minutemail.org',
+  '1secmail.com',
+  '1secmail.net',
+  '1secmail.org',
+  'dispostable.com',
+  'dropmail.me',
+  'dropmail.vip',
+  'emailondeck.com',
+  'fakeinbox.com',
+  'getnada.com',
+  'guerrillamail.com',
+  'guerrillamail.net',
+  'guerrillamail.org',
+  'guerrillamail.biz',
+  'guerrillamailblock.com',
+  'grr.la',
+  'maildrop.cc',
+  'mailinator.com',
+  'mailnesia.com',
+  'mintemail.com',
+  'moakt.com',
+  'sharklasers.com',
+  'spam4.me',
+  'tempmail.email',
+  'tempmail.plus',
+  'temp-mail.org',
+  'tempail.com',
+  'throwawaymail.com',
+  'trashmail.com',
+  'yopmail.com',
+  'yopmail.net',
+  'yopmail.fr',
+  'yopmail.gq',
+]);
+
+function getEmailDomain(value: string) {
+  const normalizedValue = String(value || '').trim().toLowerCase();
+  const atIndex = normalizedValue.lastIndexOf('@');
+  if (atIndex <= 0 || atIndex === normalizedValue.length - 1) {
+    return '';
+  }
+
+  return normalizedValue.slice(atIndex + 1).replace(/^\.+|\.+$/g, '');
+}
+
+function isDisposableEmailAddress(value: string) {
+  const domain = getEmailDomain(value);
+  if (!domain) {
+    return false;
+  }
+
+  if (DISPOSABLE_EMAIL_DOMAINS.has(domain)) {
+    return true;
+  }
+
+  return Array.from(DISPOSABLE_EMAIL_DOMAINS).some((blockedDomain) => domain.endsWith(`.${blockedDomain}`));
+}
+
 function buildProfileFromRegistration(input: CompanyRegistrationInput, extras: Record<string, unknown> = {}) {
   const companyName = input.companyName.trim();
   const companySector = input.companySector.trim();
   const country = String(input.country || extras.companyCountry || '').trim();
   const companyCity = input.companyCity.trim();
-  const teamSize = input.teamSize.trim();
+  const teamSize = normalizePositiveIntegerString(input.teamSize, { allowLegacyRange: true });
   const phone = input.phone.trim();
   const email = input.email.trim().toLowerCase();
   const landline = String(input.landline || extras.companyLandline || '').trim();
@@ -343,6 +433,52 @@ function normalizeSupabaseAuthErrorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
+function normalizeFirebaseAuthErrorMessage(error: unknown, fallback: string) {
+  const code = String((error as { code?: string })?.code || '').trim().toLowerCase();
+  const message = String((error as { message?: string })?.message || '').trim().toLowerCase();
+
+  if (
+    [
+      'auth/invalid-credential',
+      'auth/invalid-login-credentials',
+      'auth/user-not-found',
+      'auth/wrong-password',
+    ].includes(code) ||
+    message.includes('invalid-credential') ||
+    message.includes('invalid login credentials') ||
+    message.includes('wrong-password') ||
+    message.includes('user-not-found')
+  ) {
+    return 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+  }
+
+  if (code === 'auth/email-already-in-use' || message.includes('email-already-in-use')) {
+    return 'عذرًا، هذا البريد الإلكتروني مسجل بالفعل.';
+  }
+
+  if (code === 'auth/invalid-email' || message.includes('badly formatted')) {
+    return 'البريد الإلكتروني غير صالح.';
+  }
+
+  if (code === 'auth/user-disabled') {
+    return 'هذا الحساب موقوف حاليًا. تواصل مع الدعم للمراجعة.';
+  }
+
+  if (code === 'auth/too-many-requests') {
+    return 'تم تجاوز عدد المحاولات المسموح. انتظر قليلًا ثم أعد المحاولة.';
+  }
+
+  if (code === 'auth/network-request-failed' || message.includes('network request failed')) {
+    return 'تعذر الاتصال بالخدمة الآن. تحقق من الإنترنت ثم أعد المحاولة.';
+  }
+
+  if (code === 'permission-denied' || message.includes('missing or insufficient permissions')) {
+    return 'تعذر إكمال الطلب الآن بسبب إعدادات الصلاحيات. راجع إعدادات المشروع ثم أعد المحاولة.';
+  }
+
+  return fallback;
+}
+
 async function findSupabaseCompanyByOwner(supabase: SupabaseClient, ownerUid: string) {
   const { data, error } = await supabase
     .from('companies')
@@ -351,6 +487,13 @@ async function findSupabaseCompanyByOwner(supabase: SupabaseClient, ownerUid: st
     .is('deleted_at', null)
     .limit(1)
     .maybeSingle();
+
+  if (error) throw error;
+  return (data as SupabaseCompanyRow | null) || null;
+}
+
+async function findSupabaseCompanyByOwnerIncludingDeleted(supabase: SupabaseClient, ownerUid: string) {
+  const { data, error } = await supabase.from('companies').select('*').eq('owner_uid', ownerUid).limit(1).maybeSingle();
 
   if (error) throw error;
   return (data as SupabaseCompanyRow | null) || null;
@@ -707,7 +850,7 @@ function buildSupabaseMetadata(input: CompanyRegistrationInput) {
     companySector: input.companySector.trim(),
     companyCountry: String(input.country || '').trim(),
     companyCity: input.companyCity.trim(),
-    teamSize: input.teamSize.trim(),
+    teamSize: normalizePositiveIntegerString(input.teamSize, { allowLegacyRange: true }),
     phone: input.phone.trim(),
     landline: String(input.landline || '').trim(),
   };
@@ -790,6 +933,20 @@ async function loginWithSupabase(input: CompanyLoginInput): Promise<CompanyAuthR
     };
   }
 
+  try {
+    const companyRecord = await findSupabaseCompanyByOwnerIncludingDeleted(supabase, data.user.id);
+    if (companyRecord?.deleted_at) {
+      await supabase.auth.signOut();
+      clearStoredSession();
+      return {
+        ok: false,
+        message: 'هذا الحساب عليه طلب حذف قيد المراجعة الآن. تواصل مع الدعم إذا كنت تحتاج استعادة الشركة.',
+      };
+    }
+  } catch {
+    // Ignore extra lookup failure and continue with the normal bootstrap path.
+  }
+
   const bootstrapped = await bootstrapSupabaseCompanyState(data.user, input.remember);
   if (!bootstrapped) {
     return {
@@ -824,35 +981,42 @@ async function registerWithFirebase(input: CompanyRegistrationInput): Promise<Co
   }
 
   const { auth, authModule } = services;
-  await authModule.setPersistence(
-    auth,
-    input.remember ? authModule.browserLocalPersistence : authModule.browserSessionPersistence,
-  );
+  try {
+    await authModule.setPersistence(
+      auth,
+      input.remember ? authModule.browserLocalPersistence : authModule.browserSessionPersistence,
+    );
 
-  const credential = await authModule.createUserWithEmailAndPassword(auth, input.email.trim().toLowerCase(), input.password);
-  const user = credential.user;
-  const companyId = user.uid;
-  const companyName = input.companyName.trim();
-  const profile = buildProfileFromRegistration(input, { accountStatus: 'pending' });
-  const session = buildSession({
-    uid: user.uid,
-    companyId,
-    email: user.email || input.email.trim().toLowerCase(),
-    name: companyName,
-    provider: 'firebase',
-    remember: input.remember,
-  });
+    const credential = await authModule.createUserWithEmailAndPassword(auth, input.email.trim().toLowerCase(), input.password);
+    const user = credential.user;
+    const companyId = user.uid;
+    const companyName = input.companyName.trim();
+    const profile = buildProfileFromRegistration(input, { accountStatus: 'pending' });
+    const session = buildSession({
+      uid: user.uid,
+      companyId,
+      email: user.email || input.email.trim().toLowerCase(),
+      name: companyName,
+      provider: 'firebase',
+      remember: input.remember,
+    });
 
-  await authModule.updateProfile(user, { displayName: companyName });
-  await persistFirebaseProfile(session, profile);
-  safeWriteSession(session, input.remember);
-  persistLocalProfile(profile);
+    await authModule.updateProfile(user, { displayName: companyName });
+    await persistFirebaseProfile(session, profile);
+    safeWriteSession(session, input.remember);
+    persistLocalProfile(profile);
 
-  return {
-    ok: true,
-    message: 'تم إنشاء حساب الشركة بنجاح.',
-    session,
-  };
+    return {
+      ok: true,
+      message: 'تم إنشاء حساب الشركة بنجاح.',
+      session,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: normalizeFirebaseAuthErrorMessage(error, 'تعذر إنشاء حساب الشركة الآن. حاول مرة أخرى بعد قليل.'),
+    };
+  }
 }
 
 async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthResult> {
@@ -865,72 +1029,88 @@ async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthR
   }
 
   const { auth, authModule, firestoreModule, db } = services;
-  await authModule.setPersistence(
-    auth,
-    input.remember ? authModule.browserLocalPersistence : authModule.browserSessionPersistence,
-  );
+  try {
+    await authModule.setPersistence(
+      auth,
+      input.remember ? authModule.browserLocalPersistence : authModule.browserSessionPersistence,
+    );
 
-  const credential = await authModule.signInWithEmailAndPassword(auth, input.email.trim().toLowerCase(), input.password);
-  const user = credential.user;
-  const companyId = user.uid;
-  const companySnap = await firestoreModule.getDoc(firestoreModule.doc(db, 'companies', companyId));
-  const companyData = companySnap.exists() ? companySnap.data() : {};
+    const credential = await authModule.signInWithEmailAndPassword(auth, input.email.trim().toLowerCase(), input.password);
+    const user = credential.user;
+    const companyId = user.uid;
+    const companySnap = await firestoreModule.getDoc(firestoreModule.doc(db, 'companies', companyId));
+    const companyData = companySnap.exists() ? companySnap.data() : {};
 
-  if (companyData.status && ['restricted', 'suspended', 'archived'].includes(normalize(String(companyData.status)))) {
+    if (companyData.deletedAt || String(companyData.deletedBy || '').trim() === 'company') {
+      await authModule.signOut(auth);
+      clearStoredSession();
+      return {
+        ok: false,
+        message: 'هذا الحساب عليه طلب حذف قيد المراجعة الآن. تواصل مع الدعم إذا كنت تحتاج استعادة الشركة.',
+      };
+    }
+
+    if (companyData.status && ['restricted', 'suspended', 'archived'].includes(normalize(String(companyData.status)))) {
+      return {
+        ok: false,
+        message: 'هذا الحساب غير متاح حاليًا. تواصل مع الدعم إذا كنت تحتاج مراجعة الحالة.',
+      };
+    }
+
+    const companyName = String(companyData.name || companyData.companyName || user.displayName || input.email.split('@')[0] || 'شركة').trim();
+    const profile = buildProfileFromRegistration(
+      {
+        companyName,
+        companySector: String(companyData.sector || companyData.companySector || '').trim(),
+        country: String(companyData.country || '').trim(),
+        companyCity: String(companyData.city || companyData.location || '').trim(),
+        teamSize: String(companyData.teamSize || '').trim(),
+        phone: String(companyData.phone || '').trim(),
+        landline: String(companyData.landline || companyData.companyLandline || '').trim(),
+        email: user.email || input.email.trim().toLowerCase(),
+        password: input.password,
+        confirmPassword: input.password,
+        remember: input.remember,
+      },
+      {
+        accountStatus: String(companyData.status || 'active'),
+        companyLandline: String(companyData.landline || companyData.companyLandline || '').trim(),
+        companyLogoUrl: String(companyData.logoUrl || companyData.companyLogoUrl || '').trim(),
+        companyCoverUrl: String(companyData.coverUrl || companyData.companyCoverUrl || '').trim(),
+        companyDescription: String(companyData.description || companyData.companyDescription || '').trim(),
+        companyWebsite: String(companyData.website || '').trim(),
+        socialLinks: normalizeCompanySocialLinks(companyData.socialLinks),
+        siteMode: String(companyData.siteMode || 'full').trim() === 'landing' ? 'landing' : 'full',
+        restrictionMessage: String(companyData.restrictionMessage || '').trim(),
+        restrictionAttachmentUrl: String(companyData.restrictionAttachmentUrl || '').trim(),
+        restrictionAttachmentName: String(companyData.restrictionAttachmentName || '').trim(),
+        createdAt: companyData.createdAt || null,
+      },
+    );
+
+    const session = buildSession({
+      uid: user.uid,
+      companyId,
+      email: user.email || input.email.trim().toLowerCase(),
+      name: companyName,
+      provider: 'firebase',
+      remember: input.remember,
+    });
+
+    safeWriteSession(session, input.remember);
+    persistLocalProfile(profile);
+
+    return {
+      ok: true,
+      message: 'تم تسجيل الدخول بنجاح.',
+      session,
+    };
+  } catch (error) {
     return {
       ok: false,
-      message: 'هذا الحساب غير متاح حاليًا. تواصل مع الدعم إذا كنت تحتاج مراجعة الحالة.',
+      message: normalizeFirebaseAuthErrorMessage(error, 'تعذر تسجيل الدخول الآن. حاول مرة أخرى بعد قليل.'),
     };
   }
-
-  const companyName = String(companyData.name || companyData.companyName || user.displayName || input.email.split('@')[0] || 'شركة').trim();
-  const profile = buildProfileFromRegistration(
-    {
-      companyName,
-      companySector: String(companyData.sector || companyData.companySector || '').trim(),
-      country: String(companyData.country || '').trim(),
-      companyCity: String(companyData.city || companyData.location || '').trim(),
-      teamSize: String(companyData.teamSize || '').trim(),
-      phone: String(companyData.phone || '').trim(),
-      landline: String(companyData.landline || companyData.companyLandline || '').trim(),
-      email: user.email || input.email.trim().toLowerCase(),
-      password: input.password,
-      confirmPassword: input.password,
-      remember: input.remember,
-    },
-    {
-      accountStatus: String(companyData.status || 'active'),
-      companyLandline: String(companyData.landline || companyData.companyLandline || '').trim(),
-      companyLogoUrl: String(companyData.logoUrl || companyData.companyLogoUrl || '').trim(),
-      companyCoverUrl: String(companyData.coverUrl || companyData.companyCoverUrl || '').trim(),
-      companyDescription: String(companyData.description || companyData.companyDescription || '').trim(),
-      companyWebsite: String(companyData.website || '').trim(),
-      socialLinks: normalizeCompanySocialLinks(companyData.socialLinks),
-      siteMode: String(companyData.siteMode || 'full').trim() === 'landing' ? 'landing' : 'full',
-      restrictionMessage: String(companyData.restrictionMessage || '').trim(),
-      restrictionAttachmentUrl: String(companyData.restrictionAttachmentUrl || '').trim(),
-      restrictionAttachmentName: String(companyData.restrictionAttachmentName || '').trim(),
-      createdAt: companyData.createdAt || null,
-    },
-  );
-
-  const session = buildSession({
-    uid: user.uid,
-    companyId,
-    email: user.email || input.email.trim().toLowerCase(),
-    name: companyName,
-    provider: 'firebase',
-    remember: input.remember,
-  });
-
-  safeWriteSession(session, input.remember);
-  persistLocalProfile(profile);
-
-  return {
-    ok: true,
-    message: 'تم تسجيل الدخول بنجاح.',
-    session,
-  };
 }
 
 /* Legacy local auth fallback removed.
@@ -1059,6 +1239,14 @@ export async function registerCompany(input: CompanyRegistrationInput): Promise<
     };
   }
 
+  const normalizedEmail = input.email.trim().toLowerCase();
+  if (isDisposableEmailAddress(normalizedEmail)) {
+    return {
+      ok: false,
+      message: 'استخدم بريدًا إلكترونيًا رسميًا للشركة. الإيميلات المؤقتة أو الوهمية غير مسموح بها.',
+    };
+  }
+
   if (input.password.length < 8) {
     return {
       ok: false,
@@ -1073,15 +1261,29 @@ export async function registerCompany(input: CompanyRegistrationInput): Promise<
     };
   }
 
+  const normalizedTeamSize = normalizePositiveIntegerString(input.teamSize, { allowLegacyRange: true });
+  if (!normalizedTeamSize) {
+    return {
+      ok: false,
+      message: 'اكتب حجم الفريق كرقم صحيح أكبر من صفر.',
+    };
+  }
+
+  const normalizedInput = {
+    ...input,
+    email: normalizedEmail,
+    teamSize: normalizedTeamSize,
+  };
+
   if (hasSupabaseConfig()) {
-    return registerWithSupabase(input);
+    return registerWithSupabase(normalizedInput);
   }
 
   if (hasFirebaseConfig()) {
-    return registerWithFirebase(input);
+    return registerWithFirebase(normalizedInput);
   }
 
-  return registerWithLocalFallback(input);
+  return registerWithLocalFallback(normalizedInput);
 }
 
 export async function loginCompany(input: CompanyLoginInput): Promise<CompanyAuthResult> {

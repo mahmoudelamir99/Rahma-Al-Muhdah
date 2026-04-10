@@ -213,7 +213,7 @@ export const APPLICATION_STATUS_FILTERS: Array<{ value: ApplicationRecord['statu
   { value: 'hired', label: 'تم التعيين' },
 ];
 
-export const JOB_TYPE_OPTIONS = ['دوام كامل', 'دوام جزئي', 'هجين', 'عن بعد', 'عقد مؤقت'];
+export const JOB_TYPE_OPTIONS = ['دوام كامل', 'دوام جزئي', 'عن بعد', 'عقد مؤقت'];
 
 export function matchesQuery(haystack: Array<unknown>, query: string) {
   const keyword = text(query, '').trim().toLowerCase();
