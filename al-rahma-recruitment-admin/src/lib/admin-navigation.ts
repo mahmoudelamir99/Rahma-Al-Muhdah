@@ -47,7 +47,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   },
   {
     id: 'applications',
-    name: 'المرشحون',
+    name: 'طلبات التوظيف',
     path: '/applications',
     icon: UsersRound,
     permission: 'applications:view',
@@ -55,7 +55,7 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   },
   {
     id: 'candidates',
-    name: 'بيانات المرشحين',
+    name: 'المرشحون',
     path: '/candidates',
     icon: IdCard,
     permission: 'applications:view',

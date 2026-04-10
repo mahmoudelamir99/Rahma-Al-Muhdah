@@ -309,6 +309,7 @@ export default function Companies() {
   const navigate = useNavigate();
   const {
     state,
+    hasPermission,
     saveCompany,
     updateCompanyStatus,
     toggleCompanyVerified,
@@ -340,6 +341,7 @@ export default function Companies() {
   const [showPasswordDialogConfirm, setShowPasswordDialogConfirm] = useState(false);
   const attachmentInputRef = useRef<HTMLInputElement | null>(null);
   const logoInputRef = useRef<HTMLInputElement | null>(null);
+  const canResetCompanyPassword = hasPermission('companies:password_reset') || hasPermission('companies:approve');
 
   useEffect(() => {
     const companyId = searchParams.get('companyId');
@@ -1457,12 +1459,16 @@ export default function Companies() {
               <AdminButton
                 variant="soft"
                 onClick={() => void sendCompanyPasswordReset(selectedCompany)}
-                disabled={sendingResetForCompanyId === selectedCompany.id}
+                disabled={!canResetCompanyPassword || sendingResetForCompanyId === selectedCompany.id}
               >
                 <RefreshCcw size={15} />
                 {sendingResetForCompanyId === selectedCompany.id ? 'جارٍ الإرسال...' : 'إرسال رابط إعادة تعيين'}
               </AdminButton>
-              <AdminButton variant="secondary" onClick={() => openCompanyPasswordDialog(selectedCompany)}>
+              <AdminButton
+                variant="secondary"
+                onClick={() => openCompanyPasswordDialog(selectedCompany)}
+                disabled={!canResetCompanyPassword}
+              >
                 <PencilLine size={15} />
                 تعيين / تغيير كلمة المرور
               </AdminButton>

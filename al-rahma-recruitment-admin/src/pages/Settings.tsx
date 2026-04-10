@@ -204,7 +204,27 @@ export default function Settings() {
         eyebrow="الإعدادات والتحكم"
         title="مركز الضبط والمحتوى والصلاحيات"
         description="من هنا نتحكم في تشغيل المنصة، النصوص العامة، الحسابات الإدارية، والأدوار الداخلية بدون أي طبقة وهمية أو إعدادات شكلية."
-        actions={<><AdminSectionTabs items={tabs} value={activeTab} onChange={setActiveTab} />{activeTab === 'platform' ? <AdminButton onClick={savePlatformSettings}><Save size={16} />حفظ إعدادات المنصة</AdminButton> : null}{activeTab === 'content' ? <AdminButton onClick={saveContentSettings}><Save size={16} />حفظ المحتوى</AdminButton> : null}</>}
+        actions={
+          <>
+            <AdminSectionTabs items={tabs} value={activeTab} onChange={setActiveTab} />
+            <AdminButton type="button" variant="soft" onClick={() => setActiveTab('content')}>
+              <Film size={16} />
+              فيديو الواجهة الرئيسية
+            </AdminButton>
+            {activeTab === 'platform' ? (
+              <AdminButton onClick={savePlatformSettings}>
+                <Save size={16} />
+                حفظ إعدادات المنصة
+              </AdminButton>
+            ) : null}
+            {activeTab === 'content' ? (
+              <AdminButton onClick={saveContentSettings}>
+                <Save size={16} />
+                حفظ المحتوى
+              </AdminButton>
+            ) : null}
+          </>
+        }
       />
 
       {feedback ? <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-[1.5rem] border border-[rgba(24,37,63,0.08)] bg-white px-5 py-4 shadow-[0_18px_36px_rgba(18,30,54,0.06)]"><div className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-[1rem] bg-[#eef3ff] text-[#17325a]"><CheckCheck size={18} /></div><div><div className="text-sm font-black text-[#10213d]">آخر تحديث</div><div className="mt-1 text-sm text-[#65768a]">{feedback.text}</div></div></div><AdminBadge tone={feedback.tone === 'danger' ? 'danger' : feedback.tone === 'warning' ? 'warning' : 'success'}>{feedback.tone === 'danger' ? 'مشكلة' : feedback.tone === 'warning' ? 'تنبيه' : 'تم'}</AdminBadge></div></motion.div> : null}

@@ -6990,6 +6990,7 @@
   const initHomeSearch = () => {
     const keywordInput = document.querySelector('[data-home-keyword]');
     const button = document.querySelector('[data-search-action="home"]');
+    const searchForm = document.querySelector('[data-home-search-form]');
 
     if (!keywordInput || !button) return;
 
@@ -6999,7 +7000,17 @@
       });
     };
 
-    button.addEventListener('click', runSearch);
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      runSearch();
+    });
+
+    if (searchForm) {
+      searchForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        runSearch();
+      });
+    }
 
     [keywordInput].forEach((input) => {
       input.addEventListener('keydown', (event) => {
