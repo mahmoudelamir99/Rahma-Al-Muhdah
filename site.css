@@ -11807,3 +11807,29 @@ body.page-jobs .jobs-results__badge {
   background: rgba(0, 93, 172, 0.08);
   color: #103a61;
 }
+
+/* Compact actions for lighter jobs cards */
+body.page-jobs .listing-job-card {
+  padding: 1rem 1rem 0.95rem;
+}
+
+body.page-jobs .listing-job-card__actions {
+  gap: 0.45rem;
+}
+
+body.page-jobs .listing-job-card__actions a,
+body.page-jobs .listing-job-card__actions button {
+  min-height: 2.3rem;
+  padding: 0 0.8rem;
+  border-radius: 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+body.page-jobs .listing-job-card__primary {
+  box-shadow: 0 10px 22px rgba(15, 53, 108, 0.18);
+}
+
+body.page-jobs .listing-job-card__secondary {
+  background: #f7faff;
+}
