@@ -315,6 +315,27 @@ export default function Settings() {
                     حفظ إعدادات الفيديو
                   </AdminButton>
                 </div>
+                <div className="rounded-[1.1rem] border border-[rgba(24,37,63,0.1)] bg-[#f8fbff] p-3">
+                  <div className="mb-2 text-xs font-black text-[#1a3458]">معاينة الفيديو ومكان ظهوره على الموقع</div>
+                  <div className="relative overflow-hidden rounded-[0.95rem] border border-[rgba(24,37,63,0.08)] bg-[#dfe9f5]">
+                    {contentDraft.homeHeroVideoUrl ? (
+                      <video
+                        key={contentDraft.homeHeroVideoUrl}
+                        src={contentDraft.homeHeroVideoUrl}
+                        className="h-44 w-full object-cover"
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                        controls
+                      />
+                    ) : (
+                      <div className="flex h-44 items-center justify-center text-xs font-bold text-[#4b6281]">
+                        لا يوجد فيديو مرفوع حاليًا — هذا هو المكان الذي سيظهر فيه فيديو خلفية الرئيسية.
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </AdminPanel>
 

@@ -7027,6 +7027,7 @@
     if (!section) return;
     const wrap = section.querySelector('[data-home-hero-video-wrap]');
     const video = section.querySelector('[data-home-hero-video]');
+    const placeholder = section.querySelector('[data-home-hero-video-placeholder]');
     if (!(wrap instanceof HTMLElement) || !(video instanceof HTMLVideoElement)) return;
 
     const url = String(getAdminRuntimeContent().homeHeroVideoUrl || '').trim();
@@ -7038,13 +7039,21 @@
       } catch (error) {
         /* ignore */
       }
-      wrap.classList.add('hidden');
-      wrap.setAttribute('hidden', '');
+      wrap.classList.remove('hidden');
+      wrap.removeAttribute('hidden');
+      if (placeholder instanceof HTMLElement) {
+        placeholder.classList.remove('hidden');
+        placeholder.removeAttribute('hidden');
+      }
       return;
     }
 
     wrap.classList.remove('hidden');
     wrap.removeAttribute('hidden');
+    if (placeholder instanceof HTMLElement) {
+      placeholder.classList.add('hidden');
+      placeholder.setAttribute('hidden', '');
+    }
 
     if (video.dataset.rahmaHeroSrc !== url) {
       video.dataset.rahmaHeroSrc = url;
