@@ -2457,8 +2457,9 @@
     });
   const collectApprovedJobsForPublicListing = () => {
     const publicCompanyNames = new Set(getPublicRuntimeCompanies().map((company) => normalize(company?.name)));
+    const hasCompanyRecords = publicCompanyNames.size > 0;
     return getPublicRuntimeJobs()
-      .filter((job) => publicCompanyNames.has(normalize(job?.companyName)))
+      .filter((job) => !hasCompanyRecords || publicCompanyNames.has(normalize(job?.companyName)))
       .sort((firstJob, secondJob) => Number(Boolean(secondJob.featured)) - Number(Boolean(firstJob.featured)));
   };
   const getAdminRuntimeContent = () => ({
@@ -7026,7 +7027,6 @@
     if (!section) return;
     const wrap = section.querySelector('[data-home-hero-video-wrap]');
     const video = section.querySelector('[data-home-hero-video]');
-    const placeholder = section.querySelector('[data-home-hero-video-placeholder]');
     const overlay = section.querySelector('[data-home-hero-video-overlay]');
     if (!(wrap instanceof HTMLElement) || !(video instanceof HTMLVideoElement)) return;
 
@@ -7057,10 +7057,6 @@
       }
       wrap.classList.remove('hidden');
       wrap.removeAttribute('hidden');
-      if (placeholder instanceof HTMLElement) {
-        placeholder.classList.remove('hidden');
-        placeholder.removeAttribute('hidden');
-      }
       if (overlay instanceof HTMLElement) {
         overlay.style.opacity = '1';
       }
@@ -7069,10 +7065,6 @@
 
     wrap.classList.remove('hidden');
     wrap.removeAttribute('hidden');
-    if (placeholder instanceof HTMLElement) {
-      placeholder.classList.add('hidden');
-      placeholder.setAttribute('hidden', '');
-    }
     if (overlay instanceof HTMLElement) {
       overlay.style.opacity = '0.62';
     }
