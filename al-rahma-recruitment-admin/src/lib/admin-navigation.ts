@@ -4,6 +4,7 @@ import {
   Bell,
   BriefcaseBusiness,
   Building2,
+  Film,
   IdCard,
   LayoutDashboard,
   MessageSquare,
@@ -84,6 +85,14 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     icon: Bell,
     permission: 'notifications:send',
     summary: 'الإشعارات المرسلة والتنبيهات السريعة.',
+  },
+  {
+    id: 'site-video',
+    name: 'فيديو الخلفية',
+    path: '/settings?tab=content',
+    icon: Film,
+    permission: 'settings:view',
+    summary: 'رفع وتغيير فيديو خلفية الصفحة الرئيسية مباشرة.',
   },
   {
     id: 'settings',

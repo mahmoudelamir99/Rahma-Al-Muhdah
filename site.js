@@ -1379,28 +1379,25 @@
   };
   let sharedRuntimeFingerprint = '';
 
-  const readSharedAdminRuntime = () => {
+  const readSharedAdminRuntime = async () => {
     try {
-      const request = new XMLHttpRequest();
-      request.open('GET', `${ADMIN_RUNTIME_SHARED_URL}?_=${Date.now()}`, false);
-      request.send(null);
-
-      if (request.status >= 200 && request.status < 300 && request.responseText) {
-        return request.responseText;
-      }
+      const response = await fetch(`${ADMIN_RUNTIME_SHARED_URL}?_=${Date.now()}`, {
+        method: 'GET',
+        cache: 'no-store',
+      });
+      if (!response.ok) return '';
+      return (await response.text()) || '';
     } catch (error) {
       return '';
     }
-
-    return '';
   };
 
-  const syncAdminRuntimeFromSharedFile = () => {
+  const syncAdminRuntimeFromSharedFile = async () => {
     if (hasFirebaseSiteConfig() && !isPrivateRuntimeSyncHost(window.location.hostname)) {
       return false;
     }
 
-    const responseText = readSharedAdminRuntime();
+    const responseText = await readSharedAdminRuntime();
     if (!responseText) return false;
 
     try {
@@ -11428,7 +11425,7 @@
 
   const initPageState = () => {
     purgeLegacyRuntimeStorage();
-    syncAdminRuntimeFromSharedFile();
+    void syncAdminRuntimeFromSharedFile();
     const localRuntime = sanitizeAdminRuntime(safeReadJSON(ADMIN_RUNTIME_KEY, {})).runtime;
     if (shouldWriteSharedRuntimeOnBootstrap() && hasShareableRuntimeRecords(localRuntime)) {
       void syncSharedAdminRuntimeFile(localRuntime);
@@ -11739,13 +11736,20 @@
     }
   };
 
+  const shouldPollSharedRuntime =
+    isPrivateRuntimeSyncHost(window.location.hostname) || !READONLY_PUBLIC_PAGES.has(CURRENT_SITE_PAGE);
+  const SHARED_RUNTIME_POLL_MS = shouldPollSharedRuntime ? 30000 : 120000;
+
   initPageState();
   initLegacyMojibakeDomRepair();
   window.setInterval(() => {
-    if (syncAdminRuntimeFromSharedFile()) {
-      window.location.reload();
-    }
-  }, 2500);
+    void syncAdminRuntimeFromSharedFile().then((changed) => {
+      if (!changed) return;
+      if (shouldPollSharedRuntime) {
+        window.location.reload();
+      }
+    });
+  }, SHARED_RUNTIME_POLL_MS);
   window.addEventListener('storage', syncRuntimeFromStorage);
   initAdminAccessGuard();
   initMobileBrandHomeLinks();

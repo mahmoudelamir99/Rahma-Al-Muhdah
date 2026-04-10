@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { BellRing, CheckCheck, Clock3, Film, Mail, Plus, Save, ShieldCheck, UserCog, Users2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   AdminBadge,
   AdminButton,
@@ -54,7 +55,17 @@ function buildMaintenanceUntil(date: string, hour: string, minute: string, perio
   return Number.isNaN(nextDate.getTime()) ? '' : nextDate.toISOString();
 }
 
+const SETTINGS_TABS = ['platform', 'content', 'access', 'profile'] as const;
+type SettingsTab = (typeof SETTINGS_TABS)[number];
+
+function resolveSettingsTab(search: string): SettingsTab {
+  const query = new URLSearchParams(search || '');
+  const tab = String(query.get('tab') || '').trim().toLowerCase();
+  return SETTINGS_TABS.includes(tab as SettingsTab) ? (tab as SettingsTab) : 'platform';
+}
+
 export default function Settings() {
+  const location = useLocation();
   const {
     state,
     session,
@@ -71,7 +82,7 @@ export default function Settings() {
   } = useAdmin();
 
   const delegatedRoleId = useMemo(() => getDefaultDelegatedRoleId(state.roles.map((role) => role.id)), [state.roles]);
-  const [activeTab, setActiveTab] = useState('platform');
+  const [activeTab, setActiveTab] = useState<SettingsTab>(() => resolveSettingsTab(location.search));
   const [settingsDraft, setSettingsDraft] = useState(state.settings);
   const [contentDraft, setContentDraft] = useState(state.content);
   const [roleName, setRoleName] = useState('');
@@ -96,6 +107,10 @@ export default function Settings() {
   useEffect(() => setSettingsDraft(state.settings), [state.settings]);
   useEffect(() => setContentDraft(state.content), [state.content]);
   useEffect(() => {
+    const nextTab = resolveSettingsTab(location.search);
+    setActiveTab((current) => (current === nextTab ? current : nextTab));
+  }, [location.search]);
+  useEffect(() => {
     setProfileForm({
       displayName: currentAdmin?.displayName || '',
       email: session?.identifier || '',
@@ -119,7 +134,7 @@ export default function Settings() {
     );
   }, [delegatedRoleId, state.roles]);
 
-  const tabs = [
+  const tabs: { value: SettingsTab; label: string }[] = [
     { value: 'platform', label: 'المنصة' },
     { value: 'content', label: 'المحتوى' },
     { value: 'access', label: 'الصلاحيات' },
@@ -219,7 +234,7 @@ export default function Settings() {
         description="من هنا نتحكم في تشغيل المنصة، النصوص العامة، الحسابات الإدارية، والأدوار الداخلية بدون أي طبقة وهمية أو إعدادات شكلية."
         actions={
           <>
-            <AdminSectionTabs items={tabs} value={activeTab} onChange={setActiveTab} />
+            <AdminSectionTabs items={tabs} value={activeTab} onChange={(nextTab) => setActiveTab(resolveSettingsTab(`tab=${nextTab}`))} />
             <AdminButton type="button" variant="soft" onClick={() => setActiveTab('content')}>
               <Film size={16} />
               فيديو الواجهة الرئيسية
