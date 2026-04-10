@@ -11833,3 +11833,25 @@ body.page-jobs .listing-job-card__primary {
 body.page-jobs .listing-job-card__secondary {
   background: #f7faff;
 }
+
+body.page-jobs .listing-job-card__type {
+  min-height: 1.55rem;
+  padding: 0 0.55rem;
+  font-size: 0.66rem;
+}
+
+body.page-jobs .listing-job-card__tags span {
+  min-height: 1.45rem;
+  padding: 0 0.55rem;
+  font-size: 0.68rem;
+}
+
+body.page-jobs .listing-job-card__company {
+  font-size: 0.8rem;
+}
+
+body.page-jobs .jobs-results__badge {
+  min-height: 2rem;
+  padding: 0 0.85rem;
+  font-size: 0.78rem;
+}
