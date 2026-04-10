@@ -7027,6 +7027,7 @@
     const wrap = section.querySelector('[data-home-hero-video-wrap]');
     const video = section.querySelector('[data-home-hero-video]');
     const placeholder = section.querySelector('[data-home-hero-video-placeholder]');
+    const overlay = section.querySelector('[data-home-hero-video-overlay]');
     if (!(wrap instanceof HTMLElement) || !(video instanceof HTMLVideoElement)) return;
 
     const prefersReducedMotion =
@@ -7060,6 +7061,9 @@
         placeholder.classList.remove('hidden');
         placeholder.removeAttribute('hidden');
       }
+      if (overlay instanceof HTMLElement) {
+        overlay.style.opacity = '1';
+      }
       return;
     }
 
@@ -7068,6 +7072,9 @@
     if (placeholder instanceof HTMLElement) {
       placeholder.classList.add('hidden');
       placeholder.setAttribute('hidden', '');
+    }
+    if (overlay instanceof HTMLElement) {
+      overlay.style.opacity = '0.62';
     }
 
     if (video.dataset.rahmaHeroSrc !== url) {
