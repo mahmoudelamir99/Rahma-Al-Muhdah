@@ -9,11 +9,13 @@
     bookmarkedJobs: 'rahmaBookmarkedJobs',
   };
   const COMPANY_DASHBOARD_FEEDBACK_STORAGE_KEY = 'rahmaCompanyDashboardFeedback';
-  const PUBLIC_SITE_BUILD = '20260408-1';
+  const PUBLIC_SITE_BUILD = '20260410-2';
   const PUBLIC_SITE_BUILD_MARKER_KEY = 'rahmaPublicBuildMarker';
   const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
   let publicJobsCoverflowSwiper = null;
   let publicCountersObserver = null;
+  /** Re-bound inside `initJobsSearch` so `renderPublicJobsPage` can re-apply filters after DOM rebuild (e.g. Firebase). */
+  let refreshPublicJobsListingFilters = () => {};
 
   const ensureToast = () => {
     let toast = document.querySelector('.site-toast');
@@ -87,6 +89,41 @@
       return false;
     }
   };
+  const shouldEnableHeavyPublicEffects = () => {
+    if (!supportsFinePointerInteractions()) return false;
+
+    try {
+      const deviceMemory = Number(window.navigator?.deviceMemory || 0);
+      const hardwareConcurrency = Number(window.navigator?.hardwareConcurrency || 0);
+
+      if ((Number.isFinite(deviceMemory) && deviceMemory > 0 && deviceMemory <= 4) ||
+          (Number.isFinite(hardwareConcurrency) && hardwareConcurrency > 0 && hardwareConcurrency <= 4)) {
+        return false;
+      }
+
+      if (window.innerWidth < 992) {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+
+    return true;
+  };
+  const normalizeSearchTokens = (value = '') =>
+    normalize(value)
+      .split(/\s+/)
+      .map((token) => token.trim())
+      .filter(Boolean);
+  const matchesSearchQuery = (query, ...parts) => {
+    const tokens = normalizeSearchTokens(query);
+    if (!tokens.length) return true;
+
+    const haystack = normalize(parts.filter(Boolean).join(' '));
+    if (!haystack) return false;
+
+    return tokens.every((token) => haystack.includes(token));
+  };
   const queryPublicInteractiveTargets = (root, selector) => {
     const searchRoot = root instanceof Document || root instanceof Element ? root : document;
     return Array.from(searchRoot.querySelectorAll(selector)).filter((element) => element instanceof HTMLElement);
@@ -114,11 +151,23 @@
     return inner;
   };
   const initPublicSpotlightSurfaces = (root = document) => {
-    queryPublicInteractiveTargets(
+    const targets = queryPublicInteractiveTargets(
       root,
       '.page-card, .hero-card, .home-live-card, .listing-job-card, .directory-company-card, .jobs-coverflow-card, .job-demand-card, .home-cinematic-visual__panel',
-    ).forEach((element) => {
+    );
+
+    targets.forEach((element) => {
       element.classList.add('spotlight-surface');
+    });
+
+    if (!shouldEnableHeavyPublicEffects()) {
+      targets.forEach((element) => {
+        element.style.removeProperty('--spotlight-active');
+      });
+      return;
+    }
+
+    targets.slice(0, 12).forEach((element) => {
       if (element.dataset.spotlightBound === 'true') return;
       element.dataset.spotlightBound = 'true';
 
@@ -193,11 +242,11 @@
       element.classList.add('tilt-surface');
     });
 
-    if (!supportsFinePointerInteractions() || typeof window.VanillaTilt?.init !== 'function') {
+    if (!shouldEnableHeavyPublicEffects() || typeof window.VanillaTilt?.init !== 'function') {
       return;
     }
 
-    targets.forEach((element) => {
+    targets.slice(0, 14).forEach((element) => {
       if (element.vanillaTilt) return;
       window.VanillaTilt.init(element, {
         max: Number(element.dataset.tiltMax || 4),
@@ -1895,6 +1944,7 @@
     syncMaintenanceShell();
     syncSystemBanner();
     initHomeRuntimeContent();
+    initHomeHeroVideo();
     initHomeUsefulStats();
     renderPublicJobsPage();
     renderPublicCompaniesPage();
@@ -2406,6 +2456,12 @@
         (!linkedCompany || (!linkedCompany?.deletedAt && normalize(linkedCompany?.status) === 'approved'))
       );
     });
+  const collectApprovedJobsForPublicListing = () => {
+    const publicCompanyNames = new Set(getPublicRuntimeCompanies().map((company) => normalize(company?.name)));
+    return getPublicRuntimeJobs()
+      .filter((job) => publicCompanyNames.has(normalize(job?.companyName)))
+      .sort((firstJob, secondJob) => Number(Boolean(secondJob.featured)) - Number(Boolean(firstJob.featured)));
+  };
   const getAdminRuntimeContent = () => ({
     ...(shouldUseFirebaseOnlyPublicData() ? {} : getAdminRuntime()?.content || {}),
     ...(firebaseRuntimeCache.content || {}),
@@ -2866,14 +2922,10 @@
     populateSelectOptions(governorateSelect, EGYPT_GOVERNORATES, placeholder, selectedValue);
   };
 
-  const buildJobsUrl = ({ keyword, country, governorate, location }) => {
-    const legacyLocationMeta = getSearchLocationMeta(location);
-
-    return buildQueryUrl('jobs.html', {
+  const buildJobsUrl = ({ keyword } = {}) =>
+    buildQueryUrl('jobs.html', {
       q: keyword,
-      governorate: governorate || legacyLocationMeta.governorate,
     });
-  };
 
     const buildJobDetailsUrl = (dataset) => {
       const jobId = String(dataset.jobId || '').trim();
@@ -2915,12 +2967,23 @@
       });
     };
 
-  const AUTH_APP_PATH = 'تسجيل-الدخول-وإنشاء-حساب/dist/index.html';
+  const AUTH_APP_PATH = 'auth.html';
   const buildAuthUrl = (view, redirectTarget) =>
-    buildQueryUrl(AUTH_APP_PATH, {
-      view,
-      redirect: redirectTarget,
-    });
+    buildQueryUrl(
+      normalize(view) === 'register'
+        ? 'register.html'
+        : normalize(view) === 'login'
+          ? 'login.html'
+          : AUTH_APP_PATH,
+      normalize(view) === 'register' || normalize(view) === 'login'
+        ? {
+            redirect: redirectTarget,
+          }
+        : {
+            view,
+            redirect: redirectTarget,
+          },
+    );
 
   const buildLoginUrl = (redirectTarget) => buildAuthUrl('login', redirectTarget);
 
@@ -6926,17 +6989,13 @@
 
   const initHomeSearch = () => {
     const keywordInput = document.querySelector('[data-home-keyword]');
-    const governorateSelect = document.querySelector('[data-home-governorate]');
     const button = document.querySelector('[data-search-action="home"]');
 
-    if (!keywordInput || !governorateSelect || !button) return;
-
-    populateSelectOptions(governorateSelect, EGYPT_GOVERNORATES, 'اختر محافظة مصر');
+    if (!keywordInput || !button) return;
 
     const runSearch = () => {
       window.location.href = buildJobsUrl({
         keyword: keywordInput.value,
-        governorate: governorateSelect.value,
       });
     };
 
@@ -6949,6 +7008,150 @@
           runSearch();
         }
       });
+    });
+  };
+
+  const initHomeHeroVideo = () => {
+    const section = document.querySelector('section[data-purpose="hero-section"]');
+    if (!section) return;
+    const wrap = section.querySelector('[data-home-hero-video-wrap]');
+    const video = section.querySelector('[data-home-hero-video]');
+    if (!(wrap instanceof HTMLElement) || !(video instanceof HTMLVideoElement)) return;
+
+    const url = String(getAdminRuntimeContent().homeHeroVideoUrl || '').trim();
+    if (!url) {
+      try {
+        delete video.dataset.rahmaHeroSrc;
+        video.removeAttribute('src');
+        video.load();
+      } catch (error) {
+        /* ignore */
+      }
+      wrap.classList.add('hidden');
+      wrap.setAttribute('hidden', '');
+      return;
+    }
+
+    wrap.classList.remove('hidden');
+    wrap.removeAttribute('hidden');
+
+    if (video.dataset.rahmaHeroSrc !== url) {
+      video.dataset.rahmaHeroSrc = url;
+      video.src = url;
+      try {
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => {});
+        }
+      } catch (error) {
+        /* autoplay may be blocked */
+      }
+    }
+  };
+
+  const initHomeSearchLive = () => {
+    const keywordInput = document.querySelector('[data-home-keyword]');
+    const panel = document.querySelector('[data-home-search-panel]');
+    if (!keywordInput || !(panel instanceof HTMLElement)) return;
+
+    const resultsRoot = panel.querySelector('[data-home-search-results]');
+    if (!resultsRoot) return;
+
+    const maxRows = 8;
+    let frame = null;
+
+    const hidePanel = () => {
+      panel.hidden = true;
+      panel.setAttribute('hidden', '');
+    };
+
+    const showPanel = () => {
+      panel.hidden = false;
+      panel.removeAttribute('hidden');
+    };
+
+    const render = () => {
+      const query = String(keywordInput.value || '').trim();
+      if (!query) {
+        resultsRoot.innerHTML = '';
+        hidePanel();
+        return;
+      }
+
+      const jobs = collectApprovedJobsForPublicListing().filter((job) => {
+        const locationMeta = getSearchLocationMeta(String(job.location || ''));
+        return matchesSearchQuery(
+          query,
+          job.title,
+          job.companyName,
+          job.location,
+          locationMeta.raw,
+          locationMeta.governorate,
+          job.type,
+          job.salary,
+          job.sector,
+          job.summary,
+        );
+      });
+
+      if (!jobs.length) {
+        resultsRoot.innerHTML =
+          '<p class="home-search-live__empty" dir="rtl">لا توجد وظائف مطابقة. جرّب كلمات أخرى أو اضغط «بحث» لعرض صفحة الوظائف.</p>';
+        showPanel();
+        return;
+      }
+
+      const slice = jobs.slice(0, maxRows);
+      resultsRoot.innerHTML = slice
+        .map((job) => {
+          const jobData = {
+            jobId: String(job.id || '').trim(),
+            jobTitle: String(job.title || '').trim(),
+            jobCompany: String(job.companyName || '').trim(),
+            jobLocation: String(job.location || '').trim(),
+            jobType: String(job.type || '').trim(),
+            jobSalary: String(job.salary || '').trim(),
+            jobPosted: String(job.postedLabel || '').trim(),
+            jobSummary: String(job.summary || '').trim(),
+            jobSector: String(job.sector || '').trim(),
+            jobFeatured: Boolean(job.featured),
+          };
+          const href = escapeHtml(buildJobDetailsUrl(jobData));
+          return `<a class="home-search-live__row" href="${href}"><span class="home-search-live__title">${escapeHtml(jobData.jobTitle || 'وظيفة')}</span><span class="home-search-live__meta">${escapeHtml(jobData.jobCompany)} · ${escapeHtml(jobData.jobLocation || 'الموقع غير مضاف')}</span></a>`;
+        })
+        .join('');
+
+      showPanel();
+    };
+
+    const schedule = () => {
+      if (frame !== null) {
+        cancelAnimationFrame(frame);
+      }
+      frame = requestAnimationFrame(() => {
+        frame = null;
+        render();
+      });
+    };
+
+    keywordInput.addEventListener('input', schedule);
+    keywordInput.addEventListener('focus', () => {
+      if (String(keywordInput.value || '').trim()) {
+        render();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (target === keywordInput || panel.contains(target)) return;
+      hidePanel();
+    });
+
+    keywordInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        hidePanel();
+      }
     });
   };
 
@@ -7372,36 +7575,58 @@
     shell.id = MAINTENANCE_SHELL_ID;
     shell.hidden = true;
     shell.setAttribute('aria-live', 'polite');
-    shell.dataset.supportOpen = 'false';
+    shell.dataset.supportOpen = 'true';
     shell.innerHTML = `
       <div class="rahma-maintenance-shell__card">
-        <div class="rahma-maintenance-shell__logo">
-          <img src="logo-mark.png" alt="الرحمة المهداه للتوظيف" />
+        <div class="rahma-maintenance-shell__brandbar" aria-hidden="true">
+          <span></span>
+          <span></span>
         </div>
-        <span class="rahma-maintenance-shell__badge">صفحة الصيانة</span>
-        <h1 class="rahma-maintenance-shell__title">المنصة متوقفة مؤقتًا</h1>
-        <p class="rahma-maintenance-shell__lead" data-maintenance-lead></p>
-        <div class="rahma-maintenance-shell__grid">
-          <div class="rahma-maintenance-shell__box">
-            <span>سبب الإيقاف</span>
-            <strong data-maintenance-reason></strong>
+        <div class="rahma-maintenance-shell__body">
+          <div class="rahma-maintenance-shell__hero">
+            <div class="rahma-maintenance-shell__copy">
+              <div class="rahma-maintenance-shell__brand">
+                <div class="rahma-maintenance-shell__logo">
+                  <img src="logo-mark.png" alt="الرحمة المهداه للتوظيف" />
+                </div>
+                <div class="rahma-maintenance-shell__brand-copy">
+                  <span class="rahma-maintenance-shell__badge">صفحة الصيانة</span>
+                  <h1 class="rahma-maintenance-shell__title">المنصة متوقفة مؤقتًا</h1>
+                </div>
+              </div>
+              <p class="rahma-maintenance-shell__lead" data-maintenance-lead></p>
+              <div class="rahma-maintenance-shell__grid">
+                <div class="rahma-maintenance-shell__box">
+                  <span>سبب الإيقاف</span>
+                  <strong data-maintenance-reason></strong>
+                </div>
+                <div class="rahma-maintenance-shell__box">
+                  <span>الموعد المتوقع للعودة</span>
+                  <strong data-maintenance-until></strong>
+                </div>
+              </div>
+              <div class="rahma-maintenance-shell__actions">
+                <button
+                  type="button"
+                  class="rahma-maintenance-shell__button"
+                  data-maintenance-support-toggle
+                  aria-controls="rahma-maintenance-shell-support"
+                  aria-expanded="true"
+                >
+                  إخفاء بيانات الدعم
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="rahma-maintenance-shell__box">
-            <span>الموعد المتوقع للعودة</span>
-            <strong data-maintenance-until></strong>
-          </div>
         </div>
-        <div class="rahma-maintenance-shell__actions">
-          <button type="button" class="rahma-maintenance-shell__button" data-maintenance-support-toggle>التواصل مع الدعم</button>
-        </div>
-        <section class="rahma-maintenance-shell__support" data-maintenance-support-panel aria-hidden="true">
+        <section class="rahma-maintenance-shell__support" id="rahma-maintenance-shell-support" data-maintenance-support-panel aria-hidden="false">
           <div class="rahma-maintenance-shell__support-head">
             <div>
-              <span class="rahma-maintenance-shell__support-badge">لوحة التواصل</span>
-              <h2 class="rahma-maintenance-shell__support-title">تواصل مباشر مع فريق الدعم</h2>
-              <p class="rahma-maintenance-shell__support-copy">اختَر وسيلة التواصل المناسبة من هنا أثناء فترة الصيانة.</p>
+              <span class="rahma-maintenance-shell__support-badge">الدعم الفني</span>
+              <h2 class="rahma-maintenance-shell__support-title">تواصل مباشر مع فريق الدعم أثناء الصيانة</h2>
+              <p class="rahma-maintenance-shell__support-copy">اختر وسيلة التواصل المناسبة من هنا، وسيبقى هذا القسم ظاهرًا لتسهيل الوصول إلى الدعم الفني.</p>
             </div>
-            <button type="button" class="rahma-maintenance-shell__support-close" data-maintenance-support-close>إغلاق</button>
+            <button type="button" class="rahma-maintenance-shell__support-close" data-maintenance-support-close>إخفاء الدعم</button>
           </div>
           <div class="rahma-maintenance-shell__support-grid">
             <div class="rahma-maintenance-shell__support-item">
@@ -7483,7 +7708,7 @@
     }
 
     if (supportToggle instanceof HTMLButtonElement) {
-      supportToggle.textContent = isOpen ? 'إخفاء بيانات الدعم' : 'التواصل مع الدعم';
+      supportToggle.textContent = isOpen ? 'إخفاء بيانات الدعم' : 'عرض بيانات الدعم';
     }
 
     const telHref = `tel:${normalizePhoneDigits(phoneText || CONTACT_PHONE)}`;
@@ -7550,6 +7775,7 @@
       return;
     }
 
+    const wasHidden = shell.hidden;
     const leadNode = shell.querySelector('[data-maintenance-lead]');
     const reasonNode = shell.querySelector('[data-maintenance-reason]');
     const untilNode = shell.querySelector('[data-maintenance-until]');
@@ -7561,6 +7787,9 @@
 
     shell.hidden = false;
     shell.dataset.visible = 'true';
+    if (wasHidden || !shell.dataset.supportOpen) {
+      shell.dataset.supportOpen = 'true';
+    }
     document.documentElement.dataset.maintenanceMode = 'true';
 
     if (leadNode) {
@@ -7861,13 +8090,7 @@
 
     const publicCompanies = getPublicRuntimeCompanies();
     const companyImages = new Map(publicCompanies.map((company) => [normalize(company?.name), resolvePublicCompanyImage(company)]));
-    const publicCompanyNames = new Set(publicCompanies.map((company) => normalize(company?.name)));
-    const approvedJobs = getPublicRuntimeJobs()
-      .filter(
-        (job) =>
-          publicCompanyNames.has(normalize(job?.companyName)),
-      )
-      .sort((firstJob, secondJob) => Number(Boolean(secondJob.featured)) - Number(Boolean(firstJob.featured)));
+    const approvedJobs = collectApprovedJobsForPublicListing();
 
     const getTypeClass = (type) => {
       const normalizedType = normalize(type);
@@ -8016,6 +8239,7 @@
     syncJobsCoverflow(renderedCards);
     initPublicExperienceEnhancements(grid);
     requestPublicMotionRefresh();
+    refreshPublicJobsListingFilters();
   };
 
   const renderPublicCompaniesPage = () => {
@@ -8118,17 +8342,14 @@
 
   const initJobsSearch = () => {
     const keywordInput = document.querySelector('[data-jobs-keyword]');
-    const governorateSelect = document.querySelector('[data-jobs-governorate]');
     const button = document.querySelector('[data-search-action="jobs"]');
     const grid = document.querySelector('[data-jobs-grid]');
     const count = document.querySelector('[data-jobs-count]');
     const empty = document.querySelector('[data-jobs-empty]');
     const paginationRoot = document.querySelector('[data-jobs-pagination]');
 
-    if (!keywordInput || !governorateSelect || !button || !grid) return;
+    if (!keywordInput || !button || !grid) return;
 
-    const cards = Array.from(grid.querySelectorAll('.job-card'));
-    const runtimeJobs = getAdminRuntimeJobs();
     const params = new URLSearchParams(window.location.search);
     const legacyLocationMeta = getSearchLocationMeta(params.get('location'));
     const pageSize = 3;
@@ -8138,14 +8359,24 @@
       currentPage = 1;
     }
 
-    populateSelectOptions(
-      governorateSelect,
-      EGYPT_GOVERNORATES,
-      'كل محافظات مصر',
-      params.get('governorate') || legacyLocationMeta.governorate,
-    );
+    if (params.has('q')) {
+      keywordInput.value = params.get('q');
+    } else if (params.get('governorate')) {
+      keywordInput.value = params.get('governorate');
+    } else if (legacyLocationMeta.governorate) {
+      keywordInput.value = legacyLocationMeta.governorate;
+    }
 
-    if (params.has('q')) keywordInput.value = params.get('q');
+    let inputFilterFrame = null;
+    const scheduleFilterFromInput = () => {
+      if (inputFilterFrame !== null) {
+        cancelAnimationFrame(inputFilterFrame);
+      }
+      inputFilterFrame = requestAnimationFrame(() => {
+        inputFilterFrame = null;
+        applyFilters();
+      });
+    };
 
     const applyFilters = ({ page, preservePage = false } = {}) => {
       if (Number.isFinite(page)) {
@@ -8154,8 +8385,8 @@
         currentPage = 1;
       }
 
-      const keyword = normalize(keywordInput.value);
-      const governorate = normalize(governorateSelect.value);
+      const cards = Array.from(grid.querySelectorAll('.job-card'));
+      const runtimeJobs = getAdminRuntimeJobs();
       const matchedCards = [];
 
       cards.forEach((card) => {
@@ -8177,14 +8408,21 @@
           return;
         }
 
-        const matchesKeyword = !keyword || title.includes(keyword) || company.includes(keyword) || haystack.includes(keyword);
-        const matchesGovernorate =
-          !governorate ||
-          normalize(locationMeta.governorate) === governorate ||
-          normalize(locationMeta.raw).includes(governorate) ||
-          haystack.includes(governorate);
+        const matchesKeyword = matchesSearchQuery(
+          keywordInput.value,
+          title,
+          company,
+          locationText,
+          locationMeta.raw,
+          locationMeta.governorate,
+          card.dataset.jobType,
+          card.dataset.jobSalary,
+          card.dataset.jobSector,
+          card.dataset.jobSummary,
+          haystack,
+        );
 
-        if (matchesKeyword && matchesGovernorate) {
+        if (matchesKeyword) {
           matchedCards.push(card);
         }
       });
@@ -8230,7 +8468,6 @@
         appendQueryParams(
           buildJobsUrl({
             keyword: keywordInput.value,
-            governorate: governorateSelect.value,
           }),
           {
             page: totalPages > 1 && currentPage > 1 ? String(currentPage) : null,
@@ -8239,18 +8476,24 @@
       );
     };
 
+    refreshPublicJobsListingFilters = () => applyFilters({ preservePage: true });
+
     button.addEventListener('click', () => applyFilters());
 
     [keywordInput].forEach((input) => {
+      input.addEventListener('input', scheduleFilterFromInput);
       input.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
           event.preventDefault();
+          if (inputFilterFrame !== null) {
+            cancelAnimationFrame(inputFilterFrame);
+            inputFilterFrame = null;
+          }
           applyFilters();
         }
       });
     });
 
-    governorateSelect.addEventListener('change', () => applyFilters());
     applyFilters({ preservePage: true });
   };
 
@@ -11272,7 +11515,7 @@
     );
 
     markMotionList(
-      getUniqueMotionElements('main > section, main > article, main > div, .dashboard-hero, .dashboard-main-grid, .dashboard-shell, .auth-panel, .auth-visual, .auth-main, .home-final-cta, .footer-cta'),
+      getUniqueMotionElements('main > section, .dashboard-hero, .dashboard-main-grid, .dashboard-shell, .auth-panel, .auth-visual, .auth-main, .home-final-cta, .footer-cta'),
       'section-rise',
       { step: 80, duration: 900, maxDelay: 420, hover: 'panel' },
     );
@@ -11322,15 +11565,9 @@
       maxDelay: 280,
     });
 
-    markMotionChildren('main > div, main > article', ['trail', 'headline', 'copy', 'field-rise', 'soft-card'], {
-      step: 68,
-      duration: 780,
-      maxDelay: 360,
-    });
-
     markMotionList(
       getUniqueMotionElements(
-        '.home-hero-v2__stack > article, .home-hero-v2__pulse > article, .home-value-grid > *, .home-modern-jobs > *, .home-footer__grid--compact > *, .jobs-hero__signals > article, .jobs-trend-list > article, .jobs-chip-bar__inner > *, .jobs-results__grid > *, main article, main [class*="card"], main [class*="panel"], main [class*="stat"], footer article, .dashboard-panel, .dashboard-opportunity-card, .dashboard-progress-card, .dashboard-highlight-card, .dashboard-brand-card, .dashboard-stat-card, .dashboard-mini-stats > article, .auth-features > *, .account-card, .upload-card, .template-card, .auth-method-card, .company-card, .listing-job-card',
+        '.home-hero-v2__stack > article, .home-hero-v2__pulse > article, .home-value-grid > *, .home-modern-jobs > *, .home-footer__grid--compact > *, .jobs-hero__signals > article, .jobs-trend-list > article, .jobs-chip-bar__inner > *, .jobs-results__grid > *, .dashboard-panel, .dashboard-opportunity-card, .dashboard-progress-card, .dashboard-highlight-card, .dashboard-brand-card, .dashboard-stat-card, .dashboard-mini-stats > article, .auth-features > *, .account-card, .upload-card, .template-card, .auth-method-card, .company-card, .listing-job-card, .page-card',
       ),
       ['card-rise', 'card-tilt', 'soft-card'],
       {
@@ -11353,7 +11590,7 @@
     );
 
     markMotionList(
-      getUniqueMotionElements('.site-brand, .auth-brand, .dashboard-profile-chip, .listing-job-card__logo, .home-modern-job-card__brand img, .home-mini-job__brand img, .company-card img, .site-logo, .auth-logo'),
+      getUniqueMotionElements('.dashboard-profile-chip, .listing-job-card__logo, .home-modern-job-card__brand img, .home-mini-job__brand img, .company-card img'),
       'image-float',
       {
         step: 45,
@@ -11363,7 +11600,7 @@
     );
 
     markMotionList(
-      getUniqueMotionElements('.site-action, .home-nav-action, .site-nav__link, .home-nav-links a, .jobs-filter-chip, .listing-job-card__actions button, .home-modern-job-card__actions button, .auth-button, .auth-submit, .auth-secondary, .dashboard-pill-button, .dashboard-action-button, .dashboard-cta-button, .dashboard-icon-button, .dashboard-nav__link, .mobile-site-drawer__link, .mobile-site-drawer__action, button[type=\"submit\"], body > nav a, main a, [data-search-action], [data-apply-job], [data-job-details], [data-company-details], [data-companies-filter], [data-link]'),
+      getUniqueMotionElements('.site-action, .home-nav-action, .site-nav__link, .home-nav-links a, .jobs-filter-chip, .listing-job-card__actions button, .home-modern-job-card__actions button, .auth-button, .auth-submit, .auth-secondary, .dashboard-pill-button, .dashboard-action-button, .dashboard-cta-button, .dashboard-icon-button, .dashboard-nav__link, .mobile-site-drawer__link, .mobile-site-drawer__action, button[type="submit"], [data-search-action], [data-apply-job], [data-job-details], [data-company-details], [data-companies-filter], [data-link]'),
       'pop',
       {
         step: 30,
@@ -11432,6 +11669,8 @@
   initPublicHeaderChrome();
   initSiteMobileDrawer();
   initHomeSearch();
+  initHomeSearchLive();
+  initHomeHeroVideo();
   initHomeRuntimeContent();
   initHomeUsefulStats();
   initCompanyOnlySections();

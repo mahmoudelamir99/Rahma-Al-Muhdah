@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BellRing, CheckCheck, Clock3, Mail, Plus, Save, ShieldCheck, UserCog, Users2 } from 'lucide-react';
+import { BellRing, CheckCheck, Clock3, Film, Mail, Plus, Save, ShieldCheck, UserCog, Users2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   AdminBadge,
@@ -17,6 +17,7 @@ import {
 import { PERMISSION_CATALOG } from '../lib/admin-data';
 import { buildRoleSummary, cleanAdminText, formatDateTime, formatNumber } from '../lib/admin-dashboard';
 import { useAdmin } from '../lib/admin-store';
+import { getFirebaseServices, hasFirebaseConfig } from '../lib/firebase';
 
 function pad2(value: number) {
   return String(value).padStart(2, '0');
@@ -90,6 +91,7 @@ export default function Settings() {
   const [maintenanceHour, setMaintenanceHour] = useState(maintenanceParts.hour);
   const [maintenanceMinute, setMaintenanceMinute] = useState(maintenanceParts.minute);
   const [maintenancePeriod, setMaintenancePeriod] = useState<'AM' | 'PM'>(maintenanceParts.period);
+  const [videoBusy, setVideoBusy] = useState(false);
 
   useEffect(() => setSettingsDraft(state.settings), [state.settings]);
   useEffect(() => setContentDraft(state.content), [state.content]);
@@ -167,6 +169,33 @@ export default function Settings() {
     sendNotification(messageForm.audience, messageForm.subject.trim(), messageForm.body.trim());
     setMessageForm({ audience: 'الجميع', subject: '', body: '' });
     setFeedback({ tone: 'success', text: 'تم إرسال الرسالة وحفظها ضمن سجل الإشعارات.' });
+  };
+
+  const handleHeroVideoUpload = async (fileList: FileList | null) => {
+    const file = fileList?.[0];
+    if (!file) return;
+    if (!hasFirebaseConfig()) {
+      setFeedback({ tone: 'danger', text: 'فعّل إعدادات Firebase أو الصق رابط فيديو مباشر بدل الرفع.' });
+      return;
+    }
+    setVideoBusy(true);
+    try {
+      const services = await getFirebaseServices();
+      if (!services) throw new Error('firebase');
+      const safeName = file.name.replace(/[^\w.-]+/g, '-');
+      const path = `site/home-hero/${Date.now()}-${safeName}`;
+      const storageRef = services.storageModule.ref(services.storage, path);
+      await services.storageModule.uploadBytes(storageRef, file, {
+        contentType: file.type || 'video/mp4',
+      });
+      const url = await services.storageModule.getDownloadURL(storageRef);
+      setContentDraft((current) => ({ ...current, homeHeroVideoUrl: url }));
+      setFeedback({ tone: 'success', text: 'تم رفع الفيديو. اضغط «حفظ المحتوى» لنشره على الموقع العام.' });
+    } catch {
+      setFeedback({ tone: 'danger', text: 'تعذر الرفع. راجع قواعد التخزين أو جرّب رابط URL عام.' });
+    } finally {
+      setVideoBusy(false);
+    }
   };
 
   return (
@@ -282,6 +311,46 @@ export default function Settings() {
       ) : null}
       {activeTab === 'content' ? (
         <div className="grid gap-6">
+          <AdminPanel
+            title="فيديو خلفية الصفحة الرئيسية"
+            description="يظهر خلف قسم الترحيب على الموقع العام مع طبقة شفافة للحفاظ على وضوح النصوص."
+          >
+            <div className="grid gap-4 lg:grid-cols-2">
+              <AdminField label="رابط الفيديو (mp4 / webm)" hint="يمكنك لصق رابط مباشر من أي CDN." className="lg:col-span-2">
+                <AdminInput
+                  dir="ltr"
+                  value={contentDraft.homeHeroVideoUrl}
+                  onChange={(event) =>
+                    setContentDraft((current) => ({ ...current, homeHeroVideoUrl: event.target.value }))
+                  }
+                  placeholder="https://example.com/hero.mp4"
+                />
+              </AdminField>
+              <AdminField
+                label="رفع ملف"
+                hint={
+                  hasFirebaseConfig()
+                    ? 'يُرفع إلى Firebase Storage ضمن مجلد site/home-hero.'
+                    : 'غير متاح بدون تهيئة Firebase في لوحة الأدمن.'
+                }
+              >
+                <label className="flex cursor-pointer flex-col gap-2 rounded-[1.1rem] border border-dashed border-[rgba(24,37,63,0.14)] bg-[#f8fafc] px-4 py-6 text-center text-sm font-bold text-[#4d5f6d] transition hover:border-[#005dac]/40">
+                  <Film className="mx-auto text-[#005dac]" size={22} />
+                  <span>{videoBusy ? 'جارٍ الرفع…' : 'اختر فيديو من الجهاز'}</span>
+                  <input
+                    type="file"
+                    accept="video/mp4,video/webm"
+                    className="hidden"
+                    disabled={!hasFirebaseConfig() || videoBusy}
+                    onChange={(event) => void handleHeroVideoUpload(event.target.files)}
+                  />
+                </label>
+              </AdminField>
+              <div className="rounded-[1.1rem] bg-[#f4f7fb] px-4 py-4 text-xs leading-6 text-[#5c6f83]">
+                بعد التأكد من المعاينة على الموقع، احفظ المحتوى من الشريط العلوي. لإخفاء الفيديو، امسح الرابط واحفظ.
+              </div>
+            </div>
+          </AdminPanel>
           {contentSections.map((section) => (
             <AdminPanel key={section.title} title={section.title} description="هذا القسم مرتبط مباشرة بالصفحات العامة على الموقع.">
               <div className="grid gap-4 lg:grid-cols-2">

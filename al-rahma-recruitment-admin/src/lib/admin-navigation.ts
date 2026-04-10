@@ -4,6 +4,7 @@ import {
   Bell,
   BriefcaseBusiness,
   Building2,
+  IdCard,
   LayoutDashboard,
   MessageSquare,
   Settings2,
@@ -51,6 +52,14 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     icon: UsersRound,
     permission: 'applications:view',
     summary: 'مراجعة الطلبات وتحديث الحالات وأسباب الرفض.',
+  },
+  {
+    id: 'candidates',
+    name: 'بيانات المرشحين',
+    path: '/candidates',
+    icon: IdCard,
+    permission: 'applications:view',
+    summary: 'تعديل بيانات المتقدم أو حذف كل طلباته نهائيًا مع ربط اختياري لـ Supabase Auth.',
   },
   {
     id: 'reports',

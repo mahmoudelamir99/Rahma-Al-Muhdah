@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>بوابة الشركات | الرحمة المهداه للتوظيف</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #10213d;
+        --muted: #5b6b7d;
+        --line: rgba(15, 23, 42, 0.08);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background:
+          radial-gradient(circle at 18% 12%, rgba(230, 0, 0, 0.08), transparent 28%),
+          radial-gradient(circle at 82% 14%, rgba(0, 0, 128, 0.1), transparent 26%),
+          linear-gradient(180deg, #f8fbfe 0%, #edf4f8 100%);
+        color: var(--ink);
+        font-family: "Cairo", system-ui, sans-serif;
+      }
+      .auth-shell {
+        width: min(100%, 720px);
+        border-radius: 30px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid var(--line);
+        box-shadow: 0 28px 80px rgba(15, 23, 42, 0.14);
+        backdrop-filter: blur(18px);
+        text-align: center;
+      }
+      .auth-shell__bar { display: flex; height: 12px; }
+      .auth-shell__bar span { flex: 1; }
+      .auth-shell__bar span:first-child { background: #e60000; }
+      .auth-shell__bar span:last-child { background: #000080; }
+      .auth-shell__body { padding: clamp(1.4rem, 4vw, 2.5rem); }
+      .auth-shell__mark {
+        width: 88px;
+        height: 88px;
+        margin: 0 auto 1rem;
+        border-radius: 28px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(145deg, rgba(230, 0, 0, 0.12), rgba(0, 0, 128, 0.08));
+        box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+      }
+      .auth-shell__mark img { width: 68px; height: 68px; object-fit: contain; }
+      .auth-shell__badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 34px;
+        padding: 0 14px;
+        border-radius: 999px;
+        background: rgba(0, 0, 128, 0.08);
+        border: 1px solid rgba(0, 0, 128, 0.12);
+        color: #123f63;
+        font-size: 13px;
+        font-weight: 900;
+      }
+      h1 { margin: 1rem 0 0; font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.15; }
+      p { margin: 0.9rem auto 0; max-width: 42rem; color: var(--muted); line-height: 1.9; }
+      .auth-shell__actions {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      a { color: inherit; text-decoration: none; }
+      .auth-shell__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 18px;
+        border-radius: 16px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #000080, #0f4c81);
+        color: #fff;
+        box-shadow: 0 16px 28px rgba(0, 0, 128, 0.18);
+      }
+      .auth-shell__button--ghost {
+        background: #fff;
+        color: #0f4c81;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        box-shadow: none;
+      }
+      @media (max-width: 640px) {
+        body { padding: 12px; }
+        .auth-shell { border-radius: 24px; }
+        .auth-shell__body { padding: 1.2rem; }
+        .auth-shell__actions { flex-direction: column; }
+        .auth-shell__button { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="auth-shell" dir="rtl">
+      <div class="auth-shell__bar" aria-hidden="true">
+        <span></span>
+        <span></span>
+      </div>
+      <div class="auth-shell__body">
+        <div class="auth-shell__mark">
+          <img src="logo-mark.png" alt="شعار الرحمة المهداه للتوظيف" />
+        </div>
+        <span class="auth-shell__badge">بوابة الشركات</span>
+        <h1>جارٍ تجهيز صفحة الدخول</h1>
+        <p>
+          إذا لم يتم التحويل تلقائيًا، استخدم الأزرار التالية للوصول مباشرة إلى تسجيل الدخول أو إنشاء حساب شركة جديد.
+        </p>
+        <div class="auth-shell__actions">
+          <a class="auth-shell__button" href="login.html">فتح تسجيل الدخول</a>
+          <a class="auth-shell__button auth-shell__button--ghost" href="register.html">فتح إنشاء حساب</a>
+        </div>
+      </div>
+    </main>
+    <script>
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        const view = params.get('view') === 'register' ? 'register' : 'login';
+        const redirect = params.get('redirect');
+        const target = new URL('./%D8%AA%D8%B3%D8%AC%D9%8A%D9%84-%D8%A7%D9%84%D8%AF%D8%AE%D9%88%D9%84-%D9%88%D8%A5%D9%86%D8%B4%D8%A7%D8%A1-%D8%AD%D8%B3%D8%A7%D8%A8/dist/index.html', window.location.href);
+        target.searchParams.set('view', view);
+        if (redirect) {
+          target.searchParams.set('redirect', redirect);
+        }
+        window.location.replace(target.toString());
+      })();
+    </script>
+  </body>
+</html>

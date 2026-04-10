@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="utf-8"/>
@@ -10,9 +10,12 @@
   <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
   <link rel="icon" type="image/png" href="logo-mark.png"/>
-  <link rel="stylesheet" href="site.css?v=20260407-3"/>
+  <link rel="stylesheet" href="assets/vendor/swiper/swiper-bundle.min.css?v=20260408-1"/>
+  <link rel="stylesheet" href="site.css?v=20260408-1"/>
   <script src="firebase-site-config.js" defer></script>
-  <script src="site.js?v=20260407-3" defer></script>
+  <script src="assets/vendor/vanilla-tilt/vanilla-tilt.min.js?v=20260408-1" defer></script>
+  <script src="assets/vendor/swiper/swiper-bundle.min.js?v=20260408-1" defer></script>
+  <script src="site.js?v=20260408-1" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="استعرض وظائف في مصر وفرص عمل منشورة فعليًا مع فلترة سريعة وتقديم مباشر ورقم طلب واضح للمتابعة من نفس المنصة.">
   <meta name="keywords" content="وظائف في مصر, فرص عمل, وظائف شاغرة, تقديم وظائف, توظيف شركات, وظائف القاهرة, وظائف العاشر من رمضان">
@@ -31,7 +34,7 @@
   <link rel="canonical" href="/jobs.html">
 <!-- RAHMA SEO END -->
 </head>
-<body class="page-compact antialiased">
+<body class="page-compact page-jobs antialiased">
   <header class="glass-nav site-topbar fixed top-0 w-full z-50">
     <div class="container mx-auto px-5 lg:px-6">
       <div class="site-header__inner">
@@ -53,8 +56,8 @@
 
         <div class="site-header__actions">
           <a class="site-action site-action--ghost" href="track-application.html">متابعة الطلب</a>
-          <a class="site-action site-action--ghost" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
-          <a class="site-action site-action--primary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+          <a class="site-action site-action--ghost" href="login.html">دخول</a>
+          <a class="site-action site-action--primary" href="register.html">سجل شركتك</a>
         </div>
       </div>
     </div>
@@ -73,15 +76,37 @@
           <div class="jobs-search-panel jobs-search-panel--light">
             <label class="jobs-search-panel__field">
               <span><i class="fa-solid fa-magnifying-glass"></i></span>
-              <input data-jobs-keyword placeholder="المسمى الوظيفي أو الشركة أو المهارة" type="text"/>
-            </label>
-
-            <label class="jobs-search-panel__field">
-              <span><i class="fa-solid fa-location-dot"></i></span>
-              <select data-jobs-governorate></select>
+              <input data-jobs-keyword placeholder="ابحث باسم الوظيفة أو الشركة أو المحافظة" type="text"/>
             </label>
 
             <button data-search-action="jobs" type="button">عرض النتائج</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section page-section--tight">
+      <div class="container mx-auto px-5 lg:px-6">
+        <div class="jobs-coverflow-shell hidden" data-jobs-swiper-shell hidden>
+          <div class="section-head section-head--inline jobs-coverflow-shell__head">
+            <div>
+              <span class="section-eyebrow">استعراض سينمائي</span>
+              <h2 class="section-title">اسحب الوظائف يمينًا ويسارًا</h2>
+              <p class="section-copy">نسخة غنية بصريًا من النتائج نفسها لتصفح أسرع وأكثر متعة.</p>
+            </div>
+            <div class="jobs-coverflow-shell__nav">
+              <button class="jobs-coverflow-shell__arrow" data-jobs-swiper-next type="button" aria-label="الوظيفة التالية">
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+              <button class="jobs-coverflow-shell__arrow" data-jobs-swiper-prev type="button" aria-label="الوظيفة السابقة">
+                <i class="fa-solid fa-arrow-left"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="swiper jobs-coverflow" data-jobs-swiper>
+            <div class="swiper-wrapper" data-jobs-swiper-wrapper></div>
+            <div class="jobs-coverflow__pagination" data-jobs-swiper-pagination></div>
           </div>
         </div>
       </div>
@@ -138,8 +163,8 @@
 
         <div class="public-footer__links">
           <h3>للشركات</h3>
-          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">تسجيل شركة</a>
-          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
+          <a href="register.html">تسجيل شركة</a>
+          <a href="login.html">دخول</a>
         </div>
       </div>
 

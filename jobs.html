@@ -11,11 +11,11 @@
   <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
   <link rel="icon" type="image/png" href="logo-mark.png"/>
   <link rel="stylesheet" href="assets/vendor/swiper/swiper-bundle.min.css?v=20260408-1"/>
-  <link rel="stylesheet" href="site.css?v=20260408-1"/>
+  <link rel="stylesheet" href="site.css?v=20260410-2"/>
   <script src="firebase-site-config.js" defer></script>
   <script src="assets/vendor/vanilla-tilt/vanilla-tilt.min.js?v=20260408-1" defer></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js?v=20260408-1" defer></script>
-  <script src="site.js?v=20260408-1" defer></script>
+  <script src="site.js?v=20260410-2" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="استعرض وظائف في مصر وفرص عمل منشورة فعليًا مع فلترة سريعة وتقديم مباشر ورقم طلب واضح للمتابعة من نفس المنصة.">
   <meta name="keywords" content="وظائف في مصر, فرص عمل, وظائف شاغرة, تقديم وظائف, توظيف شركات, وظائف القاهرة, وظائف العاشر من رمضان">
@@ -56,8 +56,8 @@
 
         <div class="site-header__actions">
           <a class="site-action site-action--ghost" href="track-application.html">متابعة الطلب</a>
-          <a class="site-action site-action--ghost" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
-          <a class="site-action site-action--primary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+          <a class="site-action site-action--ghost" href="login.html">دخول</a>
+          <a class="site-action site-action--primary" href="register.html">سجل شركتك</a>
         </div>
       </div>
     </div>
@@ -76,12 +76,7 @@
           <div class="jobs-search-panel jobs-search-panel--light">
             <label class="jobs-search-panel__field">
               <span><i class="fa-solid fa-magnifying-glass"></i></span>
-              <input data-jobs-keyword placeholder="المسمى الوظيفي أو الشركة أو المهارة" type="text"/>
-            </label>
-
-            <label class="jobs-search-panel__field">
-              <span><i class="fa-solid fa-location-dot"></i></span>
-              <select data-jobs-governorate></select>
+              <input data-jobs-keyword placeholder="ابحث باسم الوظيفة أو الشركة أو المحافظة" type="text"/>
             </label>
 
             <button data-search-action="jobs" type="button">عرض النتائج</button>
@@ -168,8 +163,8 @@
 
         <div class="public-footer__links">
           <h3>للشركات</h3>
-          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">تسجيل شركة</a>
-          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
+          <a href="register.html">تسجيل شركة</a>
+          <a href="login.html">دخول</a>
         </div>
       </div>
 

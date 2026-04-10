@@ -163,7 +163,7 @@ export default function JobsPage() {
   const companies = useMemo(
     () =>
       Array.from(new Set(state.companies.filter((company) => !company.deletedAt).map((company) => cleanAdminText(company.name)))).sort(
-        (first, second) => first.localeCompare(second, 'ar'),
+        (first, second) => String(first).localeCompare(String(second), 'ar'),
       ),
     [state.companies],
   );

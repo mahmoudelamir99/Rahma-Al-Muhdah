@@ -17,6 +17,7 @@ import {
   STATIC_SITE_COMPANIES,
   STATIC_SITE_JOBS,
 } from './admin-data';
+import { requestRemoteCandidateAuthPurge } from './candidate-remote-auth';
 import { getFirebaseServices, hasFirebaseConfig } from './firebase';
 
 const STORAGE_KEYS = {
@@ -278,6 +279,8 @@ export type JobRecord = {
   status: 'approved' | 'pending' | 'hidden' | 'archived' | 'rejected';
   applicantsCount: number;
   notes: NoteRecord[];
+  createdAt?: string;
+  updatedAt?: string;
   deletedBy: 'admin' | 'company' | null;
   deletedStatusSnapshot: 'approved' | 'pending' | 'hidden' | 'archived' | 'rejected' | null;
   restoredByAdminAt: string | null;
@@ -423,6 +426,8 @@ export type ContentState = {
   termsHeroTitle: string;
   termsHeroSubtitle: string;
   termsIntroText: string;
+  /** Public URL for optional looping hero background video on the marketing site */
+  homeHeroVideoUrl: string;
 };
 
 export type AuditLog = {
@@ -528,6 +533,25 @@ type AdminContextValue = {
   exportApplicationsCsv: () => void;
   exportAuditCsv: () => void;
   searchEverywhere: (query: string) => Array<{ id: string; label: string; meta: string; path: string }>;
+  permanentDeleteCandidate: (params: { email: string; phone: string }) => Promise<{ ok: boolean; message: string }>;
+  updateCandidateIdentity: (
+    params: { email: string; phone: string },
+    patch: {
+      applicantName?: string;
+      applicantEmail?: string;
+      applicantPhone?: string;
+      city?: string;
+      governorate?: string;
+    },
+  ) => void;
+  createManualCandidateApplication: (input: {
+    jobId: string;
+    applicantName: string;
+    applicantEmail: string;
+    applicantPhone: string;
+    city?: string;
+    governorate?: string;
+  }) => { ok: boolean; message: string };
 };
 
 const AdminContext = createContext<AdminContextValue | null>(null);
@@ -975,7 +999,7 @@ function sanitizePersistedState(state: AdminState): AdminState {
   };
 }
 
-function normalizePermissionList(permissions: string[]) {
+function normalizePermissionList(permissions: readonly string[]) {
   const nextPermissions = new Set<string>();
 
   permissions.forEach((permission) => {
@@ -1020,6 +1044,7 @@ function normalizeAdminAccount(admin: AdminAccount, roleIds: Set<string>): Admin
 function normalizeCompanyRecordData(company: CompanyRecord): CompanyRecord {
   return {
     ...company,
+    siteMode: company.siteMode === 'landing' ? 'landing' : 'full',
     email: String(company.email || '').trim(),
     phone: String(company.phone || '').trim(),
     address: String(company.address || '').trim(),
@@ -1893,6 +1918,7 @@ function createDefaultContentState(): ContentState {
     termsHeroTitle: 'الشروط والأحكام',
     termsHeroSubtitle: 'باستخدامك للمنصة فأنت توافق على الشروط التي تنظّم الاستخدام ومسؤولية الأطراف المختلفة.',
     termsIntroText: 'توضح هذه الصفحة ما هو مسموح وما هو غير مسموح داخل المنصة، وكيف نتعامل مع المحتوى والحسابات والخصوصية والتحديثات المستقبلية.',
+    homeHeroVideoUrl: '',
   });
 }
 
@@ -2002,6 +2028,8 @@ function normalizeContentState(content: Partial<ContentState> | null | undefined
     termsHeroTitle: normalizeLegacyContentText(content.termsHeroTitle, defaults.termsHeroTitle),
     termsHeroSubtitle: normalizeLegacyContentText(content.termsHeroSubtitle, defaults.termsHeroSubtitle),
     termsIntroText: normalizeLegacyContentText(content.termsIntroText, defaults.termsIntroText),
+    homeHeroVideoUrl:
+      typeof content.homeHeroVideoUrl === 'string' ? content.homeHeroVideoUrl.trim() : defaults.homeHeroVideoUrl,
   };
 }
 
@@ -2192,6 +2220,8 @@ function buildCompanies(profile: Record<string, unknown>): CompanyRecord[] {
         status: 'approved',
         verified: Boolean(profile.companyLogoMeta || profile.companyProfile),
         notes: [],
+        deletedBy: null,
+        deletedStatusSnapshot: null,
         deletedAt: null,
       });
     }
@@ -2241,6 +2271,9 @@ function buildJobs(profile: Record<string, unknown>): JobRecord[] {
         status: String(job?.status || 'approved') as JobRecord['status'],
         applicantsCount: 0,
         notes: [],
+        deletedBy: null,
+        deletedStatusSnapshot: null,
+        restoredByAdminAt: null,
         deletedAt: job?.deletedAt ? String(job.deletedAt) : null,
       });
     });
@@ -2673,9 +2706,9 @@ function mergeSharedRuntimeIntoState(currentState: AdminState, incomingRuntime: 
         ...currentState.content,
         ...(incomingRuntime.content || {}),
       },
-      companies: mergedCompanies,
-      jobs: mergedJobs,
-      applications: mergedApplications,
+      companies: mergedCompanies.map((row) => normalizeCompanyRecordData({ ...(row as CompanyRecord) })),
+      jobs: mergedJobs.map((row) => normalizeJobRecordData({ ...(row as JobRecord) })),
+      applications: mergedApplications.map((row) => normalizeApplicationRecordData({ ...(row as ApplicationRecord) })),
     }),
   );
 }
@@ -3783,13 +3816,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const updateUserStatus: AdminContextValue['updateUserStatus'] = (userId, status) => {
-    const targetAdmin = state.admins.find((admin) => admin.id === adminId) || null;
+    const targetAdmin = state.admins.find((admin) => admin.id === userId) || null;
     if (
       targetAdmin?.roleId === 'super-admin' &&
       status === 'suspended' &&
-      !state.admins.some((admin) => admin.id !== adminId && admin.roleId === 'super-admin' && admin.status === 'active')
+      !state.admins.some((admin) => admin.id !== userId && admin.roleId === 'super-admin' && admin.status === 'active')
     ) {
-      writeAudit(actorName, 'حماية صلاحيات الوصول', 'admins', adminId, 'لا يمكن إيقاف آخر Super Admin نشط داخل النظام.', 'warning');
+      writeAudit(actorName, 'حماية صلاحيات الوصول', 'admins', userId, 'لا يمكن إيقاف آخر Super Admin نشط داخل النظام.', 'warning');
       return;
     }
 
@@ -3808,29 +3841,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         ...current.auditLogs,
       ],
     }));
-
-    return { ok: true };
   };
 
   const updateUserRole: AdminContextValue['updateUserRole'] = (userId, role) => {
-    const targetAdmin = state.admins.find((admin) => admin.id === adminId) || null;
-    if (
-      roleId === 'super-admin' &&
-      state.admins.some((admin) => admin.id !== adminId && admin.roleId === 'super-admin')
-    ) {
-      writeAudit(actorName, 'حماية صلاحيات الوصول', 'admins', adminId, 'لا يمكن تعيين أكثر من Super Admin واحد داخل النظام.', 'warning');
-      return;
-    }
-
-    if (
-      targetAdmin?.roleId === 'super-admin' &&
-      roleId !== 'super-admin' &&
-      !state.admins.some((admin) => admin.id !== adminId && admin.roleId === 'super-admin')
-    ) {
-      writeAudit(actorName, 'حماية صلاحيات الوصول', 'admins', adminId, 'لا يمكن إزالة دور آخر Super Admin داخل النظام.', 'warning');
-      return;
-    }
-
     updateState((current) => ({
       ...current,
       users: current.users.map((user) => (user.id === userId ? { ...user, role } : user)),
@@ -4120,7 +4133,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
       return {
         ...current,
-        companies: nextCompanies,
+        companies: nextCompanies.map((company) => normalizeCompanyRecordData(company as CompanyRecord)),
         jobs: shouldRenameReferences
           ? current.jobs.map((job) =>
               normalize(job.companyName) === normalize(previousName)
@@ -4431,6 +4444,188 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         ...current.auditLogs,
       ],
     }));
+  };
+
+  const candidateApplicationsMatch = (application: ApplicationRecord, emailRaw: string, phoneRaw: string) => {
+    const emailNorm = normalize(emailRaw);
+    const phoneDigits = String(phoneRaw || '').replace(/\D+/g, '');
+    const appEmail = normalize(application.applicantEmail || '');
+    const appPhoneDigits = String(application.applicantPhone || '').replace(/\D+/g, '');
+    const stripLeadingCountry = (digits: string) => (digits.startsWith('20') && digits.length >= 12 ? digits.slice(2) : digits);
+    const matchEmail = Boolean(emailNorm) && Boolean(appEmail) && appEmail === emailNorm;
+    const matchPhone =
+      Boolean(phoneDigits) &&
+      Boolean(appPhoneDigits) &&
+      (appPhoneDigits === phoneDigits ||
+        stripLeadingCountry(appPhoneDigits) === stripLeadingCountry(phoneDigits) ||
+        `20${stripLeadingCountry(appPhoneDigits)}` === phoneDigits);
+    return matchEmail || matchPhone;
+  };
+
+  const permanentDeleteCandidate: AdminContextValue['permanentDeleteCandidate'] = async (params) => {
+    const targets = state.applications.filter((application) =>
+      candidateApplicationsMatch(application, params.email, params.phone),
+    );
+    if (!targets.length) {
+      return { ok: false, message: 'لا توجد طلبات تقديم مرتبطة بهذا المرشح.' };
+    }
+
+    const primaryEmail = String(params.email || targets[0]?.applicantEmail || '')
+      .trim()
+      .toLowerCase();
+
+    const removeKeys = new Set(
+      targets.map((item) => String(item.requestId || item.id || '').trim()).filter(Boolean),
+    );
+
+    updateState((current) => ({
+      ...current,
+      applications: current.applications.filter(
+        (application) => !removeKeys.has(String(application.requestId || application.id || '').trim()),
+      ),
+      auditLogs: [
+        createAdminAudit(
+          actorName,
+          'حذف مرشح نهائي',
+          'candidates',
+          primaryEmail || params.phone,
+          `تم حذف ${targets.length} طلب(ات) تقديم مرتبطة بالمرشح من النظام.`,
+          'danger',
+        ),
+        ...current.auditLogs,
+      ],
+    }));
+
+    if (hasFirebaseConfig()) {
+      void (async () => {
+        try {
+          const services = await getFirebaseServices();
+          if (!services) return;
+          const { db, firestoreModule } = services;
+          const batch = firestoreModule.writeBatch(db);
+          targets.forEach((application) => {
+            const requestId = String(application.requestId || application.id || '').trim();
+            if (requestId) {
+              batch.delete(firestoreModule.doc(db, 'applications', requestId));
+            }
+          });
+          await batch.commit();
+        } catch {
+          writeAudit(
+            actorName,
+            'فشل حذف طلبات المرشح من Firebase',
+            'candidates',
+            primaryEmail,
+            'تم الحذف محليًا لكن تعذر مزامنة الحذف مع Firebase.',
+            'danger',
+          );
+        }
+      })();
+    }
+
+    const remote = await requestRemoteCandidateAuthPurge(primaryEmail);
+    return {
+      ok: remote.ok,
+      message: remote.message,
+    };
+  };
+
+  const updateCandidateIdentity: AdminContextValue['updateCandidateIdentity'] = (params, patch) => {
+    updateState((current) => ({
+      ...current,
+      applications: current.applications.map((application) => {
+        if (!candidateApplicationsMatch(application, params.email, params.phone)) return application;
+        return {
+          ...application,
+          applicantName: patch.applicantName ?? application.applicantName,
+          applicantEmail: patch.applicantEmail ?? application.applicantEmail,
+          applicantPhone: patch.applicantPhone ?? application.applicantPhone,
+          city: patch.city ?? application.city,
+          governorate: patch.governorate ?? application.governorate,
+        };
+      }),
+      auditLogs: [
+        createAdminAudit(
+          actorName,
+          'تحديث بيانات مرشح',
+          'candidates',
+          normalize(params.email) || params.phone,
+          'تم تحديث الاسم أو وسائل التواصل لكل طلبات التقديم المرتبطة بهذا المرشح.',
+          'success',
+        ),
+        ...current.auditLogs,
+      ],
+    }));
+  };
+
+  const createManualCandidateApplication: AdminContextValue['createManualCandidateApplication'] = (input) => {
+    const job = state.jobs.find((item) => item.id === input.jobId) || null;
+    if (!job) {
+      return { ok: false, message: 'اختر وظيفة موجودة من القائمة.' };
+    }
+    const applicantName = String(input.applicantName || '').trim();
+    const applicantEmail = String(input.applicantEmail || '').trim();
+    const applicantPhone = String(input.applicantPhone || '').trim();
+    if (!applicantName || (!applicantEmail && !applicantPhone)) {
+      return { ok: false, message: 'أدخل الاسم وبريدًا أو هاتفًا على الأقل.' };
+    }
+
+    const requestId = createId('req');
+    const nextApplication: ApplicationRecord = {
+      id: requestId,
+      requestId,
+      applicantName,
+      applicantEmail,
+      applicantPhone,
+      address: '',
+      governorate: String(input.governorate || '').trim(),
+      city: String(input.city || '').trim(),
+      experience: '',
+      experienceYears: '',
+      expectedSalary: '',
+      educationLevel: '',
+      specialization: '',
+      militaryStatus: '',
+      publicServiceCompleted: '',
+      maritalStatus: '',
+      coverLetter: '',
+      cvFileName: '',
+      cvFileType: '',
+      jobTitle: job.title,
+      companyName: job.companyName,
+      status: 'review',
+      rejectionReason: '',
+      companyTag: '',
+      adminTag: '',
+      adminRating: 0,
+      shortlisted: false,
+      interviewScheduledAt: null,
+      interviewMode: '',
+      interviewLocation: '',
+      submittedAt: new Date().toISOString(),
+      respondedAt: null,
+      forwardedTo: '',
+      notes: [],
+      deletedAt: null,
+    };
+
+    updateState((current) => ({
+      ...current,
+      applications: [nextApplication, ...current.applications],
+      auditLogs: [
+        createAdminAudit(
+          actorName,
+          'إضافة طلب تقديم يدوي',
+          'applications',
+          requestId,
+          `طلب جديد يدويًا للمرشح ${applicantName} على وظيفة ${job.title}.`,
+          'success',
+        ),
+        ...current.auditLogs,
+      ],
+    }));
+
+    return { ok: true, message: 'تم إنشاء سجل التقديم وسيُزامن مع Firebase تلقائيًا عند الاتصال.' };
   };
 
   const updateSettings: AdminContextValue['updateSettings'] = (patch) => {
@@ -4970,6 +5165,27 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       path: '/applications',
       permission: 'applications:view',
     })),
+    ...Array.from(
+      new Map(
+        state.applications.map((application) => {
+          const email = normalize(application.applicantEmail || '');
+          const phone = String(application.applicantPhone || '').replace(/\D+/g, '');
+          const dedupeKey = email || phone || application.id;
+          return [
+            dedupeKey,
+            {
+              id: `candidate-${dedupeKey}`,
+              label: repairAdminUiValue(application.applicantName),
+              meta:
+                repairAdminUiValue(application.applicantEmail || application.applicantPhone || '') +
+                ' — إدارة المرشح',
+              path: '/candidates',
+              permission: 'applications:view',
+            },
+          ] as const;
+        }),
+      ).values(),
+    ),
     ...state.messages.map((thread) => ({
       id: thread.id,
       label: repairAdminUiValue(thread.title),
@@ -5031,6 +5247,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       exportApplicationsCsv,
       exportAuditCsv,
       searchEverywhere,
+      permanentDeleteCandidate,
+      updateCandidateIdentity,
+      createManualCandidateApplication,
     }),
     [state, session, currentAdmin, currentRole, isSetupRequired],
   );

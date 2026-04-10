@@ -1,15 +1,23 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { getRequiredPermissionForPath } from '../../lib/admin-navigation';
 import { useAdmin } from '../../lib/admin-store';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
+const THEME_STORAGE_KEY = 'rahma-admin-theme';
+
 export default function AdminLayout() {
   const location = useLocation();
   const { isAuthenticated, hasPermission } = useAdmin();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    document.documentElement.classList.toggle('dark', stored === 'dark');
+  }, []);
 
   if (!isAuthenticated && location.pathname !== '/login') {
     return <Navigate to="/login" replace />;
@@ -21,7 +29,7 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(33,58,100,0.06),transparent_22%),radial-gradient(circle_at_bottom_right,rgba(184,148,78,0.1),transparent_24%),linear-gradient(180deg,#f6f8fb_0%,#eef3f7_100%)] text-[#11213d]">
+    <div className="min-h-screen bg-[#f4f7fb] bg-[radial-gradient(circle_at_top_left,rgba(33,58,100,0.05),transparent_24%),radial-gradient(circle_at_bottom_right,rgba(184,148,78,0.08),transparent_26%),linear-gradient(180deg,#f4f7fb_0%,#eef2f8_100%)] text-[#11213d] dark:bg-[#0f172a] dark:bg-none dark:text-slate-100">
       <AnimatePresence>
         {mobileSidebarOpen ? (
           <motion.button

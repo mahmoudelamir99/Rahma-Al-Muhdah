@@ -10,10 +10,10 @@
   <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
   <link rel="icon" type="image/png" href="logo-mark.png"/>
-  <link rel="stylesheet" href="site.css?v=20260408-1"/>
+  <link rel="stylesheet" href="site.css?v=20260410-2"/>
   <script src="firebase-site-config.js" defer></script>
   <script src="assets/vendor/vanilla-tilt/vanilla-tilt.min.js?v=20260408-1" defer></script>
-  <script src="site.js?v=20260408-1" defer></script>
+  <script src="site.js?v=20260410-3" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="اعثر على وظائف في مصر وفرص عمل حقيقية وتوظيف شركات من منصة عربية منظمة تعرض الوظائف المنشورة فعليًا وتسهّل التقديم والمتابعة.">
   <meta name="keywords" content="وظائف في مصر, فرص عمل, توظيف شركات, وظائف شاغرة, تقديم وظائف, وظائف القاهرة, وظائف العاشر من رمضان">
@@ -54,16 +54,20 @@
 
         <div class="site-header__actions">
           <a class="site-action site-action--ghost" href="track-application.html">متابعة الطلب</a>
-          <a class="site-action site-action--ghost" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
-          <a class="site-action site-action--primary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">سجل شركتك</a>
+          <a class="site-action site-action--ghost" href="login.html">دخول</a>
+          <a class="site-action site-action--primary" href="register.html">سجل شركتك</a>
         </div>
       </div>
     </div>
   </header>
 
   <main class="product-shell">
-    <section class="page-section pt-32 pb-24" data-purpose="hero-section">
-      <div class="container mx-auto px-5 lg:px-6">
+    <section class="page-section pt-32 pb-24 relative overflow-hidden" data-purpose="hero-section">
+      <div class="pointer-events-none absolute inset-0 z-0 hidden" data-home-hero-video-wrap hidden aria-hidden="true">
+        <video class="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover opacity-[0.22]" data-home-hero-video muted loop playsinline preload="metadata"></video>
+        <div class="absolute inset-0 bg-gradient-to-b from-white/88 via-white/78 to-white/92"></div>
+      </div>
+      <div class="container relative z-10 mx-auto px-5 lg:px-6">
         <div class="flex flex-col items-center text-center max-w-4xl mx-auto pb-8 pt-4">
           <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-[#005dac] text-sm font-bold border border-blue-100 mb-8 drop-shadow-sm">
             <i class="fa-solid fa-check-circle"></i>
@@ -85,17 +89,19 @@
             </a>
           </div>
 
-          <div class="mt-12 w-full max-w-2xl mx-auto">
+          <div class="mt-12 w-full max-w-2xl mx-auto relative z-20">
             <div class="home-search-card bg-white/70 backdrop-blur-xl p-3 rounded-2xl shadow-lg border border-slate-100 flex flex-col md:flex-row gap-3 relative z-10 transition-shadow hover:shadow-xl">
               <div class="home-search-card__field flex-1 flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border border-slate-100">
                 <span class="text-[#005dac]"><i class="fa-solid fa-briefcase"></i></span>
-                <input class="bg-transparent border-none outline-none w-full text-slate-800" data-home-keyword placeholder="المسمى الوظيفي أو الشركة" type="text"/>
-              </div>
-              <div class="home-search-card__field flex-1 flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border border-slate-100">
-                <span class="text-[#005dac]"><i class="fa-solid fa-location-dot"></i></span>
-                <select class="bg-transparent border-none outline-none w-full text-slate-800" data-home-governorate></select>
+                <input class="bg-transparent border-none outline-none w-full text-slate-800" data-home-keyword placeholder="وظيفة، شركة، أو محافظة…" type="text" autocomplete="off"/>
               </div>
               <button class="bg-[#005dac] text-white px-7 py-3 rounded-xl font-bold hover:bg-opacity-90 transition-transform hover:-translate-y-0.5" data-search-action="home" type="button">بحث</button>
+            </div>
+            <div class="home-search-live" data-home-search-panel hidden>
+              <div class="home-search-live__results" data-home-search-results></div>
+              <div class="home-search-live__footer">
+                <a class="home-search-live__all" href="jobs.html">عرض كل الوظائف</a>
+              </div>
             </div>
           </div>
 
@@ -159,7 +165,7 @@
           <article class="page-card bento-card bento-card--tall">
             <h3>للشركات</h3>
             <p>حساب شركة واحد يكفي لنشر الوظائف، استقبال الطلبات، ومراجعة الحالات من لوحة واحدة.</p>
-            <a class="site-action site-action--secondary" href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">تسجيل شركة</a>
+            <a class="site-action site-action--secondary" href="register.html">تسجيل شركة</a>
           </article>
 
           <article class="page-card bento-card">
@@ -198,8 +204,8 @@
         <div class="public-footer__links">
           <h3>خدمات مباشرة</h3>
           <a href="track-application.html">متابعة الطلب</a>
-          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=register">تسجيل شركة</a>
-          <a href="تسجيل-الدخول-وإنشاء-حساب/dist/index.html?view=login">دخول</a>
+          <a href="register.html">تسجيل شركة</a>
+          <a href="login.html">دخول</a>
         </div>
       </div>
 

@@ -523,7 +523,7 @@ export default function Companies() {
     const result = await uploadAsset(file, 'restriction', formState.name || editingCompany?.name || 'company');
     setUploadingAttachment(false);
     event.target.value = '';
-    if (!result.ok) {
+    if (result.ok === false) {
       setFeedback({ tone: 'danger', text: result.message });
       return;
     }
@@ -552,7 +552,7 @@ export default function Companies() {
     const result = await uploadAsset(file, 'logo', formState.name || editingCompany?.name || 'company');
     setUploadingLogo(false);
     event.target.value = '';
-    if (!result.ok) {
+    if (result.ok === false) {
       setFeedback({ tone: 'danger', text: result.message });
       return;
     }

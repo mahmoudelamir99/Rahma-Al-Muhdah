@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   let toastTimer = null;
 
   const STORAGE_KEYS = {
@@ -9,9 +9,11 @@
     bookmarkedJobs: 'rahmaBookmarkedJobs',
   };
   const COMPANY_DASHBOARD_FEEDBACK_STORAGE_KEY = 'rahmaCompanyDashboardFeedback';
-  const PUBLIC_SITE_BUILD = '20260407-3';
+  const PUBLIC_SITE_BUILD = '20260410-1';
   const PUBLIC_SITE_BUILD_MARKER_KEY = 'rahmaPublicBuildMarker';
   const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+  let publicJobsCoverflowSwiper = null;
+  let publicCountersObserver = null;
 
   const ensureToast = () => {
     let toast = document.querySelector('.site-toast');
@@ -62,6 +64,394 @@
   function normalize(value) {
     return repairLegacyMojibakeText((value || '').toString()).trim().toLowerCase();
   }
+  const normalizeEasternArabicDigits = (value = '') =>
+    String(value || '')
+      .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 1632))
+      .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776));
+  const parseNumericTextValue = (value = '') =>
+    Number.parseInt(normalizeEasternArabicDigits(String(value || '')).replace(/[^\d-]/g, ''), 10);
+  const formatArabicInteger = (value) =>
+    new Intl.NumberFormat('ar-EG').format(Math.max(0, Math.round(Number(value) || 0)));
+  const prefersReducedMotion = () => {
+    try {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (error) {
+      return false;
+    }
+  };
+  const supportsFinePointerInteractions = () => {
+    if (prefersReducedMotion()) return false;
+    try {
+      return window.matchMedia('(pointer: fine)').matches;
+    } catch (error) {
+      return false;
+    }
+  };
+  const shouldEnableHeavyPublicEffects = () => {
+    if (!supportsFinePointerInteractions()) return false;
+
+    try {
+      const deviceMemory = Number(window.navigator?.deviceMemory || 0);
+      const hardwareConcurrency = Number(window.navigator?.hardwareConcurrency || 0);
+
+      if ((Number.isFinite(deviceMemory) && deviceMemory > 0 && deviceMemory <= 4) ||
+          (Number.isFinite(hardwareConcurrency) && hardwareConcurrency > 0 && hardwareConcurrency <= 4)) {
+        return false;
+      }
+
+      if (window.innerWidth < 992) {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+
+    return true;
+  };
+  const normalizeSearchTokens = (value = '') =>
+    normalize(value)
+      .split(/\s+/)
+      .map((token) => token.trim())
+      .filter(Boolean);
+  const matchesSearchQuery = (query, ...parts) => {
+    const tokens = normalizeSearchTokens(query);
+    if (!tokens.length) return true;
+
+    const haystack = normalize(parts.filter(Boolean).join(' '));
+    if (!haystack) return false;
+
+    return tokens.every((token) => haystack.includes(token));
+  };
+  const queryPublicInteractiveTargets = (root, selector) => {
+    const searchRoot = root instanceof Document || root instanceof Element ? root : document;
+    return Array.from(searchRoot.querySelectorAll(selector)).filter((element) => element instanceof HTMLElement);
+  };
+  const requestPublicMotionRefresh = () => {
+    if (typeof window.RahmaRefreshMotion !== 'function') return;
+    window.requestAnimationFrame(() => {
+      window.RahmaRefreshMotion();
+    });
+  };
+  const ensureInteractiveInnerShell = (element, className = 'interactive-shell__inner') => {
+    const existingInner = Array.from(element.children || []).find(
+      (child) => child instanceof HTMLElement && child.classList.contains(className),
+    );
+    if (existingInner instanceof HTMLElement) {
+      return existingInner;
+    }
+
+    const inner = document.createElement('span');
+    inner.className = className;
+    while (element.firstChild) {
+      inner.appendChild(element.firstChild);
+    }
+    element.appendChild(inner);
+    return inner;
+  };
+  const initPublicSpotlightSurfaces = (root = document) => {
+    const targets = queryPublicInteractiveTargets(
+      root,
+      '.page-card, .hero-card, .home-live-card, .listing-job-card, .directory-company-card, .jobs-coverflow-card, .job-demand-card, .home-cinematic-visual__panel',
+    );
+
+    targets.forEach((element) => {
+      element.classList.add('spotlight-surface');
+    });
+
+    if (!shouldEnableHeavyPublicEffects()) {
+      targets.forEach((element) => {
+        element.style.removeProperty('--spotlight-active');
+      });
+      return;
+    }
+
+    targets.slice(0, 18).forEach((element) => {
+      if (element.dataset.spotlightBound === 'true') return;
+      element.dataset.spotlightBound = 'true';
+
+      const updateSpotlight = (event) => {
+        const rect = element.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 100;
+        const y = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 100;
+        element.style.setProperty('--spotlight-x', `${Math.min(100, Math.max(0, x))}%`);
+        element.style.setProperty('--spotlight-y', `${Math.min(100, Math.max(0, y))}%`);
+      };
+
+      element.addEventListener('pointerenter', (event) => {
+        element.style.setProperty('--spotlight-active', '1');
+        updateSpotlight(event);
+      });
+      element.addEventListener('pointermove', updateSpotlight);
+      element.addEventListener('pointerleave', () => {
+        element.style.setProperty('--spotlight-active', '0');
+      });
+    });
+  };
+  const initPublicMagneticButtons = (root = document) => {
+    queryPublicInteractiveTargets(
+      root,
+      '.site-action, .listing-job-card__actions a, .directory-company-card__actions .site-action, .jobs-coverflow-card__actions a, .home-search-card button, .jobs-search-panel button, .directory-filters button, .jobs-coverflow-shell__arrow',
+    ).forEach((element) => {
+      element.classList.add('magnetic-shell');
+      const inner = ensureInteractiveInnerShell(element);
+
+      if (element.dataset.magneticBound === 'true') return;
+      element.dataset.magneticBound = 'true';
+
+      const reset = () => {
+        inner.style.transform = 'translate3d(0px, 0px, 0px)';
+      };
+
+      if (!supportsFinePointerInteractions()) {
+        reset();
+        return;
+      }
+
+      element.addEventListener('pointermove', (event) => {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const deltaX = event.clientX - centerX;
+        const deltaY = event.clientY - centerY;
+        const threshold = Math.max(rect.width, rect.height) * 0.72;
+        const distance = Math.hypot(deltaX, deltaY);
+
+        if (distance > threshold) {
+          reset();
+          return;
+        }
+
+        const translateX = deltaX * 0.16;
+        const translateY = deltaY * 0.16;
+        inner.style.transform = `translate3d(${translateX}px, ${translateY}px, 0)`;
+      });
+
+      element.addEventListener('pointerleave', reset);
+      element.addEventListener('blur', reset, true);
+    });
+  };
+  const initPublicTiltSurfaces = (root = document) => {
+    const targets = queryPublicInteractiveTargets(
+      root,
+      '.site-brand__mark, .home-cinematic-visual__panel, .listing-job-card, .directory-company-card, .jobs-coverflow-card, .page-card, .home-live-card, .bento-card',
+    );
+
+    targets.forEach((element) => {
+      element.classList.add('tilt-surface');
+    });
+
+    if (!shouldEnableHeavyPublicEffects() || typeof window.VanillaTilt?.init !== 'function') {
+      return;
+    }
+
+    targets.slice(0, 14).forEach((element) => {
+      if (element.vanillaTilt) return;
+      window.VanillaTilt.init(element, {
+        max: Number(element.dataset.tiltMax || 4),
+        speed: 500,
+        scale: 1,
+        glare: false,
+        perspective: 1200,
+        gyroscope: false,
+      });
+    });
+  };
+  const animatePublicCounter = (element) => {
+    if (!(element instanceof HTMLElement)) return;
+    if (element.dataset.countupStarted === 'true') return;
+
+    const targetValue = Number.parseInt(element.dataset.countupTarget || '', 10);
+    if (!Number.isFinite(targetValue)) return;
+
+    element.dataset.countupStarted = 'true';
+    if (prefersReducedMotion()) {
+      element.textContent = formatArabicInteger(targetValue);
+      return;
+    }
+
+    const duration = Math.min(1800, 600 + targetValue * 40);
+    const startedAt = performance.now();
+
+    const frame = (now) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      element.textContent = formatArabicInteger(targetValue * eased);
+      if (progress < 1) {
+        window.requestAnimationFrame(frame);
+      } else {
+        element.textContent = formatArabicInteger(targetValue);
+      }
+    };
+
+    window.requestAnimationFrame(frame);
+  };
+  const initPublicScrollCounters = (root = document) => {
+    const counters = queryPublicInteractiveTargets(root, '[data-countup]');
+    if (!counters.length) return;
+
+    counters.forEach((element) => {
+      const fallbackTarget = parseNumericTextValue(element.dataset.countupTarget || element.textContent || '0');
+      if (Number.isFinite(fallbackTarget)) {
+        element.dataset.countupTarget = String(fallbackTarget);
+      }
+    });
+
+    if (typeof window.IntersectionObserver !== 'function' || prefersReducedMotion()) {
+      counters.forEach((element) => {
+        const targetValue = Number.parseInt(element.dataset.countupTarget || '', 10);
+        if (Number.isFinite(targetValue)) {
+          element.textContent = formatArabicInteger(targetValue);
+          element.dataset.countupStarted = 'true';
+        }
+      });
+      return;
+    }
+
+    if (!publicCountersObserver) {
+      publicCountersObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            animatePublicCounter(entry.target);
+            publicCountersObserver?.unobserve(entry.target);
+          });
+        },
+        {
+          rootMargin: '0px 0px -12% 0px',
+          threshold: 0.35,
+        },
+      );
+    }
+
+    counters.forEach((element) => {
+      if (element.dataset.countupStarted === 'true') return;
+      publicCountersObserver.observe(element);
+    });
+  };
+  const buildJobsCoverflowCardMarkup = (jobData = {}) => {
+    const applyDisabledAttributes = jobData.filled
+      ? 'aria-disabled="true" data-disabled-message="اكتمل العدد المطلوب لهذه الوظيفة أو تم إغلاق التقديم عليها."'
+      : '';
+    return `
+      <div class="swiper-slide jobs-coverflow__slide">
+        <article class="jobs-coverflow-card">
+          <div class="jobs-coverflow-card__media">
+            <img src="${escapeHtml(jobData.companyImage || COMPANY_PLACEHOLDER_IMAGE)}" alt="شعار ${escapeHtml(jobData.jobCompany || 'الشركة')}"/>
+          </div>
+          <div class="jobs-coverflow-card__body">
+            <div class="jobs-coverflow-card__top">
+              <span class="jobs-coverflow-card__type">${escapeHtml(jobData.jobType || 'فرصة وظيفية')}</span>
+              ${jobData.jobFeatured ? '<span class="jobs-coverflow-card__featured">مميزة</span>' : ''}
+            </div>
+            <h3>${escapeHtml(jobData.jobTitle || 'وظيفة بدون عنوان')}</h3>
+            <p class="jobs-coverflow-card__company">${escapeHtml(jobData.jobCompany || 'شركة غير محددة')}</p>
+            <div class="jobs-coverflow-card__meta">
+              <span>${escapeHtml(jobData.jobLocation || 'الموقع غير مضاف')}</span>
+              <span>${escapeHtml(jobData.jobSalary || 'الراتب غير مضاف')}</span>
+            </div>
+            <p class="jobs-coverflow-card__summary">${escapeHtml(jobData.jobSummary || 'لا توجد تفاصيل مضافة لهذه الوظيفة حتى الآن.')}</p>
+            <div class="jobs-coverflow-card__demand">
+              <span>مطلوب ${escapeHtml(String(jobData.positionsCount || 1))}</span>
+              <span>${escapeHtml(jobData.filled ? 'اكتمل العدد المطلوب' : `باقي ${jobData.remainingCount || 0}`)}</span>
+            </div>
+            <div class="jobs-coverflow-card__actions">
+              <a href="${escapeHtml(buildApplyUrl(jobData))}" class="jobs-coverflow-card__primary" ${applyDisabledAttributes}>${jobData.filled ? 'اكتمل العدد' : 'قدّم الآن'}</a>
+              <a href="${escapeHtml(buildJobDetailsUrl(jobData))}" class="jobs-coverflow-card__secondary">التفاصيل</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    `;
+  };
+  const getJobsCoverflowMetaFromCard = (card) => {
+    if (!(card instanceof HTMLElement)) return null;
+    return {
+      jobId: String(card.dataset.jobId || '').trim(),
+      jobTitle: String(card.dataset.jobTitle || '').trim(),
+      jobCompany: String(card.dataset.jobCompany || '').trim(),
+      jobLocation: String(card.dataset.jobLocation || '').trim(),
+      jobType: String(card.dataset.jobType || '').trim(),
+      jobSalary: String(card.dataset.jobSalary || '').trim(),
+      jobPosted: String(card.dataset.jobPosted || '').trim(),
+      jobSummary: String(card.dataset.jobSummary || '').trim(),
+      jobSector: String(card.dataset.jobSector || '').trim(),
+      jobFeatured: card.dataset.jobFeatured === 'true',
+      companyImage: String(card.dataset.jobCompanyImage || '').trim() || COMPANY_PLACEHOLDER_IMAGE,
+      positionsCount: Number.parseInt(card.dataset.jobPositions || '1', 10) || 1,
+      applicantsCount: Number.parseInt(card.dataset.jobApplicants || '0', 10) || 0,
+      remainingCount: Number.parseInt(card.dataset.jobRemaining || '0', 10) || 0,
+      filled: card.dataset.jobFilled === 'true',
+    };
+  };
+  const syncJobsCoverflow = (cards = []) => {
+    const shell = document.querySelector('[data-jobs-swiper-shell]');
+    const swiperElement = document.querySelector('[data-jobs-swiper]');
+    const wrapper = document.querySelector('[data-jobs-swiper-wrapper]');
+    const paginationElement = document.querySelector('[data-jobs-swiper-pagination]');
+    const nextButton = document.querySelector('[data-jobs-swiper-next]');
+    const prevButton = document.querySelector('[data-jobs-swiper-prev]');
+
+    if (!(shell instanceof HTMLElement) || !(swiperElement instanceof HTMLElement) || !(wrapper instanceof HTMLElement)) return;
+
+    const jobCards = Array.isArray(cards) ? cards.map(getJobsCoverflowMetaFromCard).filter(Boolean) : [];
+
+    if (publicJobsCoverflowSwiper && typeof publicJobsCoverflowSwiper.destroy === 'function') {
+      publicJobsCoverflowSwiper.destroy(true, true);
+      publicJobsCoverflowSwiper = null;
+    }
+
+    if (!jobCards.length) {
+      wrapper.innerHTML = '';
+      shell.classList.add('hidden');
+      shell.hidden = true;
+      return;
+    }
+
+    shell.classList.remove('hidden');
+    shell.hidden = false;
+    wrapper.innerHTML = jobCards.slice(0, 12).map((job) => buildJobsCoverflowCardMarkup(job)).join('');
+    initPublicExperienceEnhancements(wrapper);
+
+    if (typeof window.Swiper === 'function') {
+      publicJobsCoverflowSwiper = new window.Swiper(swiperElement, {
+        effect: 'coverflow',
+        centeredSlides: true,
+        slidesPerView: 'auto',
+        grabCursor: true,
+        loop: jobCards.length > 2,
+        spaceBetween: 18,
+        coverflowEffect: {
+          rotate: 0,
+          stretch: 0,
+          depth: 180,
+          modifier: 1.12,
+          scale: 0.9,
+          slideShadows: false,
+        },
+        pagination: paginationElement ? { el: paginationElement, clickable: true } : undefined,
+        navigation:
+          nextButton && prevButton
+            ? {
+                nextEl: nextButton,
+                prevEl: prevButton,
+              }
+            : undefined,
+        breakpoints: {
+          0: { spaceBetween: 12 },
+          768: { spaceBetween: 18 },
+          1200: { spaceBetween: 26 },
+        },
+      });
+    }
+
+    requestPublicMotionRefresh();
+  };
+  const initPublicExperienceEnhancements = (root = document) => {
+    initPublicSpotlightSurfaces(root);
+    initPublicMagneticButtons(root);
+    initPublicTiltSurfaces(root);
+    initPublicScrollCounters(root);
+  };
   const syncPublicSeoMeta = () => {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     if (['job-details.html', 'company-details.html'].includes(currentPage)) return;
@@ -1384,10 +1774,6 @@
       x: String(source.x || source.twitter || '').trim(),
     };
   };
-  const normalizeEasternArabicDigits = (value = '') =>
-    String(value || '')
-      .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 1632))
-      .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776));
   const sanitizePositiveIntegerInput = (value = '', options = {}) => {
     const { allowLegacyRange = false } = options;
     const normalizedValue = normalizeEasternArabicDigits(value).trim();
@@ -1553,6 +1939,8 @@
     };
   };
   const refreshPublicPagesFromFirebaseCache = () => {
+    syncMaintenanceShell();
+    syncSystemBanner();
     initHomeRuntimeContent();
     initHomeUsefulStats();
     renderPublicJobsPage();
@@ -2530,7 +2918,7 @@
 
     return buildQueryUrl('jobs.html', {
       q: keyword,
-      governorate: governorate || legacyLocationMeta.governorate,
+      governorate: governorate || legacyLocationMeta.governorate || null,
     });
   };
 
@@ -2574,12 +2962,23 @@
       });
     };
 
-  const AUTH_APP_PATH = 'تسجيل-الدخول-وإنشاء-حساب/dist/index.html';
+  const AUTH_APP_PATH = 'auth.html';
   const buildAuthUrl = (view, redirectTarget) =>
-    buildQueryUrl(AUTH_APP_PATH, {
-      view,
-      redirect: redirectTarget,
-    });
+    buildQueryUrl(
+      normalize(view) === 'register'
+        ? 'register.html'
+        : normalize(view) === 'login'
+          ? 'login.html'
+          : AUTH_APP_PATH,
+      normalize(view) === 'register' || normalize(view) === 'login'
+        ? {
+            redirect: redirectTarget,
+          }
+        : {
+            view,
+            redirect: redirectTarget,
+          },
+    );
 
   const buildLoginUrl = (redirectTarget) => buildAuthUrl('login', redirectTarget);
 
@@ -6585,17 +6984,13 @@
 
   const initHomeSearch = () => {
     const keywordInput = document.querySelector('[data-home-keyword]');
-    const governorateSelect = document.querySelector('[data-home-governorate]');
     const button = document.querySelector('[data-search-action="home"]');
 
-    if (!keywordInput || !governorateSelect || !button) return;
-
-    populateSelectOptions(governorateSelect, EGYPT_GOVERNORATES, 'اختر محافظة مصر');
+    if (!keywordInput || !button) return;
 
     const runSearch = () => {
       window.location.href = buildJobsUrl({
         keyword: keywordInput.value,
-        governorate: governorateSelect.value,
       });
     };
 
@@ -6659,11 +7054,21 @@
     const activeCompaniesCount = runtimeCompanies.length;
 
     if (jobsStat) {
-      jobsStat.textContent = String(liveJobsCount || 0);
+      jobsStat.dataset.countupTarget = String(liveJobsCount || 0);
+      if (jobsStat.dataset.countupStarted !== 'true') {
+        jobsStat.textContent = '0';
+      } else {
+        jobsStat.textContent = formatArabicInteger(liveJobsCount || 0);
+      }
     }
 
     if (companiesStat) {
-      companiesStat.textContent = String(activeCompaniesCount || 0);
+      companiesStat.dataset.countupTarget = String(activeCompaniesCount || 0);
+      if (companiesStat.dataset.countupStarted !== 'true') {
+        companiesStat.textContent = '0';
+      } else {
+        companiesStat.textContent = formatArabicInteger(activeCompaniesCount || 0);
+      }
     }
 
     if (responseStat) {
@@ -6672,6 +7077,7 @@
       );
     }
 
+    initPublicScrollCounters(document);
   };
 
   const initCompanyOnlySections = () => {
@@ -7020,36 +7426,58 @@
     shell.id = MAINTENANCE_SHELL_ID;
     shell.hidden = true;
     shell.setAttribute('aria-live', 'polite');
-    shell.dataset.supportOpen = 'false';
+    shell.dataset.supportOpen = 'true';
     shell.innerHTML = `
       <div class="rahma-maintenance-shell__card">
-        <div class="rahma-maintenance-shell__logo">
-          <img src="logo-mark.png" alt="الرحمة المهداه للتوظيف" />
+        <div class="rahma-maintenance-shell__brandbar" aria-hidden="true">
+          <span></span>
+          <span></span>
         </div>
-        <span class="rahma-maintenance-shell__badge">صفحة الصيانة</span>
-        <h1 class="rahma-maintenance-shell__title">المنصة متوقفة مؤقتًا</h1>
-        <p class="rahma-maintenance-shell__lead" data-maintenance-lead></p>
-        <div class="rahma-maintenance-shell__grid">
-          <div class="rahma-maintenance-shell__box">
-            <span>سبب الإيقاف</span>
-            <strong data-maintenance-reason></strong>
+        <div class="rahma-maintenance-shell__body">
+          <div class="rahma-maintenance-shell__hero">
+            <div class="rahma-maintenance-shell__copy">
+              <div class="rahma-maintenance-shell__brand">
+                <div class="rahma-maintenance-shell__logo">
+                  <img src="logo-mark.png" alt="الرحمة المهداه للتوظيف" />
+                </div>
+                <div class="rahma-maintenance-shell__brand-copy">
+                  <span class="rahma-maintenance-shell__badge">صفحة الصيانة</span>
+                  <h1 class="rahma-maintenance-shell__title">المنصة متوقفة مؤقتًا</h1>
+                </div>
+              </div>
+              <p class="rahma-maintenance-shell__lead" data-maintenance-lead></p>
+              <div class="rahma-maintenance-shell__grid">
+                <div class="rahma-maintenance-shell__box">
+                  <span>سبب الإيقاف</span>
+                  <strong data-maintenance-reason></strong>
+                </div>
+                <div class="rahma-maintenance-shell__box">
+                  <span>الموعد المتوقع للعودة</span>
+                  <strong data-maintenance-until></strong>
+                </div>
+              </div>
+              <div class="rahma-maintenance-shell__actions">
+                <button
+                  type="button"
+                  class="rahma-maintenance-shell__button"
+                  data-maintenance-support-toggle
+                  aria-controls="rahma-maintenance-shell-support"
+                  aria-expanded="true"
+                >
+                  إخفاء بيانات الدعم
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="rahma-maintenance-shell__box">
-            <span>الموعد المتوقع للعودة</span>
-            <strong data-maintenance-until></strong>
-          </div>
         </div>
-        <div class="rahma-maintenance-shell__actions">
-          <button type="button" class="rahma-maintenance-shell__button" data-maintenance-support-toggle>التواصل مع الدعم</button>
-        </div>
-        <section class="rahma-maintenance-shell__support" data-maintenance-support-panel aria-hidden="true">
+        <section class="rahma-maintenance-shell__support" id="rahma-maintenance-shell-support" data-maintenance-support-panel aria-hidden="false">
           <div class="rahma-maintenance-shell__support-head">
             <div>
-              <span class="rahma-maintenance-shell__support-badge">لوحة التواصل</span>
-              <h2 class="rahma-maintenance-shell__support-title">تواصل مباشر مع فريق الدعم</h2>
-              <p class="rahma-maintenance-shell__support-copy">اختَر وسيلة التواصل المناسبة من هنا أثناء فترة الصيانة.</p>
+              <span class="rahma-maintenance-shell__support-badge">الدعم الفني</span>
+              <h2 class="rahma-maintenance-shell__support-title">تواصل مباشر مع فريق الدعم أثناء الصيانة</h2>
+              <p class="rahma-maintenance-shell__support-copy">اختر وسيلة التواصل المناسبة من هنا، وسيبقى هذا القسم ظاهرًا لتسهيل الوصول إلى الدعم الفني.</p>
             </div>
-            <button type="button" class="rahma-maintenance-shell__support-close" data-maintenance-support-close>إغلاق</button>
+            <button type="button" class="rahma-maintenance-shell__support-close" data-maintenance-support-close>إخفاء الدعم</button>
           </div>
           <div class="rahma-maintenance-shell__support-grid">
             <div class="rahma-maintenance-shell__support-item">
@@ -7131,7 +7559,7 @@
     }
 
     if (supportToggle instanceof HTMLButtonElement) {
-      supportToggle.textContent = isOpen ? 'إخفاء بيانات الدعم' : 'التواصل مع الدعم';
+      supportToggle.textContent = isOpen ? 'إخفاء بيانات الدعم' : 'عرض بيانات الدعم';
     }
 
     const telHref = `tel:${normalizePhoneDigits(phoneText || CONTACT_PHONE)}`;
@@ -7198,6 +7626,7 @@
       return;
     }
 
+    const wasHidden = shell.hidden;
     const leadNode = shell.querySelector('[data-maintenance-lead]');
     const reasonNode = shell.querySelector('[data-maintenance-reason]');
     const untilNode = shell.querySelector('[data-maintenance-until]');
@@ -7209,6 +7638,9 @@
 
     shell.hidden = false;
     shell.dataset.visible = 'true';
+    if (wasHidden || !shell.dataset.supportOpen) {
+      shell.dataset.supportOpen = 'true';
+    }
     document.documentElement.dataset.maintenanceMode = 'true';
 
     if (leadNode) {
@@ -7550,20 +7982,25 @@
           ? `aria-disabled="true" data-disabled-message="اكتمل العدد المطلوب لهذه الوظيفة أو تم إغلاق التقديم عليها."`
           : '';
 
-        return `
+          return `
             <article
               class="page-card listing-job-card job-card"
               data-job-id="${escapeHtml(jobData.jobId)}"
               data-job-title="${escapeHtml(jobData.jobTitle)}"
-            data-job-company="${escapeHtml(jobData.jobCompany)}"
-            data-job-location="${escapeHtml(jobData.jobLocation)}"
-            data-job-type="${escapeHtml(jobData.jobType)}"
-            data-job-salary="${escapeHtml(jobData.jobSalary)}"
-            data-job-posted="${escapeHtml(jobData.jobPosted)}"
-            data-job-summary="${escapeHtml(jobData.jobSummary)}"
-            data-job-sector="${escapeHtml(jobData.jobSector)}"
-            data-job-featured="${jobData.jobFeatured ? 'true' : 'false'}"
-          >
+              data-job-company="${escapeHtml(jobData.jobCompany)}"
+              data-job-location="${escapeHtml(jobData.jobLocation)}"
+              data-job-type="${escapeHtml(jobData.jobType)}"
+              data-job-salary="${escapeHtml(jobData.jobSalary)}"
+              data-job-posted="${escapeHtml(jobData.jobPosted)}"
+              data-job-summary="${escapeHtml(jobData.jobSummary)}"
+              data-job-sector="${escapeHtml(jobData.jobSector)}"
+              data-job-featured="${jobData.jobFeatured ? 'true' : 'false'}"
+              data-job-company-image="${escapeHtml(companyImage)}"
+              data-job-positions="${escapeHtml(String(demandMeta.positionsCount))}"
+              data-job-applicants="${escapeHtml(String(demandMeta.applicantsCount))}"
+              data-job-remaining="${escapeHtml(String(demandMeta.remainingCount))}"
+              data-job-filled="${demandMeta.filled ? 'true' : 'false'}"
+            >
             <div class="listing-job-card__top">
               <span class="listing-job-card__logo">
                 <img src="${escapeHtml(companyImage)}" alt="شعار ${escapeHtml(jobData.jobCompany || 'الشركة')}"/>
@@ -7654,6 +8091,11 @@
       emptyState.classList.toggle('hidden', approvedJobs.length !== 0);
       emptyState.toggleAttribute('hidden', approvedJobs.length !== 0);
     }
+
+    const renderedCards = Array.from(grid.querySelectorAll('.job-card'));
+    syncJobsCoverflow(renderedCards);
+    initPublicExperienceEnhancements(grid);
+    requestPublicMotionRefresh();
   };
 
   const renderPublicCompaniesPage = () => {
@@ -7749,18 +8191,20 @@
       emptyState.classList.toggle('hidden', approvedCompanies.length !== 0);
       emptyState.toggleAttribute('hidden', approvedCompanies.length !== 0);
     }
+
+    initPublicExperienceEnhancements(grid);
+    requestPublicMotionRefresh();
   };
 
   const initJobsSearch = () => {
     const keywordInput = document.querySelector('[data-jobs-keyword]');
-    const governorateSelect = document.querySelector('[data-jobs-governorate]');
     const button = document.querySelector('[data-search-action="jobs"]');
     const grid = document.querySelector('[data-jobs-grid]');
     const count = document.querySelector('[data-jobs-count]');
     const empty = document.querySelector('[data-jobs-empty]');
     const paginationRoot = document.querySelector('[data-jobs-pagination]');
 
-    if (!keywordInput || !governorateSelect || !button || !grid) return;
+    if (!keywordInput || !button || !grid) return;
 
     const cards = Array.from(grid.querySelectorAll('.job-card'));
     const runtimeJobs = getAdminRuntimeJobs();
@@ -7773,14 +8217,13 @@
       currentPage = 1;
     }
 
-    populateSelectOptions(
-      governorateSelect,
-      EGYPT_GOVERNORATES,
-      'كل محافظات مصر',
-      params.get('governorate') || legacyLocationMeta.governorate,
-    );
-
-    if (params.has('q')) keywordInput.value = params.get('q');
+    if (params.has('q')) {
+      keywordInput.value = params.get('q');
+    } else if (params.get('governorate')) {
+      keywordInput.value = params.get('governorate');
+    } else if (legacyLocationMeta.governorate) {
+      keywordInput.value = legacyLocationMeta.governorate;
+    }
 
     const applyFilters = ({ page, preservePage = false } = {}) => {
       if (Number.isFinite(page)) {
@@ -7789,8 +8232,6 @@
         currentPage = 1;
       }
 
-      const keyword = normalize(keywordInput.value);
-      const governorate = normalize(governorateSelect.value);
       const matchedCards = [];
 
       cards.forEach((card) => {
@@ -7812,14 +8253,21 @@
           return;
         }
 
-        const matchesKeyword = !keyword || title.includes(keyword) || company.includes(keyword) || haystack.includes(keyword);
-        const matchesGovernorate =
-          !governorate ||
-          normalize(locationMeta.governorate) === governorate ||
-          normalize(locationMeta.raw).includes(governorate) ||
-          haystack.includes(governorate);
+        const matchesKeyword = matchesSearchQuery(
+          keywordInput.value,
+          title,
+          company,
+          locationText,
+          locationMeta.raw,
+          locationMeta.governorate,
+          card.dataset.jobType,
+          card.dataset.jobSalary,
+          card.dataset.jobSector,
+          card.dataset.jobSummary,
+          haystack,
+        );
 
-        if (matchesKeyword && matchesGovernorate) {
+        if (matchesKeyword) {
           matchedCards.push(card);
         }
       });
@@ -7837,6 +8285,8 @@
       cards.forEach((card) => {
         card.style.display = paginatedCards.has(card) ? '' : 'none';
       });
+
+      syncJobsCoverflow(matchedCards);
 
       if (count) {
         count.textContent = `${visibleCount} ${visibleCount === 1 ? 'وظيفة متاحة' : 'وظائف متاحة'}`;
@@ -7863,7 +8313,6 @@
         appendQueryParams(
           buildJobsUrl({
             keyword: keywordInput.value,
-            governorate: governorateSelect.value,
           }),
           {
             page: totalPages > 1 && currentPage > 1 ? String(currentPage) : null,
@@ -7875,6 +8324,7 @@
     button.addEventListener('click', () => applyFilters());
 
     [keywordInput].forEach((input) => {
+      input.addEventListener('input', () => applyFilters());
       input.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
           event.preventDefault();
@@ -7883,7 +8333,6 @@
       });
     });
 
-    governorateSelect.addEventListener('change', () => applyFilters());
     applyFilters({ preservePage: true });
   };
 
@@ -10764,8 +11213,6 @@
   let siteMotionMutationObserver = null;
   let siteMotionRefreshFrame = null;
 
-  const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   const getMotionDelay = (start = 0, step = 70, index = 0, max = 560) => Math.min(start + step * index, max);
 
   const getUniqueMotionElements = (selector) =>
@@ -10907,7 +11354,7 @@
     );
 
     markMotionList(
-      getUniqueMotionElements('main > section, main > article, main > div, .dashboard-hero, .dashboard-main-grid, .dashboard-shell, .auth-panel, .auth-visual, .auth-main, .home-final-cta, .footer-cta'),
+      getUniqueMotionElements('main > section, .dashboard-hero, .dashboard-main-grid, .dashboard-shell, .auth-panel, .auth-visual, .auth-main, .home-final-cta, .footer-cta'),
       'section-rise',
       { step: 80, duration: 900, maxDelay: 420, hover: 'panel' },
     );
@@ -10957,15 +11404,9 @@
       maxDelay: 280,
     });
 
-    markMotionChildren('main > div, main > article', ['trail', 'headline', 'copy', 'field-rise', 'soft-card'], {
-      step: 68,
-      duration: 780,
-      maxDelay: 360,
-    });
-
     markMotionList(
       getUniqueMotionElements(
-        '.home-hero-v2__stack > article, .home-hero-v2__pulse > article, .home-value-grid > *, .home-modern-jobs > *, .home-footer__grid--compact > *, .jobs-hero__signals > article, .jobs-trend-list > article, .jobs-chip-bar__inner > *, .jobs-results__grid > *, main article, main [class*="card"], main [class*="panel"], main [class*="stat"], footer article, .dashboard-panel, .dashboard-opportunity-card, .dashboard-progress-card, .dashboard-highlight-card, .dashboard-brand-card, .dashboard-stat-card, .dashboard-mini-stats > article, .auth-features > *, .account-card, .upload-card, .template-card, .auth-method-card, .company-card, .listing-job-card',
+        '.home-hero-v2__stack > article, .home-hero-v2__pulse > article, .home-value-grid > *, .home-modern-jobs > *, .home-footer__grid--compact > *, .jobs-hero__signals > article, .jobs-trend-list > article, .jobs-chip-bar__inner > *, .jobs-results__grid > *, .dashboard-panel, .dashboard-opportunity-card, .dashboard-progress-card, .dashboard-highlight-card, .dashboard-brand-card, .dashboard-stat-card, .dashboard-mini-stats > article, .auth-features > *, .account-card, .upload-card, .template-card, .auth-method-card, .company-card, .listing-job-card, .page-card',
       ),
       ['card-rise', 'card-tilt', 'soft-card'],
       {
@@ -10988,7 +11429,7 @@
     );
 
     markMotionList(
-      getUniqueMotionElements('.site-brand, .auth-brand, .dashboard-profile-chip, .listing-job-card__logo, .home-modern-job-card__brand img, .home-mini-job__brand img, .company-card img, .site-logo, .auth-logo'),
+      getUniqueMotionElements('.dashboard-profile-chip, .listing-job-card__logo, .home-modern-job-card__brand img, .home-mini-job__brand img, .company-card img'),
       'image-float',
       {
         step: 45,
@@ -10998,7 +11439,7 @@
     );
 
     markMotionList(
-      getUniqueMotionElements('.site-action, .home-nav-action, .site-nav__link, .home-nav-links a, .jobs-filter-chip, .listing-job-card__actions button, .home-modern-job-card__actions button, .auth-button, .auth-submit, .auth-secondary, .dashboard-pill-button, .dashboard-action-button, .dashboard-cta-button, .dashboard-icon-button, .dashboard-nav__link, .mobile-site-drawer__link, .mobile-site-drawer__action, button[type=\"submit\"], body > nav a, main a, [data-search-action], [data-apply-job], [data-job-details], [data-company-details], [data-companies-filter], [data-link]'),
+      getUniqueMotionElements('.site-action, .home-nav-action, .site-nav__link, .home-nav-links a, .jobs-filter-chip, .listing-job-card__actions button, .home-modern-job-card__actions button, .auth-button, .auth-submit, .auth-secondary, .dashboard-pill-button, .dashboard-action-button, .dashboard-cta-button, .dashboard-icon-button, .dashboard-nav__link, .mobile-site-drawer__link, .mobile-site-drawer__action, button[type="submit"], [data-search-action], [data-apply-job], [data-job-details], [data-company-details], [data-companies-filter], [data-link]'),
       'pop',
       {
         step: 30,
@@ -11089,6 +11530,7 @@
   ensurePublicFavicon();
   syncPublicSeoMeta();
   initSiteAnimations();
+  initPublicExperienceEnhancements();
 
   document.addEventListener('click', (event) => {
     const link = event.target.closest('a');
