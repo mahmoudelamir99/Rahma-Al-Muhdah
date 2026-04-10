@@ -174,6 +174,18 @@ export default function Settings() {
   const handleHeroVideoUpload = async (fileList: FileList | null) => {
     const file = fileList?.[0];
     if (!file) return;
+    const maxVideoBytes = 35 * 1024 * 1024;
+    if (!String(file.type || '').startsWith('video/')) {
+      setFeedback({ tone: 'danger', text: 'الملف المختار ليس فيديو صالحًا. استخدم MP4/WebM مضغوط.' });
+      return;
+    }
+    if (file.size > maxVideoBytes) {
+      setFeedback({
+        tone: 'warning',
+        text: 'حجم الفيديو كبير وقد يسبب بطء. اضغطه إلى أقل من 35MB (يفضل MP4 H.264 بدقة 720p) ثم أعد الرفع.',
+      });
+      return;
+    }
     if (!hasFirebaseConfig()) {
       setFeedback({ tone: 'danger', text: 'فعّل إعدادات Firebase أو الصق رابط فيديو مباشر بدل الرفع.' });
       return;
@@ -187,6 +199,7 @@ export default function Settings() {
       const storageRef = services.storageModule.ref(services.storage, path);
       await services.storageModule.uploadBytes(storageRef, file, {
         contentType: file.type || 'video/mp4',
+        cacheControl: 'public,max-age=3600,s-maxage=3600',
       });
       const url = await services.storageModule.getDownloadURL(storageRef);
       setContentDraft((current) => ({ ...current, homeHeroVideoUrl: url }));
@@ -423,7 +436,7 @@ export default function Settings() {
                 </label>
               </AdminField>
               <div className="rounded-[1.1rem] bg-[#f4f7fb] px-4 py-4 text-xs leading-6 text-[#5c6f83]">
-                بعد التأكد من المعاينة على الموقع، احفظ المحتوى من الشريط العلوي. لإخفاء الفيديو، امسح الرابط واحفظ.
+                لأفضل أداء: استخدم MP4 (H.264) بدقة 720p وحجم أقل من 35MB. الموقع يشغّل الفيديو بتحميل ذكي لتجنب التهنيج. بعد التأكد من المعاينة، احفظ المحتوى من الشريط العلوي. لإخفاء الفيديو، امسح الرابط واحفظ.
               </div>
             </div>
           </AdminPanel>

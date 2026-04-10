@@ -14,6 +14,8 @@
   const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
   let publicJobsCoverflowSwiper = null;
   let publicCountersObserver = null;
+  let homeHeroVideoObserver = null;
+  let homeHeroObservedVideo = null;
   /** Re-bound inside `initJobsSearch` so `renderPublicJobsPage` can re-apply filters after DOM rebuild (e.g. Firebase). */
   let refreshPublicJobsListingFilters = () => {};
 
@@ -7030,11 +7032,27 @@
     const placeholder = section.querySelector('[data-home-hero-video-placeholder]');
     if (!(wrap instanceof HTMLElement) || !(video instanceof HTMLVideoElement)) return;
 
+    const prefersReducedMotion =
+      typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const connection = typeof navigator !== 'undefined' ? navigator.connection || navigator.mozConnection || navigator.webkitConnection : null;
+    const saveDataEnabled = Boolean(connection && connection.saveData);
+
+    const cleanupObserver = () => {
+      if (homeHeroVideoObserver && typeof homeHeroVideoObserver.disconnect === 'function') {
+        homeHeroVideoObserver.disconnect();
+      }
+      homeHeroVideoObserver = null;
+      homeHeroObservedVideo = null;
+    };
+
     const url = String(getAdminRuntimeContent().homeHeroVideoUrl || '').trim();
-    if (!url) {
+    if (!url || prefersReducedMotion || saveDataEnabled) {
+      cleanupObserver();
       try {
+        video.pause();
         delete video.dataset.rahmaHeroSrc;
         video.removeAttribute('src');
+        video.preload = 'none';
         video.load();
       } catch (error) {
         /* ignore */
@@ -7058,6 +7076,10 @@
     if (video.dataset.rahmaHeroSrc !== url) {
       video.dataset.rahmaHeroSrc = url;
       video.src = url;
+      video.preload = 'none';
+    }
+
+    const tryPlay = () => {
       try {
         const playPromise = video.play();
         if (playPromise && typeof playPromise.catch === 'function') {
@@ -7065,6 +7087,37 @@
         }
       } catch (error) {
         /* autoplay may be blocked */
+      }
+    };
+
+    if (homeHeroObservedVideo !== video) {
+      cleanupObserver();
+      if (typeof IntersectionObserver === 'function') {
+        homeHeroVideoObserver = new IntersectionObserver(
+          (entries) => {
+            const isVisible = entries.some((entry) => entry.isIntersecting);
+            if (!isVisible) {
+              video.pause();
+              return;
+            }
+            if (video.preload === 'none') {
+              video.preload = 'metadata';
+              if (video.readyState < 2) {
+                video.load();
+              }
+            }
+            tryPlay();
+          },
+          { threshold: 0.2 }
+        );
+        homeHeroVideoObserver.observe(section);
+        homeHeroObservedVideo = video;
+      } else {
+        video.preload = 'metadata';
+        if (video.readyState < 2) {
+          video.load();
+        }
+        tryPlay();
       }
     }
   };
