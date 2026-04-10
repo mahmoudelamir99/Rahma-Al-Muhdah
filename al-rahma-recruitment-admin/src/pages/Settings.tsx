@@ -283,6 +283,41 @@ export default function Settings() {
               </div>
             </AdminPanel>
 
+            <AdminPanel
+              title="تحكم فيديو خلفية الموقع (ظاهر هنا مباشرة)"
+              description="لو كنت في تبويب المنصة فقط، تقدر من هنا تغيير فيديو الهيرو بدون التنقل لتبويب المحتوى."
+            >
+              <div className="grid gap-4">
+                <AdminField label="رابط الفيديو (mp4 / webm)">
+                  <AdminInput
+                    dir="ltr"
+                    value={contentDraft.homeHeroVideoUrl}
+                    onChange={(event) =>
+                      setContentDraft((current) => ({ ...current, homeHeroVideoUrl: event.target.value }))
+                    }
+                    placeholder="https://example.com/hero.mp4"
+                  />
+                </AdminField>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="flex cursor-pointer items-center justify-center gap-2 rounded-[1rem] border border-dashed border-[rgba(24,37,63,0.14)] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#4d5f6d] transition hover:border-[#005dac]/40">
+                    <Film size={18} className="text-[#005dac]" />
+                    <span>{videoBusy ? 'جارٍ الرفع…' : 'رفع فيديو من الجهاز'}</span>
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm"
+                      className="hidden"
+                      disabled={!hasFirebaseConfig() || videoBusy}
+                      onChange={(event) => void handleHeroVideoUpload(event.target.files)}
+                    />
+                  </label>
+                  <AdminButton type="button" variant="secondary" onClick={saveContentSettings}>
+                    <Save size={16} />
+                    حفظ إعدادات الفيديو
+                  </AdminButton>
+                </div>
+              </div>
+            </AdminPanel>
+
             <AdminPanel title="مراسلات المنصة" description="إرسال رسالة أو إشعار عام وحفظه ضمن سجل الإشعارات.">
               <div className="grid gap-4">
                 <AdminField label="الفئة المستهدفة">
