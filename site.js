@@ -8354,6 +8354,7 @@
   const initJobsSearch = () => {
     const keywordInput = document.querySelector('[data-jobs-keyword]');
     const button = document.querySelector('[data-search-action="jobs"]');
+    const searchForm = document.querySelector('[data-jobs-search-form]');
     const grid = document.querySelector('[data-jobs-grid]');
     const count = document.querySelector('[data-jobs-count]');
     const empty = document.querySelector('[data-jobs-empty]');
@@ -8489,7 +8490,17 @@
 
     refreshPublicJobsListingFilters = () => applyFilters({ preservePage: true });
 
-    button.addEventListener('click', () => applyFilters());
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      applyFilters();
+    });
+
+    if (searchForm) {
+      searchForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        applyFilters();
+      });
+    }
 
     [keywordInput].forEach((input) => {
       input.addEventListener('input', scheduleFilterFromInput);

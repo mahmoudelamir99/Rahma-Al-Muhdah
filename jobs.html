@@ -73,14 +73,14 @@
             الصفحة تعرض الوظائف المنشورة فعليًا فقط. لو مفيش بيانات معتمدة حاليًا، هتظهر لك رسالة واضحة بدل أي محتوى وهمي.
           </p>
 
-          <div class="jobs-search-panel jobs-search-panel--light">
+          <form action="jobs.html" class="jobs-search-panel jobs-search-panel--light" data-jobs-search-form method="get">
             <label class="jobs-search-panel__field">
               <span><i class="fa-solid fa-magnifying-glass"></i></span>
-              <input data-jobs-keyword placeholder="ابحث باسم الوظيفة أو الشركة" type="text"/>
+              <input data-jobs-keyword name="q" placeholder="ابحث باسم الوظيفة أو الشركة" type="text"/>
             </label>
 
-            <button data-search-action="jobs" type="button">عرض النتائج</button>
-          </div>
+            <button data-search-action="jobs" type="submit">عرض النتائج</button>
+          </form>
         </div>
       </div>
     </section>
