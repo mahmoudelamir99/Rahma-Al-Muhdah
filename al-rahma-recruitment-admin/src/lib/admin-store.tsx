@@ -19,6 +19,7 @@ import {
 } from './admin-data';
 import { requestRemoteCandidateAuthPurge } from './candidate-remote-auth';
 import { getFirebaseServices, hasFirebaseConfig } from './firebase';
+import { trySyncSupabaseAuthFromAdminCredentials, signOutSupabaseAuxAuth } from './supabase';
 
 const STORAGE_KEYS = {
   state: 'rahmaAdminControlCenter.v1',
@@ -426,8 +427,8 @@ export type ContentState = {
   termsHeroTitle: string;
   termsHeroSubtitle: string;
   termsIntroText: string;
-  /** Public URL for optional looping hero background video on the marketing site */
-  homeHeroVideoUrl: string;
+  /** Public URL for optional hero background image (Ken Burns on the marketing site) */
+  homeHeroBackgroundImageUrl: string;
 };
 
 export type AuditLog = {
@@ -1918,7 +1919,7 @@ function createDefaultContentState(): ContentState {
     termsHeroTitle: 'الشروط والأحكام',
     termsHeroSubtitle: 'باستخدامك للمنصة فأنت توافق على الشروط التي تنظّم الاستخدام ومسؤولية الأطراف المختلفة.',
     termsIntroText: 'توضح هذه الصفحة ما هو مسموح وما هو غير مسموح داخل المنصة، وكيف نتعامل مع المحتوى والحسابات والخصوصية والتحديثات المستقبلية.',
-    homeHeroVideoUrl: '',
+    homeHeroBackgroundImageUrl: '',
   });
 }
 
@@ -2028,8 +2029,13 @@ function normalizeContentState(content: Partial<ContentState> | null | undefined
     termsHeroTitle: normalizeLegacyContentText(content.termsHeroTitle, defaults.termsHeroTitle),
     termsHeroSubtitle: normalizeLegacyContentText(content.termsHeroSubtitle, defaults.termsHeroSubtitle),
     termsIntroText: normalizeLegacyContentText(content.termsIntroText, defaults.termsIntroText),
-    homeHeroVideoUrl:
-      typeof content.homeHeroVideoUrl === 'string' ? content.homeHeroVideoUrl.trim() : defaults.homeHeroVideoUrl,
+    homeHeroBackgroundImageUrl: (() => {
+      const raw = content as Record<string, unknown>;
+      const next =
+        typeof raw.homeHeroBackgroundImageUrl === 'string' ? String(raw.homeHeroBackgroundImageUrl).trim() : '';
+      if (next) return next;
+      return defaults.homeHeroBackgroundImageUrl;
+    })(),
   };
 }
 
@@ -3695,6 +3701,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
           remember,
         });
 
+        const supabaseSync = await trySyncSupabaseAuthFromAdminCredentials(email, password);
+        if (supabaseSync.ok === false) {
+          console.warn('[Supabase auth sync]', supabaseSync.message);
+        }
+
         resetFailedLoginAttempts();
         return { ok: true };
       } catch (error) {
@@ -3742,6 +3753,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         admins: current.admins.map((item) => (item.id === admin.id ? { ...item, lastLoginAt: new Date().toISOString() } : item)),
       }));
       writeAudit(admin.displayName, 'تسجيل دخول ناجح', 'security', SITE_METADATA.name, 'تم إنشاء جلسة إدارية جديدة.', 'success');
+
+      const supabaseSync = await trySyncSupabaseAuthFromAdminCredentials(normalizedIdentifier, password);
+      if (supabaseSync.ok === false) {
+        console.warn('[Supabase auth sync]', supabaseSync.message);
+      }
+
       return { ok: true };
     }
 
@@ -3765,6 +3782,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
       })();
     }
+    void signOutSupabaseAuxAuth();
     saveSession(null);
     setSessionState(null);
     writeAudit(actorName, 'تسجيل خروج', 'security', SITE_METADATA.name, 'تم إنهاء الجلسة الإدارية الحالية.', 'info');

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="utf-8"/>
@@ -8,12 +8,12 @@
   <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
   <link href="assets/vendor/fontawesome/css/all.min.css?v=20260320-1" rel="stylesheet"/>
-  <link rel="stylesheet" href="assets/tailwind-site.css?v=20260320-2"/>
+  <link rel="stylesheet" href="assets/tailwind-site.css?v=20260412-1"/>
   <link rel="icon" type="image/png" href="logo-mark.png"/>
-  <link rel="stylesheet" href="site.css?v=20260410-4"/>
+  <link rel="stylesheet" href="site.css?v=20260412-1"/>
   <script src="firebase-site-config.js" defer></script>
   <script src="assets/vendor/vanilla-tilt/vanilla-tilt.min.js?v=20260408-1" defer></script>
-  <script src="site.js?v=20260410-8" defer></script>
+  <script src="site.js?v=20260412-1" defer></script>
   <!-- RAHMA SEO START -->
   <meta name="description" content="اعثر على وظائف في مصر وفرص عمل حقيقية وتوظيف شركات من منصة عربية منظمة تعرض الوظائف المنشورة فعليًا وتسهّل التقديم والمتابعة.">
   <meta name="keywords" content="وظائف في مصر, فرص عمل, توظيف شركات, وظائف شاغرة, تقديم وظائف, وظائف القاهرة, وظائف العاشر من رمضان">
@@ -63,9 +63,11 @@
 
   <main class="product-shell">
     <section class="page-section pt-32 pb-24 relative overflow-hidden" data-purpose="hero-section">
-      <div class="pointer-events-none absolute inset-0 z-0" data-home-hero-video-wrap aria-hidden="true">
-        <video class="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover opacity-[0.42]" data-home-hero-video muted loop playsinline preload="none"></video>
-        <div class="absolute inset-0 bg-gradient-to-b from-white/88 via-white/78 to-white/92" data-home-hero-video-overlay></div>
+      <div class="pointer-events-none absolute inset-0 z-0 hidden" data-home-hero-bg-wrap aria-hidden="true" hidden>
+        <div class="home-hero-kenburns" data-home-hero-kenburns>
+          <img alt="" class="home-hero-kenburns__img" data-home-hero-bg-img decoding="async" fetchpriority="low" />
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-b from-white/88 via-white/78 to-white/92" data-home-hero-bg-overlay></div>
       </div>
       <div class="container relative z-10 mx-auto px-5 lg:px-6">
         <div class="flex flex-col items-center text-center max-w-4xl mx-auto pb-8 pt-4">
@@ -220,7 +222,6 @@
   </footer>
 </body>
 </html>
-
 
 
 

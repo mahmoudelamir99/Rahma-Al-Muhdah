@@ -195,7 +195,7 @@ const changedFiles = [];
 
 for (const filePath of walk(rootDir)) {
   const relativePath = relative(rootDir, filePath);
-  const original = readFileSync(filePath, 'utf8');
+  const original = readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
   let repaired = original;
 
   if (extname(filePath).toLowerCase() === '.json') {

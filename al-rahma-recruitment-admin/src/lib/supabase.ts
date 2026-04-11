@@ -38,3 +38,55 @@ export function getSupabaseClient() {
 
   return supabaseClient;
 }
+
+export type SupabaseAuthSyncResult =
+  | { ok: true; skipped: true }
+  | { ok: true; skipped?: false }
+  | { ok: false; message: string };
+
+/**
+ * After admin login (local or Firebase-bridge), mirror credentials into Supabase Auth when configured.
+ * Needed so Storage RLS (e.g. public.is_admin()) sees auth.uid() for uploads.
+ */
+export async function trySyncSupabaseAuthFromAdminCredentials(email: string, password: string): Promise<SupabaseAuthSyncResult> {
+  if (!hasSupabaseConfig()) {
+    return { ok: true, skipped: true };
+  }
+
+  const client = getSupabaseClient();
+  if (!client) {
+    return { ok: false, message: 'تعذر تهيئة عميل Supabase.' };
+  }
+
+  const normalizedEmail = String(email || '').trim().toLowerCase();
+  if (!normalizedEmail || !password) {
+    return { ok: false, message: 'بريد أو كلمة مرور غير صالحة لمزامنة Supabase.' };
+  }
+
+  const { error } = await client.auth.signInWithPassword({
+    email: normalizedEmail,
+    password,
+  });
+
+  if (error) {
+    return {
+      ok: false,
+      message:
+        'لم تُنجح مزامنة جلسة Supabase (مطلوبة لرفع الملفات). تأكد أن نفس بريد/كلمة مرور الأدمن موجودة في Supabase Auth وأن المستخدم مربوط بـ public.users بدور admin.',
+    };
+  }
+
+  return { ok: true };
+}
+
+export async function signOutSupabaseAuxAuth() {
+  if (!hasSupabaseConfig()) return;
+  const client = getSupabaseClient();
+  if (!client) return;
+  try {
+    await client.auth.signOut();
+  } catch {
+    /* ignore */
+  }
+}
+

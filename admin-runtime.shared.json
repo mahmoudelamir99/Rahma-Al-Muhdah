@@ -4,7 +4,7 @@
     "companyRegistration": true,
     "jobApplications": true,
     "fileUploads": true,
-    "maintenanceMode": true,
+    "maintenanceMode": false,
     "maintenanceReason": "جارٍ تنفيذ تحسينات الواجهة والترابط بين الأدمن والموقع.",
     "maintenanceUntil": "",
     "maxFileSizeMb": 5,

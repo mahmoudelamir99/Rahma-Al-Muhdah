@@ -1,4 +1,4 @@
-﻿{
+{
   "hosting": [
     {
       "target": "public",
@@ -282,5 +282,3 @@
     "rules": "database.rules.json"
   }
 }
-
-

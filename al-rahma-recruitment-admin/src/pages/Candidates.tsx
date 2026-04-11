@@ -204,33 +204,6 @@ export default function Candidates() {
         </motion.div>
       ) : null}
 
-      <section className="grid gap-4 md:grid-cols-3">
-        <AdminPanel className="p-0">
-          <div className="p-4">
-            <p className="text-xs font-bold text-[#6f8199]">إجمالي المرشحين</p>
-            <p className="mt-2 text-2xl font-black text-[#10213d]">{rows.length}</p>
-          </div>
-        </AdminPanel>
-        <AdminPanel className="p-0">
-          <div className="p-4">
-            <p className="text-xs font-bold text-[#6f8199]">النتائج الحالية</p>
-            <p className="mt-2 text-2xl font-black text-[#10213d]">{filtered.length}</p>
-          </div>
-        </AdminPanel>
-        <AdminPanel className="p-0">
-          <div className="p-4">
-            <p className="text-xs font-bold text-[#6f8199]">صلاحية التعديل</p>
-            <p className="mt-2 text-sm font-black text-[#10213d]">{canEdit ? 'متاحة' : 'قراءة فقط'}</p>
-          </div>
-        </AdminPanel>
-      </section>
-
-      {!canEdit ? (
-        <div className="rounded-[1.2rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-900">
-          حسابك حاليًا بصلاحية قراءة فقط. لتفعيل أزرار الإضافة/التعديل/الحذف، أضف صلاحية <span dir="ltr">applications:update</span>.
-        </div>
-      ) : null}
-
       <AdminPanel title="بحث سريع" description="ابحث بالاسم، البريد، الهاتف، الوظيفة أو الشركة.">
         <AdminField label="كلمات البحث">
           <AdminInput

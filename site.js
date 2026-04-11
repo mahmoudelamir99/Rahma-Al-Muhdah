@@ -9,13 +9,13 @@
     bookmarkedJobs: 'rahmaBookmarkedJobs',
   };
   const COMPANY_DASHBOARD_FEEDBACK_STORAGE_KEY = 'rahmaCompanyDashboardFeedback';
-  const PUBLIC_SITE_BUILD = '20260410-2';
+  const PUBLIC_SITE_BUILD = '20260412-1';
   const PUBLIC_SITE_BUILD_MARKER_KEY = 'rahmaPublicBuildMarker';
   const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
   let publicJobsCoverflowSwiper = null;
   let publicCountersObserver = null;
-  let homeHeroVideoObserver = null;
-  let homeHeroObservedVideo = null;
+  let homeHeroBgObserver = null;
+  let publicFirebaseRefreshFrame = null;
   /** Re-bound inside `initJobsSearch` so `renderPublicJobsPage` can re-apply filters after DOM rebuild (e.g. Firebase). */
   let refreshPublicJobsListingFilters = () => {};
 
@@ -417,12 +417,13 @@
     initPublicExperienceEnhancements(wrapper);
 
     if (typeof window.Swiper === 'function') {
+      const visibleSlidesCount = Math.min(jobCards.length, 3);
       publicJobsCoverflowSwiper = new window.Swiper(swiperElement, {
         effect: 'coverflow',
         centeredSlides: true,
         slidesPerView: 'auto',
         grabCursor: true,
-        loop: jobCards.length > 2,
+        loop: jobCards.length >= Math.max(5, visibleSlidesCount + 2),
         spaceBetween: 18,
         coverflowEffect: {
           rotate: 0,
@@ -1940,16 +1941,51 @@
     };
   };
   const refreshPublicPagesFromFirebaseCache = () => {
-    syncMaintenanceShell();
-    syncSystemBanner();
-    initHomeRuntimeContent();
-    initHomeHeroVideo();
-    initHomeUsefulStats();
-    renderPublicJobsPage();
-    renderPublicCompaniesPage();
-    initJobDetailsPage();
-    initApplicationTrackingPage();
-    renderCompanyDashboard();
+    if (publicFirebaseRefreshFrame !== null) {
+      cancelAnimationFrame(publicFirebaseRefreshFrame);
+    }
+
+    publicFirebaseRefreshFrame = window.requestAnimationFrame(() => {
+      publicFirebaseRefreshFrame = null;
+      syncMaintenanceShell();
+      syncSystemBanner();
+
+      if (CURRENT_SITE_PAGE === 'index.html') {
+        initHomeRuntimeContent();
+        initHomeHeroBackground();
+        initHomeUsefulStats();
+        return;
+      }
+
+      if (CURRENT_SITE_PAGE === 'jobs.html') {
+        renderPublicJobsPage();
+        return;
+      }
+
+      if (CURRENT_SITE_PAGE === 'companies.html') {
+        renderPublicCompaniesPage();
+        return;
+      }
+
+      if (CURRENT_SITE_PAGE === 'job-details.html') {
+        initJobDetailsPage();
+        return;
+      }
+
+      if (CURRENT_SITE_PAGE === 'company-details.html') {
+        initCompanyDetailsPage();
+        return;
+      }
+
+      if (CURRENT_SITE_PAGE === 'track-application.html') {
+        initApplicationTrackingPage();
+        return;
+      }
+
+      if (CURRENT_SITE_PAGE === 'company-dashboard.html') {
+        renderCompanyDashboard();
+      }
+    });
   };
   const syncFirebasePublicCache = async () => {
     const services = await getFirebaseSiteServices();
@@ -1960,12 +1996,10 @@
       const publicCompaniesQuery = firestoreModule.query(
         firestoreModule.collection(db, 'companies'),
         firestoreModule.where('status', '==', 'approved'),
-        firestoreModule.where('deletedAt', '==', null),
       );
       const publicJobsQuery = firestoreModule.query(
         firestoreModule.collection(db, 'jobs'),
         firestoreModule.where('status', '==', 'approved'),
-        firestoreModule.where('deletedAt', '==', null),
       );
       const [companiesSnapshot, jobsSnapshot, runtimeSnapshot] = await Promise.all([
         firestoreModule.getDocs(publicCompaniesQuery),
@@ -2010,12 +2044,10 @@
       const publicCompaniesQuery = firestoreModule.query(
         firestoreModule.collection(db, 'companies'),
         firestoreModule.where('status', '==', 'approved'),
-        firestoreModule.where('deletedAt', '==', null),
       );
       const publicJobsQuery = firestoreModule.query(
         firestoreModule.collection(db, 'jobs'),
         firestoreModule.where('status', '==', 'approved'),
-        firestoreModule.where('deletedAt', '==', null),
       );
       firebasePublicUnsubscribers.splice(0).forEach((unsubscribe) => {
         if (typeof unsubscribe === 'function') unsubscribe();
@@ -2247,7 +2279,6 @@
           const applicationsQuery = firestoreModule.query(
             firestoreModule.collection(db, 'applications'),
             firestoreModule.where('jobId', '==', normalizedJobId),
-            firestoreModule.where('deletedAt', '==', null),
           );
           const [jobSnapshot, applicationsSnapshot] = await Promise.all([
             firestoreModule.getDoc(jobDocRef),
@@ -2256,7 +2287,10 @@
 
           if (!jobSnapshot.exists()) return false;
 
-          const nextApplicantsCount = applicationsSnapshot.docs.length;
+          const nextApplicantsCount = applicationsSnapshot.docs.filter((doc) => {
+            const row = doc.data() || {};
+            return !normalizeFirebaseTimestamp(row.deletedAt);
+          }).length;
           const nextUpdatedAt = new Date().toISOString();
 
           await firestoreModule.updateDoc(jobDocRef, {
@@ -2456,11 +2490,30 @@
       );
     });
   const collectApprovedJobsForPublicListing = () => {
-    const publicCompanyNames = new Set(getPublicRuntimeCompanies().map((company) => normalize(company?.name)));
-    const hasCompanyRecords = publicCompanyNames.size > 0;
-    return getPublicRuntimeJobs()
-      .filter((job) => !hasCompanyRecords || publicCompanyNames.has(normalize(job?.companyName)))
-      .sort((firstJob, secondJob) => Number(Boolean(secondJob.featured)) - Number(Boolean(firstJob.featured)));
+    const publicCompanies = getPublicRuntimeCompanies();
+    const publicCompanyNames = new Set(publicCompanies.map((company) => normalize(company?.name)));
+    const publicCompanyLooseNames = new Set(
+      publicCompanies.map((company) => normalizeLooseArabic(company?.name || '')).filter(Boolean),
+    );
+    const publicCompanyIds = new Set(
+      publicCompanies
+        .map((company) => normalize(String(company?.id || company?.companyId || '')).trim())
+        .filter(Boolean),
+    );
+    const hasCompanyRecords = publicCompanies.length > 0;
+    const jobMatchesPublicCompany = (job) => {
+      if (!hasCompanyRecords) return true;
+      const nameKey = normalize(job?.companyName);
+      if (nameKey && publicCompanyNames.has(nameKey)) return true;
+      const loose = normalizeLooseArabic(job?.companyName || '');
+      if (loose && publicCompanyLooseNames.has(loose)) return true;
+      const idKey = normalize(String(job?.companyId || '')).trim();
+      if (idKey && publicCompanyIds.has(idKey)) return true;
+      return false;
+    };
+    return getPublicRuntimeJobs().filter(jobMatchesPublicCompany).sort((firstJob, secondJob) => {
+      return Number(Boolean(secondJob.featured)) - Number(Boolean(firstJob.featured));
+    });
   };
   const getAdminRuntimeContent = () => ({
     ...(shouldUseFirebaseOnlyPublicData() ? {} : getAdminRuntime()?.content || {}),
@@ -7022,13 +7075,14 @@
     });
   };
 
-  const initHomeHeroVideo = () => {
+  const initHomeHeroBackground = () => {
     const section = document.querySelector('section[data-purpose="hero-section"]');
     if (!section) return;
-    const wrap = section.querySelector('[data-home-hero-video-wrap]');
-    const video = section.querySelector('[data-home-hero-video]');
-    const overlay = section.querySelector('[data-home-hero-video-overlay]');
-    if (!(wrap instanceof HTMLElement) || !(video instanceof HTMLVideoElement)) return;
+    const wrap = section.querySelector('[data-home-hero-bg-wrap]');
+    const img = section.querySelector('[data-home-hero-bg-img]');
+    const kenRoot = section.querySelector('[data-home-hero-kenburns]');
+    const overlay = section.querySelector('[data-home-hero-bg-overlay]');
+    if (!(wrap instanceof HTMLElement) || !(img instanceof HTMLImageElement)) return;
 
     const prefersReducedMotion =
       typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -7036,85 +7090,140 @@
     const saveDataEnabled = Boolean(connection && connection.saveData);
 
     const cleanupObserver = () => {
-      if (homeHeroVideoObserver && typeof homeHeroVideoObserver.disconnect === 'function') {
-        homeHeroVideoObserver.disconnect();
+      if (homeHeroBgObserver && typeof homeHeroBgObserver.disconnect === 'function') {
+        homeHeroBgObserver.disconnect();
       }
-      homeHeroVideoObserver = null;
-      homeHeroObservedVideo = null;
+      homeHeroBgObserver = null;
     };
 
-    const url = String(getAdminRuntimeContent().homeHeroVideoUrl || '').trim();
-    if (!url || prefersReducedMotion || saveDataEnabled) {
-      cleanupObserver();
-      try {
-        video.pause();
-        delete video.dataset.rahmaHeroSrc;
-        video.removeAttribute('src');
-        video.preload = 'none';
-        video.load();
-      } catch (error) {
-        /* ignore */
-      }
-      wrap.classList.remove('hidden');
-      wrap.removeAttribute('hidden');
+    const hideWrap = () => {
+      wrap.classList.add('hidden');
+      wrap.setAttribute('hidden', '');
+      wrap.style.setProperty('display', 'none', 'important');
       if (overlay instanceof HTMLElement) {
         overlay.style.opacity = '1';
       }
-      return;
-    }
-
-    wrap.classList.remove('hidden');
-    wrap.removeAttribute('hidden');
-    if (overlay instanceof HTMLElement) {
-      overlay.style.opacity = '0.62';
-    }
-
-    if (video.dataset.rahmaHeroSrc !== url) {
-      video.dataset.rahmaHeroSrc = url;
-      video.src = url;
-      video.preload = 'none';
-    }
-
-    const tryPlay = () => {
-      try {
-        const playPromise = video.play();
-        if (playPromise && typeof playPromise.catch === 'function') {
-          playPromise.catch(() => {});
-        }
-      } catch (error) {
-        /* autoplay may be blocked */
+      if (kenRoot instanceof HTMLElement) {
+        kenRoot.classList.add('home-hero-kenburns--paused');
       }
     };
 
-    if (homeHeroObservedVideo !== video) {
-      cleanupObserver();
-      if (typeof IntersectionObserver === 'function') {
-        homeHeroVideoObserver = new IntersectionObserver(
-          (entries) => {
-            const isVisible = entries.some((entry) => entry.isIntersecting);
-            if (!isVisible) {
-              video.pause();
-              return;
-            }
-            if (video.preload === 'none') {
-              video.preload = 'metadata';
-              if (video.readyState < 2) {
-                video.load();
-              }
-            }
-            tryPlay();
-          },
-          { threshold: 0.2 }
-        );
-        homeHeroVideoObserver.observe(section);
-        homeHeroObservedVideo = video;
-      } else {
-        video.preload = 'metadata';
-        if (video.readyState < 2) {
-          video.load();
-        }
-        tryPlay();
+    const showWrap = () => {
+      wrap.classList.remove('hidden');
+      wrap.removeAttribute('hidden');
+      wrap.style.removeProperty('display');
+    };
+
+    const clearImageSource = () => {
+      delete img.dataset.rahmaHeroBgSrc;
+      img.removeAttribute('src');
+      img.alt = '';
+    };
+
+    const looksLikePlaceholderAssetUrl = (value = '') => {
+      const raw = String(value || '').trim().toLowerCase();
+      if (!raw) return true;
+      if (raw.includes('example.com')) return true;
+      if (raw.includes('placeholder')) return true;
+      if (raw.includes('your-cdn')) return true;
+      if (raw.includes('localhost')) return true;
+      if (raw.startsWith('blob:')) return true;
+      return false;
+    };
+
+    const looksLikeVideoUrl = (value = '') => {
+      try {
+        const pathname = decodeURIComponent(new URL(String(value || '').trim(), window.location.href).pathname || '').toLowerCase();
+        return /\.(mp4|webm|ogg|mov|m4v)(?:$|[?#])/i.test(pathname);
+      } catch (error) {
+        return false;
       }
+    };
+
+    const looksLikeDirectHeroImageUrl = (value = '') => {
+      const trimmed = String(value || '').trim();
+      if (!trimmed || looksLikePlaceholderAssetUrl(trimmed) || looksLikeVideoUrl(trimmed)) return false;
+
+      try {
+        const parsed = new URL(trimmed, window.location.href);
+        const pathname = decodeURIComponent(String(parsed.pathname || '')).toLowerCase();
+        if (/\.(png|jpe?g|gif|webp|avif|svg)(?:$|[?#])/i.test(pathname)) {
+          return true;
+        }
+
+        return (
+          /firebasestorage\.googleapis\.com/i.test(parsed.hostname) ||
+          /\.firebasestorage\.app$/i.test(parsed.hostname) ||
+          /storage\.googleapis\.com/i.test(parsed.hostname) ||
+          /googleusercontent\.com/i.test(parsed.hostname)
+        );
+      } catch (error) {
+        return false;
+      }
+    };
+
+    const handleBackgroundUnavailable = () => {
+      cleanupObserver();
+      clearImageSource();
+      hideWrap();
+    };
+
+    section.querySelectorAll('[data-home-hero-video-hint], [data-home-hero-video-placeholder], [data-home-hero-bg-hint]').forEach((node) => {
+      if (node instanceof HTMLElement) {
+        node.remove();
+      }
+    });
+
+    const runtime = getAdminRuntimeContent();
+    const url = String(runtime.homeHeroBackgroundImageUrl || '').trim();
+    if (!url || !looksLikeDirectHeroImageUrl(url)) {
+      handleBackgroundUnavailable();
+      return;
+    }
+
+    if (saveDataEnabled) {
+      if (kenRoot instanceof HTMLElement) {
+        kenRoot.classList.add('home-hero-kenburns--paused');
+      }
+    }
+
+    showWrap();
+    if (overlay instanceof HTMLElement) {
+      overlay.style.opacity = prefersReducedMotion || saveDataEnabled ? '0.72' : '0.62';
+    }
+
+    if (img.dataset.rahmaHeroBgSrc !== url) {
+      img.dataset.rahmaHeroBgSrc = url;
+      img.src = url;
+      img.alt = '';
+    }
+
+    img.onerror = () => {
+      handleBackgroundUnavailable();
+    };
+
+    const setKenPlaying = (playing) => {
+      if (!(kenRoot instanceof HTMLElement)) return;
+      if (prefersReducedMotion || saveDataEnabled) {
+        kenRoot.classList.add('home-hero-kenburns--paused');
+        return;
+      }
+      kenRoot.classList.toggle('home-hero-kenburns--paused', !playing);
+    };
+
+    cleanupObserver();
+    if (typeof IntersectionObserver === 'function') {
+      homeHeroBgObserver = new IntersectionObserver(
+        (entries) => {
+          const isVisible = entries.some((entry) => entry.isIntersecting);
+          setKenPlaying(isVisible);
+        },
+        { threshold: 0.12, rootMargin: '0px 0px 10% 0px' },
+      );
+      homeHeroBgObserver.observe(section);
+      setKenPlaying(true);
+    } else {
+      setKenPlaying(true);
     }
   };
 
@@ -7255,6 +7364,8 @@
         LEGACY_HOME_HERO_SUBTITLES,
       );
     }
+
+    queueLegacyMojibakeDomRepair();
   };
 
   const initHomeUsefulStats = () => {
@@ -11703,10 +11814,26 @@
   };
 
   const initSiteAnimations = () => {
+    if (READONLY_PUBLIC_PAGES.has(CURRENT_SITE_PAGE)) {
+      document.body.classList.add('site-motion-lite');
+    }
+
+    if (prefersReducedMotion()) {
+      document.documentElement.dataset.motionReady = 'true';
+      window.RahmaRefreshMotion = queueSiteMotionRefresh;
+      return;
+    }
+
     decorateSiteMotionTargets();
     observeSiteMotionTargets();
 
-    if (siteMotionMutationObserver || prefersReducedMotion()) return;
+    window.RahmaRefreshMotion = queueSiteMotionRefresh;
+
+    if (siteMotionMutationObserver) return;
+
+    if (READONLY_PUBLIC_PAGES.has(CURRENT_SITE_PAGE)) {
+      return;
+    }
 
     siteMotionMutationObserver = new MutationObserver((mutations) => {
       const hasMeaningfulNode = mutations.some(({ addedNodes }) =>
@@ -11725,8 +11852,6 @@
       childList: true,
       subtree: true,
     });
-
-    window.RahmaRefreshMotion = queueSiteMotionRefresh;
   };
 
   const syncRuntimeFromStorage = (event) => {
@@ -11757,7 +11882,7 @@
   initSiteMobileDrawer();
   initHomeSearch();
   initHomeSearchLive();
-  initHomeHeroVideo();
+  initHomeHeroBackground();
   initHomeRuntimeContent();
   initHomeUsefulStats();
   initCompanyOnlySections();
@@ -11886,4 +12011,3 @@
   });
 
 })();
-

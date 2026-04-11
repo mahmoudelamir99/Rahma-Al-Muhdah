@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BellRing, CheckCheck, Clock3, Film, Mail, Plus, Save, ShieldCheck, UserCog, Users2 } from 'lucide-react';
+import { BellRing, CheckCheck, Clock3, Image as ImageIcon, Mail, Plus, Save, ShieldCheck, UserCog, Users2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
@@ -18,7 +18,7 @@ import {
 import { PERMISSION_CATALOG } from '../lib/admin-data';
 import { buildRoleSummary, cleanAdminText, formatDateTime, formatNumber } from '../lib/admin-dashboard';
 import { useAdmin } from '../lib/admin-store';
-import { getFirebaseServices, hasFirebaseConfig } from '../lib/firebase';
+import { getSiteAssetsBucketName, hasSiteAssetsStorageConfig, uploadSiteHeroBackgroundImage } from '../lib/supabase-storage';
 
 function pad2(value: number) {
   return String(value).padStart(2, '0');
@@ -102,8 +102,8 @@ export default function Settings() {
   const [maintenanceHour, setMaintenanceHour] = useState(maintenanceParts.hour);
   const [maintenanceMinute, setMaintenanceMinute] = useState(maintenanceParts.minute);
   const [maintenancePeriod, setMaintenancePeriod] = useState<'AM' | 'PM'>(maintenanceParts.period);
-  const [videoBusy, setVideoBusy] = useState(false);
-  const [videoUploadProgress, setVideoUploadProgress] = useState(0);
+  const [heroBgBusy, setHeroBgBusy] = useState(false);
+  const [heroBgUploadProgress, setHeroBgUploadProgress] = useState(0);
 
   useEffect(() => setSettingsDraft(state.settings), [state.settings]);
   useEffect(() => setContentDraft(state.content), [state.content]);
@@ -187,82 +187,48 @@ export default function Settings() {
     setFeedback({ tone: 'success', text: 'تم إرسال الرسالة وحفظها ضمن سجل الإشعارات.' });
   };
 
-  const handleHeroVideoUpload = async (fileList: FileList | null) => {
+  const handleHeroBackgroundImageUpload = async (fileList: FileList | null) => {
     const file = fileList?.[0];
     if (!file) return;
-    const maxVideoBytes = 35 * 1024 * 1024;
-    if (!String(file.type || '').startsWith('video/')) {
-      setFeedback({ tone: 'danger', text: 'الملف المختار ليس فيديو صالحًا. استخدم MP4/WebM مضغوط.' });
+    const maxBytes = 2.5 * 1024 * 1024;
+    if (!String(file.type || '').startsWith('image/')) {
+      setFeedback({ tone: 'danger', text: 'الملف المختار ليس صورة. استخدم JPG أو PNG أو WebP.' });
       return;
     }
-    if (file.size > maxVideoBytes) {
+    if (file.size > maxBytes) {
       setFeedback({
         tone: 'warning',
-        text: 'حجم الفيديو كبير وقد يسبب بطء. اضغطه إلى أقل من 35MB (يفضل MP4 H.264 بدقة 720p) ثم أعد الرفع.',
+        text: 'حجم الصورة كبير ويؤثر على السرعة. اضغطها إلى أقل من 2.5MB (عرض حوالي 1920px يكفي) ثم أعد الرفع.',
       });
       return;
     }
-    if (!hasFirebaseConfig()) {
-      setFeedback({ tone: 'danger', text: 'فعّل إعدادات Firebase أو الصق رابط فيديو مباشر بدل الرفع.' });
+    if (!hasSiteAssetsStorageConfig()) {
+      setFeedback({
+        tone: 'danger',
+        text: 'فعّل Supabase في لوحة الأدمن (VITE_SUPABASE_URL و VITE_SUPABASE_ANON_KEY) أو الصق رابط صورة مباشر (HTTPS).',
+      });
       return;
     }
-    setVideoBusy(true);
-    setVideoUploadProgress(0);
+    setHeroBgBusy(true);
+    setHeroBgUploadProgress(5);
     try {
-      const services = await getFirebaseServices();
-      if (!services) throw new Error('firebase');
-      const safeName = file.name.replace(/[^\w.-]+/g, '-');
-      const path = `site/home-hero/${Date.now()}-${safeName}`;
-      const storageRef = services.storageModule.ref(services.storage, path);
-      const metadata = {
-        contentType: file.type || 'video/mp4',
-        cacheControl: 'public,max-age=3600,s-maxage=3600',
-      };
-      const storageModule = services.storageModule as unknown as {
-        uploadBytes: (ref: unknown, data: File, meta: Record<string, string>) => Promise<unknown>;
-        uploadBytesResumable?: (
-          ref: unknown,
-          data: File,
-          meta: Record<string, string>,
-        ) => {
-          on: (
-            event: 'state_changed',
-            next: (snapshot: { bytesTransferred: number; totalBytes: number }) => void,
-            error: (error: unknown) => void,
-            complete: () => void,
-          ) => void;
-        };
-      };
-
-      if (typeof storageModule.uploadBytesResumable === 'function') {
-        await new Promise<void>((resolve, reject) => {
-          const task = storageModule.uploadBytesResumable!(storageRef, file, metadata);
-          task.on(
-            'state_changed',
-            (snapshot) => {
-              const ratio = snapshot.totalBytes > 0 ? snapshot.bytesTransferred / snapshot.totalBytes : 0;
-              setVideoUploadProgress(Math.max(0, Math.min(100, Math.round(ratio * 100))));
-            },
-            reject,
-            resolve,
-          );
-        });
-      } else {
-        await storageModule.uploadBytes(storageRef, file, metadata);
-        setVideoUploadProgress(100);
-      }
-      const url = await services.storageModule.getDownloadURL(storageRef);
-      setContentDraft((current) => ({ ...current, homeHeroVideoUrl: url }));
-      setFeedback({ tone: 'success', text: 'تم رفع الفيديو. اضغط «حفظ المحتوى» لنشره على الموقع العام.' });
+      const url = await uploadSiteHeroBackgroundImage(file);
+      setHeroBgUploadProgress(100);
+      setContentDraft((current) => ({ ...current, homeHeroBackgroundImageUrl: url }));
+      setFeedback({ tone: 'success', text: 'تم رفع صورة الخلفية إلى Supabase Storage. اضغط «حفظ المحتوى» لنشرها على الموقع العام.' });
     } catch {
-      setFeedback({ tone: 'danger', text: 'تعذر الرفع. راجع قواعد التخزين أو جرّب رابط URL عام.' });
+      setFeedback({
+        tone: 'danger',
+        text:
+          'تعذر الرفع إلى Supabase. تأكد من تسجيل الدخول بنفس بريد/كلمة مرور مستخدم Supabase (دور admin)، ومن وجود الـ bucket والسياسات (راجع supabase/migrations). أو استخدم رابط URL للصورة.',
+      });
     } finally {
-      setVideoBusy(false);
-      setVideoUploadProgress(0);
+      setHeroBgBusy(false);
+      setHeroBgUploadProgress(0);
     }
   };
 
-  const videoUploadLabel = videoBusy ? `جارٍ الرفع… ${videoUploadProgress}%` : 'رفع فيديو من الجهاز';
+  const heroBgUploadLabel = heroBgBusy ? `جارٍ الرفع… ${heroBgUploadProgress}%` : 'رفع صورة من الجهاز';
 
   return (
     <>
@@ -274,8 +240,8 @@ export default function Settings() {
           <>
             <AdminSectionTabs items={tabs} value={activeTab} onChange={(nextTab) => setActiveTab(resolveSettingsTab(`tab=${nextTab}`))} />
             <AdminButton type="button" variant="soft" onClick={() => setActiveTab('content')}>
-              <Film size={16} />
-              فيديو الواجهة الرئيسية
+              <ImageIcon size={16} />
+              صورة خلفية الرئيسية
             </AdminButton>
             {activeTab === 'platform' ? (
               <AdminButton onClick={savePlatformSettings}>
@@ -350,54 +316,50 @@ export default function Settings() {
             </AdminPanel>
 
             <AdminPanel
-              title="تحكم فيديو خلفية الموقع (ظاهر هنا مباشرة)"
-              description="لو كنت في تبويب المنصة فقط، تقدر من هنا تغيير فيديو الهيرو بدون التنقل لتبويب المحتوى."
+              title="صورة خلفية الصفحة الرئيسية (معاينة سريعة)"
+              description="من هنا ترفع صورة ثابتة خفيفة؛ الموقع يطبّق حركة Ken Burns بطيئة على الصورة لتحسين الشكل من غير ثقل الفيديو."
             >
               <div className="grid gap-4">
-                <AdminField label="رابط الفيديو (mp4 / webm)">
+                <AdminField label="رابط الصورة (HTTPS)" hint="JPG أو PNG أو WebP — رابط مباشر يفتح كصورة فقط.">
                   <AdminInput
                     dir="ltr"
-                    value={contentDraft.homeHeroVideoUrl}
+                    value={contentDraft.homeHeroBackgroundImageUrl}
                     onChange={(event) =>
-                      setContentDraft((current) => ({ ...current, homeHeroVideoUrl: event.target.value }))
+                      setContentDraft((current) => ({ ...current, homeHeroBackgroundImageUrl: event.target.value }))
                     }
-                    placeholder="https://example.com/hero.mp4"
+                    placeholder="https://example.com/hero-bg.webp"
                   />
                 </AdminField>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="flex cursor-pointer items-center justify-center gap-2 rounded-[1rem] border border-dashed border-[rgba(24,37,63,0.14)] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#4d5f6d] transition hover:border-[#005dac]/40">
-                    <Film size={18} className="text-[#005dac]" />
-                    <span>{videoUploadLabel}</span>
+                    <ImageIcon size={18} className="text-[#005dac]" />
+                    <span>{heroBgUploadLabel}</span>
                     <input
                       type="file"
-                      accept="video/mp4,video/webm"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
                       className="hidden"
-                      disabled={!hasFirebaseConfig() || videoBusy}
-                      onChange={(event) => void handleHeroVideoUpload(event.target.files)}
+                      disabled={!hasSiteAssetsStorageConfig() || heroBgBusy}
+                      onChange={(event) => void handleHeroBackgroundImageUpload(event.target.files)}
                     />
                   </label>
                   <AdminButton type="button" variant="secondary" onClick={saveContentSettings}>
                     <Save size={16} />
-                    حفظ إعدادات الفيديو
+                    حفظ صورة الخلفية
                   </AdminButton>
                 </div>
                 <div className="rounded-[1.1rem] border border-[rgba(24,37,63,0.1)] bg-[#f8fbff] p-3">
-                  <div className="mb-2 text-xs font-black text-[#1a3458]">معاينة الفيديو ومكان ظهوره على الموقع</div>
+                  <div className="mb-2 text-xs font-black text-[#1a3458]">معاينة الصورة (بدون حركة Ken Burns هنا)</div>
                   <div className="relative overflow-hidden rounded-[0.95rem] border border-[rgba(24,37,63,0.08)] bg-[#dfe9f5]">
-                    {contentDraft.homeHeroVideoUrl ? (
-                      <video
-                        key={contentDraft.homeHeroVideoUrl}
-                        src={contentDraft.homeHeroVideoUrl}
+                    {contentDraft.homeHeroBackgroundImageUrl ? (
+                      <img
+                        key={contentDraft.homeHeroBackgroundImageUrl}
+                        src={contentDraft.homeHeroBackgroundImageUrl}
+                        alt=""
                         className="h-44 w-full object-cover"
-                        muted
-                        loop
-                        playsInline
-                        autoPlay
-                        controls
                       />
                     ) : (
-                      <div className="flex h-44 items-center justify-center text-xs font-bold text-[#4b6281]">
-                        لا يوجد فيديو مرفوع حاليًا — هذا هو المكان الذي سيظهر فيه فيديو خلفية الرئيسية.
+                      <div className="flex h-44 items-center justify-center px-3 text-center text-xs font-bold text-[#4b6281]">
+                        لا توجد صورة بعد — ارفع صورة خفيفة أو الصق رابطًا ثم احفظ المحتوى.
                       </div>
                     )}
                   </div>
@@ -454,42 +416,42 @@ export default function Settings() {
       {activeTab === 'content' ? (
         <div className="grid gap-6">
           <AdminPanel
-            title="فيديو خلفية الصفحة الرئيسية"
-            description="يظهر خلف قسم الترحيب على الموقع العام مع طبقة شفافة للحفاظ على وضوح النصوص."
+            title="صورة خلفية الصفحة الرئيسية"
+            description="صورة ثابتة واحدة تظهر خلف قسم الترحيب مع طبقة شفافة لقراءة النصوص. على الموقع العام تُطبَّق حركة Ken Burns بطيئة وخفيفة على الصورة (بدون فيديو)."
           >
             <div className="grid gap-4 lg:grid-cols-2">
-              <AdminField label="رابط الفيديو (mp4 / webm)" hint="يمكنك لصق رابط مباشر من أي CDN." className="lg:col-span-2">
+              <AdminField label="رابط الصورة (HTTPS)" hint="يفضّل WebP أو JPG مضغوط، عرض تقريبًا 1600–1920px." className="lg:col-span-2">
                 <AdminInput
                   dir="ltr"
-                  value={contentDraft.homeHeroVideoUrl}
+                  value={contentDraft.homeHeroBackgroundImageUrl}
                   onChange={(event) =>
-                    setContentDraft((current) => ({ ...current, homeHeroVideoUrl: event.target.value }))
+                    setContentDraft((current) => ({ ...current, homeHeroBackgroundImageUrl: event.target.value }))
                   }
-                  placeholder="https://example.com/hero.mp4"
+                  placeholder="https://example.com/hero-bg.webp"
                 />
               </AdminField>
               <AdminField
-                label="رفع ملف"
+                label="رفع صورة"
                 hint={
-                  hasFirebaseConfig()
-                    ? 'يُرفع إلى Firebase Storage ضمن مجلد site/home-hero.'
-                    : 'غير متاح بدون تهيئة Firebase في لوحة الأدمن.'
+                  hasSiteAssetsStorageConfig()
+                    ? `يُرفع إلى Supabase Storage في الـ bucket «${getSiteAssetsBucketName()}» تحت المسار home-hero/.`
+                    : 'غير متاح بدون تهيئة Supabase (رابط المشروع والمفتاح) في لوحة الأدمن.'
                 }
               >
                 <label className="flex cursor-pointer flex-col gap-2 rounded-[1.1rem] border border-dashed border-[rgba(24,37,63,0.14)] bg-[#f8fafc] px-4 py-6 text-center text-sm font-bold text-[#4d5f6d] transition hover:border-[#005dac]/40">
-                  <Film className="mx-auto text-[#005dac]" size={22} />
-                  <span>{videoBusy ? `جارٍ الرفع… ${videoUploadProgress}%` : 'اختر فيديو من الجهاز'}</span>
+                  <ImageIcon className="mx-auto text-[#005dac]" size={22} />
+                  <span>{heroBgBusy ? `جارٍ الرفع… ${heroBgUploadProgress}%` : 'اختر صورة من الجهاز'}</span>
                   <input
                     type="file"
-                    accept="video/mp4,video/webm"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
                     className="hidden"
-                    disabled={!hasFirebaseConfig() || videoBusy}
-                    onChange={(event) => void handleHeroVideoUpload(event.target.files)}
+                    disabled={!hasSiteAssetsStorageConfig() || heroBgBusy}
+                    onChange={(event) => void handleHeroBackgroundImageUpload(event.target.files)}
                   />
                 </label>
               </AdminField>
               <div className="rounded-[1.1rem] bg-[#f4f7fb] px-4 py-4 text-xs leading-6 text-[#5c6f83]">
-                لأفضل أداء: استخدم MP4 (H.264) بدقة 720p وحجم أقل من 35MB. الموقع يشغّل الفيديو بتحميل ذكي لتجنب التهنيج. بعد التأكد من المعاينة، احفظ المحتوى من الشريط العلوي. لإخفاء الفيديو، امسح الرابط واحفظ.
+                للأداء الأفضل: صورة واحدة أقل من 2.5MB. وضع توفير البيانات أو تقليل الحركة في الجهاز يوقف تأثير Ken Burns تلقائيًا. لإخفاء الخلفية، امسح الرابط واحفظ المحتوى.
               </div>
             </div>
           </AdminPanel>
