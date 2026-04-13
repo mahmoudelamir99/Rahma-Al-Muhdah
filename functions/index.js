@@ -283,3 +283,92 @@ exports.adminSetCompanyPassword = onRequest({ cors: true }, async (request, resp
     });
   }
 });
+
+exports.adminHardDeleteCompany = onRequest({ cors: true }, async (request, response) => {
+  if (request.method === 'OPTIONS') {
+    response.status(204).send('');
+    return;
+  }
+
+  if (request.method !== 'DELETE') {
+    jsonResponse(response, 405, {
+      ok: false,
+      message: 'طريقة الطلب غير مدعومة.',
+    });
+    return;
+  }
+
+  const authHeader = normalizeText(request.get('authorization'));
+  const idToken = authHeader.toLowerCase().startsWith('bearer ')
+    ? authHeader.slice(7).trim()
+    : '';
+
+  if (!idToken) {
+    jsonResponse(response, 401, {
+      ok: false,
+      message: 'بيانات اعتماد الأدمن غير موجودة.',
+    });
+    return;
+  }
+
+  let decodedToken = null;
+  try {
+    decodedToken = await admin.auth().verifyIdToken(idToken);
+  } catch (error) {
+    jsonResponse(response, 401, {
+      ok: false,
+      message: 'بيانات اعتماد الأدمن غير صالحة.',
+    });
+    return;
+  }
+
+  if (!hasAdminClaims(decodedToken)) {
+    jsonResponse(response, 403, {
+      ok: false,
+      message: 'ليس لديك صلاحية حذف الشركات نهائيًا.',
+    });
+    return;
+  }
+
+  const companyId = normalizeText(request.query.companyId);
+  if (!companyId) {
+    jsonResponse(response, 400, {
+      ok: false,
+      message: 'معرف الشركة مطلوب.',
+    });
+    return;
+  }
+
+  try {
+    const db = admin.firestore();
+    const companyRef = db.collection('companies').doc(companyId);
+    const companySnap = await companyRef.get();
+
+    if (!companySnap.exists) {
+      jsonResponse(response, 404, {
+        ok: false,
+        message: 'الشركة غير موجودة.',
+      });
+      return;
+    }
+
+    const companyData = companySnap.data() || {};
+    const companyUser = await resolveCompanyUser(admin.auth(), companyId, companyData);
+
+    if (companyUser) {
+      await admin.auth().deleteUser(companyUser.uid);
+    }
+
+    jsonResponse(response, 200, {
+      ok: true,
+      message: 'تم حذف الشركة نهائيًا من النظام.',
+      companyId,
+      userDeleted: !!companyUser,
+    });
+  } catch (error) {
+    jsonResponse(response, 500, {
+      ok: false,
+      message: 'تعذر حذف الشركة نهائيًا الآن. حاول مرة أخرى بعد قليل.',
+    });
+  }
+});

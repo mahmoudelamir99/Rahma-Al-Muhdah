@@ -3,6 +3,7 @@ import {
   EmailAuthProvider,
   browserLocalPersistence,
   browserSessionPersistence,
+  deleteUser,
   getAuth,
   getIdTokenResult,
   onAuthStateChanged,
@@ -18,6 +19,7 @@ import {
 } from 'firebase/auth';
 import {
   collection,
+  deleteField,
   doc,
   getDoc,
   getDocs,
@@ -32,6 +34,7 @@ import {
   getStorage,
   ref,
   uploadBytes,
+  uploadBytesResumable,
   type FirebaseStorage,
 } from 'firebase/storage';
 
@@ -57,6 +60,7 @@ type FirebaseServices = {
   };
   firestoreModule: {
     collection: typeof collection;
+    deleteField: typeof deleteField;
     doc: typeof doc;
     getDoc: typeof getDoc;
     getDocs: typeof getDocs;
@@ -68,6 +72,7 @@ type FirebaseServices = {
     getDownloadURL: typeof getDownloadURL;
     ref: typeof ref;
     uploadBytes: typeof uploadBytes;
+    uploadBytesResumable: typeof uploadBytesResumable;
   };
 };
 
@@ -143,6 +148,7 @@ export async function getFirebaseServices(): Promise<FirebaseServices | null> {
           EmailAuthProvider,
           browserLocalPersistence,
           browserSessionPersistence,
+          deleteUser,
           getIdTokenResult,
           onAuthStateChanged,
           reauthenticateWithCredential,
@@ -156,6 +162,7 @@ export async function getFirebaseServices(): Promise<FirebaseServices | null> {
         },
         firestoreModule: {
           collection,
+          deleteField,
           doc,
           getDoc,
           getDocs,
@@ -167,6 +174,7 @@ export async function getFirebaseServices(): Promise<FirebaseServices | null> {
           getDownloadURL,
           ref,
           uploadBytes,
+          uploadBytesResumable,
         },
       };
     });

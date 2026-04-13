@@ -4,7 +4,7 @@ import ForgotPassword from './components/ForgotPassword';
 import Login from './components/Login';
 import Register from './components/Register';
 import ResetPassword from './components/ResetPassword';
-import { bootstrapCompanySession, hasCompanyPasswordRecoveryPending } from './lib/company-auth';
+import { bootstrapCompanySession, getStoredCompanySession, hasCompanyPasswordRecoveryPending } from './lib/company-auth';
 import { buildSiteUrl, sanitizeRedirectTarget } from './lib/navigation';
 
 type PortalView = 'login' | 'register' | 'forgot-password' | 'reset-password';
@@ -29,7 +29,12 @@ export default function App() {
   );
 
   const [currentPage, setCurrentPage] = useState<PortalView>(() => getInitialView(searchParams));
-  const [bootstrapped, setBootstrapped] = useState(false);
+  const [bootstrapped, setBootstrapped] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const initialView = getInitialView(searchParams);
+    if (initialView === 'forgot-password' || initialView === 'reset-password') return true;
+    return !getStoredCompanySession();
+  });
   const redirectTarget = sanitizeRedirectTarget(searchParams.get('redirect'), 'company-dashboard.html');
 
   useEffect(() => {
@@ -52,7 +57,8 @@ export default function App() {
     }
 
     let active = true;
-    setBootstrapped(false);
+    const hasStoredSession = Boolean(getStoredCompanySession());
+    setBootstrapped(!hasStoredSession);
 
     void (async () => {
       const session = await bootstrapCompanySession();

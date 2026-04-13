@@ -1,4 +1,4 @@
-﻿import {
+import {
   createContext,
   startTransition,
   useContext,
@@ -18,6 +18,7 @@ import {
   STATIC_SITE_JOBS,
 } from './admin-data';
 import { requestRemoteCandidateAuthPurge } from './candidate-remote-auth';
+import { requestRemoteCompanyAuthPurge } from './company-remote-auth';
 import { getFirebaseServices, hasFirebaseConfig } from './firebase';
 import { trySyncSupabaseAuthFromAdminCredentials, signOutSupabaseAuxAuth } from './supabase';
 
@@ -427,8 +428,6 @@ export type ContentState = {
   termsHeroTitle: string;
   termsHeroSubtitle: string;
   termsIntroText: string;
-  /** Public URL for optional hero background image (Ken Burns on the marketing site) */
-  homeHeroBackgroundImageUrl: string;
 };
 
 export type AuditLog = {
@@ -1919,7 +1918,6 @@ function createDefaultContentState(): ContentState {
     termsHeroTitle: 'الشروط والأحكام',
     termsHeroSubtitle: 'باستخدامك للمنصة فأنت توافق على الشروط التي تنظّم الاستخدام ومسؤولية الأطراف المختلفة.',
     termsIntroText: 'توضح هذه الصفحة ما هو مسموح وما هو غير مسموح داخل المنصة، وكيف نتعامل مع المحتوى والحسابات والخصوصية والتحديثات المستقبلية.',
-    homeHeroBackgroundImageUrl: '',
   });
 }
 
@@ -2029,13 +2027,6 @@ function normalizeContentState(content: Partial<ContentState> | null | undefined
     termsHeroTitle: normalizeLegacyContentText(content.termsHeroTitle, defaults.termsHeroTitle),
     termsHeroSubtitle: normalizeLegacyContentText(content.termsHeroSubtitle, defaults.termsHeroSubtitle),
     termsIntroText: normalizeLegacyContentText(content.termsIntroText, defaults.termsIntroText),
-    homeHeroBackgroundImageUrl: (() => {
-      const raw = content as Record<string, unknown>;
-      const next =
-        typeof raw.homeHeroBackgroundImageUrl === 'string' ? String(raw.homeHeroBackgroundImageUrl).trim() : '';
-      if (next) return next;
-      return defaults.homeHeroBackgroundImageUrl;
-    })(),
   };
 }
 
@@ -2993,7 +2984,7 @@ function buildFirebaseSyncSlice(state: AdminState) {
     jobs: [...state.jobs].sort((first, second) => first.id.localeCompare(second.id)),
     applications: [...state.applications].sort((first, second) => first.id.localeCompare(second.id)),
     settings: state.settings,
-    content: state.content,
+    content: normalizeContentState(state.content),
   };
 }
 
@@ -3005,7 +2996,7 @@ function normalizeFirebaseRemoteSlice(slice: FirebaseRemoteSlice): FirebaseRemot
     jobs: [...slice.jobs].sort((first, second) => first.id.localeCompare(second.id)),
     applications: [...slice.applications].sort((first, second) => first.id.localeCompare(second.id)),
     settings: { ...slice.settings },
-    content: { ...slice.content },
+    content: normalizeContentState(slice.content),
   };
 }
 
@@ -4003,6 +3994,32 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         });
 
         await batch.commit();
+
+        // Try to delete from Auth as well
+        void (async () => {
+          try {
+            const authResult = await requestRemoteCompanyAuthPurge(companyId);
+            if (!authResult.ok) {
+              writeAudit(
+                actorName,
+                'فشل حذف شركة من Auth',
+                'companies',
+                companyId,
+                `تم حذف الشركة من قاعدة البيانات لكن تعذر حذفها من Auth: ${authResult.message}`,
+                'warning',
+              );
+            }
+          } catch (error) {
+            writeAudit(
+              actorName,
+              'فشل حذف شركة من Auth',
+              'companies',
+              companyId,
+              'تم حذف الشركة من قاعدة البيانات لكن تعذر حذفها من Auth.',
+              'warning',
+            );
+          }
+        })();
       } catch {
         writeAudit(
           actorName,
@@ -5445,4 +5462,3 @@ export function humanDate(dateLike: string) {
 export function humanRelative(dateLike: string) {
   return relativeTime(dateLike);
 }
-

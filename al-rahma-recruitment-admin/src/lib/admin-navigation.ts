@@ -4,7 +4,6 @@ import {
   Bell,
   BriefcaseBusiness,
   Building2,
-  Image as ImageIcon,
   IdCard,
   LayoutDashboard,
   MessageSquare,
@@ -85,14 +84,6 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     icon: Bell,
     permission: 'notifications:send',
     summary: 'الإشعارات المرسلة والتنبيهات السريعة.',
-  },
-  {
-    id: 'site-hero-bg',
-    name: 'صورة خلفية الرئيسية',
-    path: '/settings?tab=content',
-    icon: ImageIcon,
-    permission: 'settings:view',
-    summary: 'رفع صورة خلفية خفيفة للصفحة الرئيسية (Ken Burns على الموقع العام).',
   },
   {
     id: 'settings',

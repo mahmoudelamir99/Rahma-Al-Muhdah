@@ -86,7 +86,7 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
       if (result.session) {
         const nextTarget = sanitizeRedirectTarget(redirectTo, 'company-dashboard.html');
         window.setTimeout(() => {
-          window.location.href = buildSiteUrl(nextTarget, 'company-dashboard.html');
+          window.location.replace(buildSiteUrl(nextTarget, 'company-dashboard.html'));
         }, 320);
       } else if (result.requiresEmailVerification) {
         window.setTimeout(() => {

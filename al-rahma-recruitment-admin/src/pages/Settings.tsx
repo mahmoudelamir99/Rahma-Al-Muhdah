@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BellRing, CheckCheck, Clock3, Image as ImageIcon, Mail, Plus, Save, ShieldCheck, UserCog, Users2 } from 'lucide-react';
+import { BellRing, CheckCheck, Clock3, Mail, Plus, Save, ShieldCheck, UserCog, Users2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
@@ -18,8 +18,6 @@ import {
 import { PERMISSION_CATALOG } from '../lib/admin-data';
 import { buildRoleSummary, cleanAdminText, formatDateTime, formatNumber } from '../lib/admin-dashboard';
 import { useAdmin } from '../lib/admin-store';
-import { getSiteAssetsBucketName, hasSiteAssetsStorageConfig, uploadSiteHeroBackgroundImage } from '../lib/supabase-storage';
-
 function pad2(value: number) {
   return String(value).padStart(2, '0');
 }
@@ -102,8 +100,6 @@ export default function Settings() {
   const [maintenanceHour, setMaintenanceHour] = useState(maintenanceParts.hour);
   const [maintenanceMinute, setMaintenanceMinute] = useState(maintenanceParts.minute);
   const [maintenancePeriod, setMaintenancePeriod] = useState<'AM' | 'PM'>(maintenanceParts.period);
-  const [heroBgBusy, setHeroBgBusy] = useState(false);
-  const [heroBgUploadProgress, setHeroBgUploadProgress] = useState(0);
 
   useEffect(() => setSettingsDraft(state.settings), [state.settings]);
   useEffect(() => setContentDraft(state.content), [state.content]);
@@ -187,49 +183,6 @@ export default function Settings() {
     setFeedback({ tone: 'success', text: 'تم إرسال الرسالة وحفظها ضمن سجل الإشعارات.' });
   };
 
-  const handleHeroBackgroundImageUpload = async (fileList: FileList | null) => {
-    const file = fileList?.[0];
-    if (!file) return;
-    const maxBytes = 2.5 * 1024 * 1024;
-    if (!String(file.type || '').startsWith('image/')) {
-      setFeedback({ tone: 'danger', text: 'الملف المختار ليس صورة. استخدم JPG أو PNG أو WebP.' });
-      return;
-    }
-    if (file.size > maxBytes) {
-      setFeedback({
-        tone: 'warning',
-        text: 'حجم الصورة كبير ويؤثر على السرعة. اضغطها إلى أقل من 2.5MB (عرض حوالي 1920px يكفي) ثم أعد الرفع.',
-      });
-      return;
-    }
-    if (!hasSiteAssetsStorageConfig()) {
-      setFeedback({
-        tone: 'danger',
-        text: 'فعّل Supabase في لوحة الأدمن (VITE_SUPABASE_URL و VITE_SUPABASE_ANON_KEY) أو الصق رابط صورة مباشر (HTTPS).',
-      });
-      return;
-    }
-    setHeroBgBusy(true);
-    setHeroBgUploadProgress(5);
-    try {
-      const url = await uploadSiteHeroBackgroundImage(file);
-      setHeroBgUploadProgress(100);
-      setContentDraft((current) => ({ ...current, homeHeroBackgroundImageUrl: url }));
-      setFeedback({ tone: 'success', text: 'تم رفع صورة الخلفية إلى Supabase Storage. اضغط «حفظ المحتوى» لنشرها على الموقع العام.' });
-    } catch {
-      setFeedback({
-        tone: 'danger',
-        text:
-          'تعذر الرفع إلى Supabase. تأكد من تسجيل الدخول بنفس بريد/كلمة مرور مستخدم Supabase (دور admin)، ومن وجود الـ bucket والسياسات (راجع supabase/migrations). أو استخدم رابط URL للصورة.',
-      });
-    } finally {
-      setHeroBgBusy(false);
-      setHeroBgUploadProgress(0);
-    }
-  };
-
-  const heroBgUploadLabel = heroBgBusy ? `جارٍ الرفع… ${heroBgUploadProgress}%` : 'رفع صورة من الجهاز';
-
   return (
     <>
       <AdminPageHeader
@@ -239,10 +192,6 @@ export default function Settings() {
         actions={
           <>
             <AdminSectionTabs items={tabs} value={activeTab} onChange={(nextTab) => setActiveTab(resolveSettingsTab(`tab=${nextTab}`))} />
-            <AdminButton type="button" variant="soft" onClick={() => setActiveTab('content')}>
-              <ImageIcon size={16} />
-              صورة خلفية الرئيسية
-            </AdminButton>
             {activeTab === 'platform' ? (
               <AdminButton onClick={savePlatformSettings}>
                 <Save size={16} />
@@ -315,58 +264,6 @@ export default function Settings() {
               </div>
             </AdminPanel>
 
-            <AdminPanel
-              title="صورة خلفية الصفحة الرئيسية (معاينة سريعة)"
-              description="من هنا ترفع صورة ثابتة خفيفة؛ الموقع يطبّق حركة Ken Burns بطيئة على الصورة لتحسين الشكل من غير ثقل الفيديو."
-            >
-              <div className="grid gap-4">
-                <AdminField label="رابط الصورة (HTTPS)" hint="JPG أو PNG أو WebP — رابط مباشر يفتح كصورة فقط.">
-                  <AdminInput
-                    dir="ltr"
-                    value={contentDraft.homeHeroBackgroundImageUrl}
-                    onChange={(event) =>
-                      setContentDraft((current) => ({ ...current, homeHeroBackgroundImageUrl: event.target.value }))
-                    }
-                    placeholder="https://example.com/hero-bg.webp"
-                  />
-                </AdminField>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="flex cursor-pointer items-center justify-center gap-2 rounded-[1rem] border border-dashed border-[rgba(24,37,63,0.14)] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-[#4d5f6d] transition hover:border-[#005dac]/40">
-                    <ImageIcon size={18} className="text-[#005dac]" />
-                    <span>{heroBgUploadLabel}</span>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/gif"
-                      className="hidden"
-                      disabled={!hasSiteAssetsStorageConfig() || heroBgBusy}
-                      onChange={(event) => void handleHeroBackgroundImageUpload(event.target.files)}
-                    />
-                  </label>
-                  <AdminButton type="button" variant="secondary" onClick={saveContentSettings}>
-                    <Save size={16} />
-                    حفظ صورة الخلفية
-                  </AdminButton>
-                </div>
-                <div className="rounded-[1.1rem] border border-[rgba(24,37,63,0.1)] bg-[#f8fbff] p-3">
-                  <div className="mb-2 text-xs font-black text-[#1a3458]">معاينة الصورة (بدون حركة Ken Burns هنا)</div>
-                  <div className="relative overflow-hidden rounded-[0.95rem] border border-[rgba(24,37,63,0.08)] bg-[#dfe9f5]">
-                    {contentDraft.homeHeroBackgroundImageUrl ? (
-                      <img
-                        key={contentDraft.homeHeroBackgroundImageUrl}
-                        src={contentDraft.homeHeroBackgroundImageUrl}
-                        alt=""
-                        className="h-44 w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-44 items-center justify-center px-3 text-center text-xs font-bold text-[#4b6281]">
-                        لا توجد صورة بعد — ارفع صورة خفيفة أو الصق رابطًا ثم احفظ المحتوى.
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </AdminPanel>
-
             <AdminPanel title="مراسلات المنصة" description="إرسال رسالة أو إشعار عام وحفظه ضمن سجل الإشعارات.">
               <div className="grid gap-4">
                 <AdminField label="الفئة المستهدفة">
@@ -415,46 +312,6 @@ export default function Settings() {
       ) : null}
       {activeTab === 'content' ? (
         <div className="grid gap-6">
-          <AdminPanel
-            title="صورة خلفية الصفحة الرئيسية"
-            description="صورة ثابتة واحدة تظهر خلف قسم الترحيب مع طبقة شفافة لقراءة النصوص. على الموقع العام تُطبَّق حركة Ken Burns بطيئة وخفيفة على الصورة (بدون فيديو)."
-          >
-            <div className="grid gap-4 lg:grid-cols-2">
-              <AdminField label="رابط الصورة (HTTPS)" hint="يفضّل WebP أو JPG مضغوط، عرض تقريبًا 1600–1920px." className="lg:col-span-2">
-                <AdminInput
-                  dir="ltr"
-                  value={contentDraft.homeHeroBackgroundImageUrl}
-                  onChange={(event) =>
-                    setContentDraft((current) => ({ ...current, homeHeroBackgroundImageUrl: event.target.value }))
-                  }
-                  placeholder="https://example.com/hero-bg.webp"
-                />
-              </AdminField>
-              <AdminField
-                label="رفع صورة"
-                hint={
-                  hasSiteAssetsStorageConfig()
-                    ? `يُرفع إلى Supabase Storage في الـ bucket «${getSiteAssetsBucketName()}» تحت المسار home-hero/.`
-                    : 'غير متاح بدون تهيئة Supabase (رابط المشروع والمفتاح) في لوحة الأدمن.'
-                }
-              >
-                <label className="flex cursor-pointer flex-col gap-2 rounded-[1.1rem] border border-dashed border-[rgba(24,37,63,0.14)] bg-[#f8fafc] px-4 py-6 text-center text-sm font-bold text-[#4d5f6d] transition hover:border-[#005dac]/40">
-                  <ImageIcon className="mx-auto text-[#005dac]" size={22} />
-                  <span>{heroBgBusy ? `جارٍ الرفع… ${heroBgUploadProgress}%` : 'اختر صورة من الجهاز'}</span>
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,image/gif"
-                    className="hidden"
-                    disabled={!hasSiteAssetsStorageConfig() || heroBgBusy}
-                    onChange={(event) => void handleHeroBackgroundImageUpload(event.target.files)}
-                  />
-                </label>
-              </AdminField>
-              <div className="rounded-[1.1rem] bg-[#f4f7fb] px-4 py-4 text-xs leading-6 text-[#5c6f83]">
-                للأداء الأفضل: صورة واحدة أقل من 2.5MB. وضع توفير البيانات أو تقليل الحركة في الجهاز يوقف تأثير Ken Burns تلقائيًا. لإخفاء الخلفية، امسح الرابط واحفظ المحتوى.
-              </div>
-            </div>
-          </AdminPanel>
           {contentSections.map((section) => (
             <AdminPanel key={section.title} title={section.title} description="هذا القسم مرتبط مباشرة بالصفحات العامة على الموقع.">
               <div className="grid gap-4 lg:grid-cols-2">

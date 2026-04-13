@@ -1,5 +1,5 @@
 const AUTH_APP_DIST_SEGMENT = '/dist/';
-const DEV_AUTH_PORT = '4176';
+const DEV_AUTH_PORT = '3000';
 const DEV_PUBLIC_SITE_PORT = '4173';
 
 declare global {

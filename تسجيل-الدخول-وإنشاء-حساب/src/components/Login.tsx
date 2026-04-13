@@ -49,7 +49,7 @@ export default function Login({ onNavigate, redirectTo }: LoginProps) {
 
       if (result.session) {
         window.setTimeout(() => {
-          window.location.href = buildSiteUrl(nextTarget, 'company-dashboard.html');
+          window.location.replace(buildSiteUrl(nextTarget, 'company-dashboard.html'));
         }, 280);
       }
     } catch (error) {

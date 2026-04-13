@@ -9,13 +9,14 @@
     bookmarkedJobs: 'rahmaBookmarkedJobs',
   };
   const COMPANY_DASHBOARD_FEEDBACK_STORAGE_KEY = 'rahmaCompanyDashboardFeedback';
-  const PUBLIC_SITE_BUILD = '20260412-1';
+  const PUBLIC_SITE_BUILD = '20260413-1';
   const PUBLIC_SITE_BUILD_MARKER_KEY = 'rahmaPublicBuildMarker';
   const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
   let publicJobsCoverflowSwiper = null;
   let publicCountersObserver = null;
-  let homeHeroBgObserver = null;
   let publicFirebaseRefreshFrame = null;
+  let homeUsefulStatsRetryTimer = null;
+  let homeUsefulStatsRetryCount = 0;
   /** Re-bound inside `initJobsSearch` so `renderPublicJobsPage` can re-apply filters after DOM rebuild (e.g. Firebase). */
   let refreshPublicJobsListingFilters = () => {};
 
@@ -98,12 +99,12 @@
       const deviceMemory = Number(window.navigator?.deviceMemory || 0);
       const hardwareConcurrency = Number(window.navigator?.hardwareConcurrency || 0);
 
-      if ((Number.isFinite(deviceMemory) && deviceMemory > 0 && deviceMemory <= 4) ||
-          (Number.isFinite(hardwareConcurrency) && hardwareConcurrency > 0 && hardwareConcurrency <= 4)) {
+      if ((Number.isFinite(deviceMemory) && deviceMemory > 0 && deviceMemory <= 8) ||
+          (Number.isFinite(hardwareConcurrency) && hardwareConcurrency > 0 && hardwareConcurrency <= 8)) {
         return false;
       }
 
-      if (window.innerWidth < 992) {
+      if (window.innerWidth < 1280) {
         return false;
       }
     } catch (error) {
@@ -763,8 +764,9 @@
   const initLegacyMojibakeDomRepair = () => {
     if (!document.documentElement) return;
 
-    repairLegacyMojibakeSubtree(document);
     if (!shouldEnableLegacyMojibakeObserver()) return;
+
+    repairLegacyMojibakeSubtree(document);
     if (legacyMojibakeDomObserver) return;
 
     legacyMojibakeDomObserver = new MutationObserver((mutations) => {
@@ -1952,7 +1954,6 @@
 
       if (CURRENT_SITE_PAGE === 'index.html') {
         initHomeRuntimeContent();
-        initHomeHeroBackground();
         initHomeUsefulStats();
         return;
       }
@@ -2519,10 +2520,20 @@
     ...(shouldUseFirebaseOnlyPublicData() ? {} : getAdminRuntime()?.content || {}),
     ...(firebaseRuntimeCache.content || {}),
   });
-  const getAdminRuntimeSettings = () => ({
-    ...(shouldUseFirebaseOnlyPublicData() ? {} : getAdminRuntime()?.settings || {}),
-    ...(firebaseRuntimeCache.settings || {}),
-  });
+  const getAdminRuntimeSettings = () => {
+    const localSettings = shouldUseFirebaseOnlyPublicData() ? {} : getAdminRuntime()?.settings || {};
+    const remoteSettings = firebaseRuntimeCache.settings || {};
+    const mergedSettings = {
+      ...remoteSettings,
+      ...localSettings,
+    };
+
+    if (Object.prototype.hasOwnProperty.call(localSettings, 'maintenanceMode')) {
+      mergedSettings.maintenanceMode = Boolean(localSettings.maintenanceMode);
+    }
+
+    return mergedSettings;
+  };
   const escapeHtml = (value) =>
     String(repairLegacyMojibakeText(value || '')).replace(/[&<>"']/g, (character) =>
       ({
@@ -5116,16 +5127,33 @@
     const loadingTitle = document.querySelector('[data-company-dashboard-loading-title]');
     const loadingMessage = document.querySelector('[data-company-dashboard-loading-message]');
     const dashboardBody = document.body;
+    let dashboardLoadingDelayTimer = null;
+    let dashboardLoadingVisible = false;
     const setDashboardLoading = (isLoading, message = 'نحمّل بيانات الوظائف والطلبات وملف الشركة الآن.') => {
       if (!(loadingShell instanceof HTMLElement)) return;
       if (loadingTitle instanceof HTMLElement) {
         loadingTitle.textContent = 'جارٍ تجهيز لوحة الشركة';
       }
       if (loadingMessage instanceof HTMLElement) {
-        loadingMessage.textContent = message;
+        loadingMessage.textContent = repairLegacyMojibakeText(message);
       }
-      loadingShell.classList.toggle('is-hidden', !isLoading);
-      loadingShell.setAttribute('aria-hidden', isLoading ? 'false' : 'true');
+      if (isLoading) {
+        if (dashboardLoadingVisible || dashboardLoadingDelayTimer !== null) return;
+        dashboardLoadingDelayTimer = window.setTimeout(() => {
+          dashboardLoadingDelayTimer = null;
+          dashboardLoadingVisible = true;
+          loadingShell.classList.remove('is-hidden');
+          loadingShell.setAttribute('aria-hidden', 'false');
+        }, 180);
+        return;
+      }
+      if (dashboardLoadingDelayTimer !== null) {
+        clearTimeout(dashboardLoadingDelayTimer);
+        dashboardLoadingDelayTimer = null;
+      }
+      dashboardLoadingVisible = false;
+      loadingShell.classList.add('is-hidden');
+      loadingShell.setAttribute('aria-hidden', 'true');
     };
     const setDashboardSidebarOpen = (isOpen) => {
       if (!(dashboardBody instanceof HTMLElement)) return;
@@ -7075,158 +7103,6 @@
     });
   };
 
-  const initHomeHeroBackground = () => {
-    const section = document.querySelector('section[data-purpose="hero-section"]');
-    if (!section) return;
-    const wrap = section.querySelector('[data-home-hero-bg-wrap]');
-    const img = section.querySelector('[data-home-hero-bg-img]');
-    const kenRoot = section.querySelector('[data-home-hero-kenburns]');
-    const overlay = section.querySelector('[data-home-hero-bg-overlay]');
-    if (!(wrap instanceof HTMLElement) || !(img instanceof HTMLImageElement)) return;
-
-    const prefersReducedMotion =
-      typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const connection = typeof navigator !== 'undefined' ? navigator.connection || navigator.mozConnection || navigator.webkitConnection : null;
-    const saveDataEnabled = Boolean(connection && connection.saveData);
-
-    const cleanupObserver = () => {
-      if (homeHeroBgObserver && typeof homeHeroBgObserver.disconnect === 'function') {
-        homeHeroBgObserver.disconnect();
-      }
-      homeHeroBgObserver = null;
-    };
-
-    const hideWrap = () => {
-      wrap.classList.add('hidden');
-      wrap.setAttribute('hidden', '');
-      wrap.style.setProperty('display', 'none', 'important');
-      if (overlay instanceof HTMLElement) {
-        overlay.style.opacity = '1';
-      }
-      if (kenRoot instanceof HTMLElement) {
-        kenRoot.classList.add('home-hero-kenburns--paused');
-      }
-    };
-
-    const showWrap = () => {
-      wrap.classList.remove('hidden');
-      wrap.removeAttribute('hidden');
-      wrap.style.removeProperty('display');
-    };
-
-    const clearImageSource = () => {
-      delete img.dataset.rahmaHeroBgSrc;
-      img.removeAttribute('src');
-      img.alt = '';
-    };
-
-    const looksLikePlaceholderAssetUrl = (value = '') => {
-      const raw = String(value || '').trim().toLowerCase();
-      if (!raw) return true;
-      if (raw.includes('example.com')) return true;
-      if (raw.includes('placeholder')) return true;
-      if (raw.includes('your-cdn')) return true;
-      if (raw.includes('localhost')) return true;
-      if (raw.startsWith('blob:')) return true;
-      return false;
-    };
-
-    const looksLikeVideoUrl = (value = '') => {
-      try {
-        const pathname = decodeURIComponent(new URL(String(value || '').trim(), window.location.href).pathname || '').toLowerCase();
-        return /\.(mp4|webm|ogg|mov|m4v)(?:$|[?#])/i.test(pathname);
-      } catch (error) {
-        return false;
-      }
-    };
-
-    const looksLikeDirectHeroImageUrl = (value = '') => {
-      const trimmed = String(value || '').trim();
-      if (!trimmed || looksLikePlaceholderAssetUrl(trimmed) || looksLikeVideoUrl(trimmed)) return false;
-
-      try {
-        const parsed = new URL(trimmed, window.location.href);
-        const pathname = decodeURIComponent(String(parsed.pathname || '')).toLowerCase();
-        if (/\.(png|jpe?g|gif|webp|avif|svg)(?:$|[?#])/i.test(pathname)) {
-          return true;
-        }
-
-        return (
-          /firebasestorage\.googleapis\.com/i.test(parsed.hostname) ||
-          /\.firebasestorage\.app$/i.test(parsed.hostname) ||
-          /storage\.googleapis\.com/i.test(parsed.hostname) ||
-          /googleusercontent\.com/i.test(parsed.hostname)
-        );
-      } catch (error) {
-        return false;
-      }
-    };
-
-    const handleBackgroundUnavailable = () => {
-      cleanupObserver();
-      clearImageSource();
-      hideWrap();
-    };
-
-    section.querySelectorAll('[data-home-hero-video-hint], [data-home-hero-video-placeholder], [data-home-hero-bg-hint]').forEach((node) => {
-      if (node instanceof HTMLElement) {
-        node.remove();
-      }
-    });
-
-    const runtime = getAdminRuntimeContent();
-    const url = String(runtime.homeHeroBackgroundImageUrl || '').trim();
-    if (!url || !looksLikeDirectHeroImageUrl(url)) {
-      handleBackgroundUnavailable();
-      return;
-    }
-
-    if (saveDataEnabled) {
-      if (kenRoot instanceof HTMLElement) {
-        kenRoot.classList.add('home-hero-kenburns--paused');
-      }
-    }
-
-    showWrap();
-    if (overlay instanceof HTMLElement) {
-      overlay.style.opacity = prefersReducedMotion || saveDataEnabled ? '0.72' : '0.62';
-    }
-
-    if (img.dataset.rahmaHeroBgSrc !== url) {
-      img.dataset.rahmaHeroBgSrc = url;
-      img.src = url;
-      img.alt = '';
-    }
-
-    img.onerror = () => {
-      handleBackgroundUnavailable();
-    };
-
-    const setKenPlaying = (playing) => {
-      if (!(kenRoot instanceof HTMLElement)) return;
-      if (prefersReducedMotion || saveDataEnabled) {
-        kenRoot.classList.add('home-hero-kenburns--paused');
-        return;
-      }
-      kenRoot.classList.toggle('home-hero-kenburns--paused', !playing);
-    };
-
-    cleanupObserver();
-    if (typeof IntersectionObserver === 'function') {
-      homeHeroBgObserver = new IntersectionObserver(
-        (entries) => {
-          const isVisible = entries.some((entry) => entry.isIntersecting);
-          setKenPlaying(isVisible);
-        },
-        { threshold: 0.12, rootMargin: '0px 0px 10% 0px' },
-      );
-      homeHeroBgObserver.observe(section);
-      setKenPlaying(true);
-    } else {
-      setKenPlaying(true);
-    }
-  };
-
   const initHomeSearchLive = () => {
     const keywordInput = document.querySelector('[data-home-keyword]');
     const panel = document.querySelector('[data-home-search-panel]');
@@ -7384,26 +7260,46 @@
 
     if (jobsStat) {
       jobsStat.dataset.countupTarget = String(liveJobsCount || 0);
-      if (jobsStat.dataset.countupStarted !== 'true') {
-        jobsStat.textContent = '0';
-      } else {
-        jobsStat.textContent = formatArabicInteger(liveJobsCount || 0);
-      }
+      jobsStat.textContent = formatArabicInteger(liveJobsCount || 0);
+      jobsStat.dataset.countupStarted = liveJobsCount > 0 ? 'true' : 'false';
     }
 
     if (companiesStat) {
       companiesStat.dataset.countupTarget = String(activeCompaniesCount || 0);
-      if (companiesStat.dataset.countupStarted !== 'true') {
-        companiesStat.textContent = '0';
-      } else {
-        companiesStat.textContent = formatArabicInteger(activeCompaniesCount || 0);
-      }
+      companiesStat.textContent = formatArabicInteger(activeCompaniesCount || 0);
+      companiesStat.dataset.countupStarted = activeCompaniesCount > 0 ? 'true' : 'false';
     }
 
     if (responseStat) {
       responseStat.textContent = formatAverageResponseLabel(
         getApplicationsAverageResponseHours(applications),
       );
+    }
+
+    const shouldRetryHomeStats =
+      CURRENT_SITE_PAGE === 'index.html' && liveJobsCount === 0 && activeCompaniesCount === 0;
+
+    if (shouldRetryHomeStats) {
+      if (homeUsefulStatsRetryTimer !== null) {
+        clearTimeout(homeUsefulStatsRetryTimer);
+      }
+
+      if (homeUsefulStatsRetryCount < 12) {
+        homeUsefulStatsRetryCount += 1;
+        const retryDelayMs = homeUsefulStatsRetryCount <= 3 ? 500 : 1200;
+        homeUsefulStatsRetryTimer = window.setTimeout(() => {
+          homeUsefulStatsRetryTimer = null;
+          void syncFirebasePublicCache();
+          void startFirebasePublicSync();
+          initHomeUsefulStats();
+        }, retryDelayMs);
+      }
+    } else {
+      if (homeUsefulStatsRetryTimer !== null) {
+        clearTimeout(homeUsefulStatsRetryTimer);
+        homeUsefulStatsRetryTimer = null;
+      }
+      homeUsefulStatsRetryCount = 0;
     }
 
     initPublicScrollCounters(document);
@@ -11882,7 +11778,6 @@
   initSiteMobileDrawer();
   initHomeSearch();
   initHomeSearchLive();
-  initHomeHeroBackground();
   initHomeRuntimeContent();
   initHomeUsefulStats();
   initCompanyOnlySections();

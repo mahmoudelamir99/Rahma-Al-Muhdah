@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "."
+      }
+    },
+    {
+      "src": "al-rahma-recruitment-admin/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "al-rahma-recruitment-admin/dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/admin-dashboard",
+      "dest": "/al-rahma-recruitment-admin/dist/index.html"
+    },
+    {
+      "src": "/admin-dashboard/(.*)",
+      "dest": "/al-rahma-recruitment-admin/dist/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "functions": {
+    "api/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}
