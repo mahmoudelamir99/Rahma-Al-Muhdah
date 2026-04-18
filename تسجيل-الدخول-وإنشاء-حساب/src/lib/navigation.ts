@@ -21,8 +21,18 @@ function normalizeBaseUrl(rawValue: string | null | undefined) {
   }
 }
 
+function normalizeRootHtmlTarget(pathname: string | null | undefined, fallback = 'company-dashboard.html') {
+  const safeFallback = String(fallback || '').trim() || 'company-dashboard.html';
+  const rawPath = String(pathname || '').trim();
+  if (!rawPath) return safeFallback;
+
+  const normalizedPath = rawPath.replace(/\\/g, '/').replace(/^\/+/, '');
+  const fileName = normalizedPath.split('/').filter(Boolean).pop() || '';
+  return /\.html$/i.test(fileName) ? fileName : safeFallback;
+}
+
 export function sanitizeRedirectTarget(target: string | null | undefined, fallback = 'company-dashboard.html') {
-  const safeFallback = fallback.trim() || 'company-dashboard.html';
+  const safeFallback = normalizeRootHtmlTarget(fallback, 'company-dashboard.html');
   const rawTarget = String(target || '').trim();
   if (!rawTarget) return safeFallback;
 
@@ -30,7 +40,7 @@ export function sanitizeRedirectTarget(target: string | null | undefined, fallba
     const nextUrl = new URL(rawTarget, window.location.origin);
     if (nextUrl.origin !== window.location.origin) return safeFallback;
     if (!/\.html$/i.test(nextUrl.pathname)) return safeFallback;
-    const pathname = nextUrl.pathname.replace(/^\/+/, '');
+    const pathname = normalizeRootHtmlTarget(nextUrl.pathname, safeFallback);
     return `${pathname}${nextUrl.search}${nextUrl.hash}`;
   } catch {
     return safeFallback;
@@ -77,13 +87,15 @@ function getSiteBaseUrl() {
   }
 
   const currentPath = window.location.pathname || '/';
-  const markerIndex = currentPath.lastIndexOf(AUTH_APP_DIST_SEGMENT);
-  if (markerIndex >= 0) {
-    const siteRootPath = currentPath.slice(0, markerIndex + 1);
-    return `${window.location.origin}${siteRootPath}`;
+  if (currentPath.includes('/company-auth/') || currentPath.endsWith('/company-auth')) {
+    return `${window.location.origin}/`;
   }
 
-  return new URL('../../', window.location.href).toString();
+  if (currentPath.lastIndexOf(AUTH_APP_DIST_SEGMENT) >= 0) {
+    return `${window.location.origin}/`;
+  }
+
+  return `${window.location.origin}/`;
 }
 
 export function buildSiteUrl(target: string | null | undefined, fallback = 'index.html') {

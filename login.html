@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex,nofollow" />
-    <title>تسجيل الدخول | الرحمة المهداه للتوظيف</title>
+    <title>دخول الشركات | الرحمة المهداه للتوظيف</title>
     <style>
       :root { color-scheme: light; }
       * { box-sizing: border-box; }
@@ -67,11 +67,12 @@
     <main class="shell">
       <div class="bar"></div>
       <section class="content">
-        <span class="badge">بوابة تسجيل الدخول</span>
-        <h1>جارٍ تحويلك لصفحة الدخول</h1>
-        <p>لو لم يتم التحويل تلقائيًا خلال لحظات، استخدم الزر التالي للانتقال مباشرة.</p>
+        <span class="badge">بوابة الشركات</span>
+        <h1>جارٍ تحويلك إلى لوحة الشركات</h1>
+        <p>هذه الصفحة مخصصة لدخول الشركات فقط. إذا كنت باحثًا عن عمل، استخدم متابعة الطلب أو ارجع للرئيسية.</p>
         <div class="actions">
-          <a class="btn btn-primary" id="go-login" href="#">متابعة تسجيل الدخول</a>
+          <a class="btn btn-primary" id="go-login" href="#">دخول الشركات</a>
+          <a class="btn btn-ghost" href="track-application.html">متابعة الطلب</a>
           <a class="btn btn-ghost" href="index.html">العودة للرئيسية</a>
         </div>
       </section>
@@ -80,7 +81,7 @@
       (() => {
         const params = new URLSearchParams(window.location.search);
         const redirect = params.get('redirect');
-        const target = new URL('./تسجيل-الدخول-وإنشاء-حساب/dist/index.html', window.location.href);
+        const target = new URL('./company-auth/index.html', window.location.href);
         target.searchParams.set('view', 'login');
         if (redirect) target.searchParams.set('redirect', redirect);
         const href = target.toString();

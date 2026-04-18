@@ -2,14 +2,14 @@
 
 Current production-ready split in this project:
 
-- Public site: `rahma-al-muhdah-c0430`
-- Admin app: `rahma-al-muhdah-admin`
-- Optional company portal: can be split later if needed
+- Public site: `rahma-al-muhdah.vercel.app`
+- Admin app: `rahma-al-muhdah.vercel.app/admin-dashboard/`
+- Optional company portal: `rahma-al-muhdah.vercel.app/company-auth/`
 
 Current URLs:
 
-- `https://rahma-al-muhdah-c0430.web.app/`
-- `https://rahma-al-muhdah-admin.web.app/`
+- `https://rahma-al-muhdah.vercel.app/`
+- `https://rahma-al-muhdah.vercel.app/admin-dashboard/`
 
 Suggested custom-domain mapping later:
 
@@ -66,4 +66,4 @@ From Firebase Console:
 
 - This is stronger isolation than hiding admin pages inside the same public root.
 - The public hosting config now excludes old admin pages and the admin build entirely.
-- The admin app is deployed from `al-rahma-recruitment-admin/dist` to its own Hosting site.
+- The admin app is deployed from `al-rahma-recruitment-admin/dist` into the `/admin-dashboard/` route on Vercel.

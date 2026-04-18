@@ -935,7 +935,16 @@ async function loginWithSupabase(input: CompanyLoginInput): Promise<CompanyAuthR
 
   try {
     const companyRecord = await findSupabaseCompanyByOwnerIncludingDeleted(supabase, data.user.id);
-    if (companyRecord?.deleted_at) {
+    if (!companyRecord) {
+      await supabase.auth.signOut();
+      clearStoredSession();
+      return {
+        ok: false,
+        message: 'هذا الحساب غير متاح حاليًا أو تمت إزالته من النظام. تواصل مع الدعم إذا كنت تحتاج مراجعة الحساب.',
+      };
+    }
+
+    if (companyRecord.deleted_at) {
       await supabase.auth.signOut();
       clearStoredSession();
       return {
@@ -944,7 +953,12 @@ async function loginWithSupabase(input: CompanyLoginInput): Promise<CompanyAuthR
       };
     }
   } catch {
-    // Ignore extra lookup failure and continue with the normal bootstrap path.
+    await supabase.auth.signOut();
+    clearStoredSession();
+    return {
+      ok: false,
+      message: 'تعذر التحقق من حالة الشركة الآن. حاول مرة أخرى بعد قليل.',
+    };
   }
 
   const bootstrapped = await bootstrapSupabaseCompanyState(data.user, input.remember);
@@ -1019,6 +1033,68 @@ async function registerWithFirebase(input: CompanyRegistrationInput): Promise<Co
   }
 }
 
+async function clearFirebaseCompanySession(
+  services: NonNullable<Awaited<ReturnType<typeof getFirebaseServices>>>,
+) {
+  try {
+    await services.authModule.signOut(services.auth);
+  } catch {
+    // Ignore sign-out failures and still clear the local session snapshot.
+  }
+  clearStoredSession();
+}
+
+function buildFirebaseCompanyProfileAndSession(
+  user: { uid: string; email: string | null; displayName: string | null },
+  companyData: Record<string, unknown>,
+  remember: boolean,
+  fallbackEmail: string,
+) {
+  const resolvedEmail = user.email || fallbackEmail.trim().toLowerCase();
+  const companyId = user.uid;
+  const companyName = String(companyData.name || companyData.companyName || user.displayName || fallbackEmail.split('@')[0] || 'شركة').trim();
+  const profile = buildProfileFromRegistration(
+    {
+      companyName,
+      companySector: String(companyData.sector || companyData.companySector || '').trim(),
+      country: String(companyData.country || '').trim(),
+      companyCity: String(companyData.city || companyData.location || '').trim(),
+      teamSize: String(companyData.teamSize || '').trim(),
+      phone: String(companyData.phone || '').trim(),
+      landline: String(companyData.landline || companyData.companyLandline || '').trim(),
+      email: resolvedEmail,
+      password: '',
+      confirmPassword: '',
+      remember,
+    },
+    {
+      accountStatus: String(companyData.status || 'active'),
+      companyLandline: String(companyData.landline || companyData.companyLandline || '').trim(),
+      companyLogoUrl: String(companyData.logoUrl || companyData.companyLogoUrl || '').trim(),
+      companyCoverUrl: String(companyData.coverUrl || companyData.companyCoverUrl || '').trim(),
+      companyDescription: String(companyData.description || companyData.companyDescription || '').trim(),
+      companyWebsite: String(companyData.website || '').trim(),
+      socialLinks: normalizeCompanySocialLinks(companyData.socialLinks),
+      siteMode: String(companyData.siteMode || 'full').trim() === 'landing' ? 'landing' : 'full',
+      restrictionMessage: String(companyData.restrictionMessage || '').trim(),
+      restrictionAttachmentUrl: String(companyData.restrictionAttachmentUrl || '').trim(),
+      restrictionAttachmentName: String(companyData.restrictionAttachmentName || '').trim(),
+      createdAt: companyData.createdAt || null,
+    },
+  );
+
+  const session = buildSession({
+    uid: user.uid,
+    companyId,
+    email: resolvedEmail,
+    name: companyName,
+    provider: 'firebase',
+    remember,
+  });
+
+  return { profile, session };
+}
+
 async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthResult> {
   const services = await getFirebaseServices();
   if (!services) {
@@ -1039,11 +1115,18 @@ async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthR
     const user = credential.user;
     const companyId = user.uid;
     const companySnap = await firestoreModule.getDoc(firestoreModule.doc(db, 'companies', companyId));
-    const companyData = companySnap.exists() ? companySnap.data() : {};
+    if (!companySnap.exists()) {
+      await clearFirebaseCompanySession(services);
+      return {
+        ok: false,
+        message: 'هذا الحساب لم يعد متاحًا داخل النظام. ربما تم حذفه نهائيًا من لوحة الأدمن.',
+      };
+    }
+
+    const companyData = companySnap.data() || {};
 
     if (companyData.deletedAt || String(companyData.deletedBy || '').trim() === 'company') {
-      await authModule.signOut(auth);
-      clearStoredSession();
+      await clearFirebaseCompanySession(services);
       return {
         ok: false,
         message: 'هذا الحساب عليه طلب حذف قيد المراجعة الآن. تواصل مع الدعم إذا كنت تحتاج استعادة الشركة.',
@@ -1051,51 +1134,19 @@ async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthR
     }
 
     if (companyData.status && ['restricted', 'suspended', 'archived'].includes(normalize(String(companyData.status)))) {
+      await clearFirebaseCompanySession(services);
       return {
         ok: false,
         message: 'هذا الحساب غير متاح حاليًا. تواصل مع الدعم إذا كنت تحتاج مراجعة الحالة.',
       };
     }
 
-    const companyName = String(companyData.name || companyData.companyName || user.displayName || input.email.split('@')[0] || 'شركة').trim();
-    const profile = buildProfileFromRegistration(
-      {
-        companyName,
-        companySector: String(companyData.sector || companyData.companySector || '').trim(),
-        country: String(companyData.country || '').trim(),
-        companyCity: String(companyData.city || companyData.location || '').trim(),
-        teamSize: String(companyData.teamSize || '').trim(),
-        phone: String(companyData.phone || '').trim(),
-        landline: String(companyData.landline || companyData.companyLandline || '').trim(),
-        email: user.email || input.email.trim().toLowerCase(),
-        password: input.password,
-        confirmPassword: input.password,
-        remember: input.remember,
-      },
-      {
-        accountStatus: String(companyData.status || 'active'),
-        companyLandline: String(companyData.landline || companyData.companyLandline || '').trim(),
-        companyLogoUrl: String(companyData.logoUrl || companyData.companyLogoUrl || '').trim(),
-        companyCoverUrl: String(companyData.coverUrl || companyData.companyCoverUrl || '').trim(),
-        companyDescription: String(companyData.description || companyData.companyDescription || '').trim(),
-        companyWebsite: String(companyData.website || '').trim(),
-        socialLinks: normalizeCompanySocialLinks(companyData.socialLinks),
-        siteMode: String(companyData.siteMode || 'full').trim() === 'landing' ? 'landing' : 'full',
-        restrictionMessage: String(companyData.restrictionMessage || '').trim(),
-        restrictionAttachmentUrl: String(companyData.restrictionAttachmentUrl || '').trim(),
-        restrictionAttachmentName: String(companyData.restrictionAttachmentName || '').trim(),
-        createdAt: companyData.createdAt || null,
-      },
+    const { profile, session } = buildFirebaseCompanyProfileAndSession(
+      user,
+      companyData as Record<string, unknown>,
+      input.remember,
+      input.email,
     );
-
-    const session = buildSession({
-      uid: user.uid,
-      companyId,
-      email: user.email || input.email.trim().toLowerCase(),
-      name: companyName,
-      provider: 'firebase',
-      remember: input.remember,
-    });
 
     safeWriteSession(session, input.remember);
     persistLocalProfile(profile);
@@ -1106,6 +1157,7 @@ async function loginWithFirebase(input: CompanyLoginInput): Promise<CompanyAuthR
       session,
     };
   } catch (error) {
+    await clearFirebaseCompanySession(services);
     return {
       ok: false,
       message: normalizeFirebaseAuthErrorMessage(error, 'تعذر تسجيل الدخول الآن. حاول مرة أخرى بعد قليل.'),
@@ -1313,6 +1365,22 @@ export async function bootstrapCompanySession(): Promise<CompanySession | null> 
     if (supabase) {
       const { data, error } = await supabase.auth.getSession();
       if (!error && data.session?.user) {
+        let companyRecord: SupabaseCompanyRow | null = null;
+        try {
+          companyRecord = await findSupabaseCompanyByOwnerIncludingDeleted(supabase, data.session.user.id);
+        } catch {
+          clearStoredSession();
+          await supabase.auth.signOut();
+          return null;
+        }
+
+        const normalizedStatus = normalize(String(companyRecord?.status || ''));
+        if (!companyRecord || companyRecord.deleted_at || ['restricted', 'archived'].includes(normalizedStatus)) {
+          clearStoredSession();
+          await supabase.auth.signOut();
+          return null;
+        }
+
         const remember = localSession?.remember ?? true;
         const bootstrapped = await bootstrapSupabaseCompanyState(data.session.user, remember);
         return bootstrapped?.session || localSession;
@@ -1321,6 +1389,68 @@ export async function bootstrapCompanySession(): Promise<CompanySession | null> 
       if (localSession?.provider === 'supabase') {
         clearStoredSession();
         return null;
+      }
+    }
+  }
+
+  if (hasFirebaseConfig()) {
+    const services = await getFirebaseServices();
+    if (services) {
+      const authStateReady = (
+        services.auth as typeof services.auth & { authStateReady?: () => Promise<void> }
+      ).authStateReady;
+
+      if (typeof authStateReady === 'function') {
+        try {
+          await authStateReady.call(services.auth);
+        } catch {
+          // Ignore auth-state readiness failures and fall back to the current auth snapshot.
+        }
+      }
+
+      const firebaseUser = services.auth.currentUser;
+      if (localSession?.provider === 'firebase' || firebaseUser) {
+        if (!firebaseUser) {
+          clearStoredSession();
+          return null;
+        }
+
+        try {
+          const companySnap = await services.firestoreModule.getDoc(
+            services.firestoreModule.doc(services.db, 'companies', firebaseUser.uid),
+          );
+
+          if (!companySnap.exists()) {
+            await clearFirebaseCompanySession(services);
+            return null;
+          }
+
+          const companyData = companySnap.data() || {};
+          const normalizedStatus = normalize(String(companyData.status || ''));
+          if (
+            companyData.deletedAt ||
+            String(companyData.deletedBy || '').trim() === 'company' ||
+            ['restricted', 'suspended', 'archived'].includes(normalizedStatus)
+          ) {
+            await clearFirebaseCompanySession(services);
+            return null;
+          }
+
+          const remember = localSession?.remember ?? true;
+          const { profile, session } = buildFirebaseCompanyProfileAndSession(
+            firebaseUser,
+            companyData as Record<string, unknown>,
+            remember,
+            firebaseUser.email || localSession?.email || '',
+          );
+
+          safeWriteSession(session, remember);
+          persistLocalProfile(profile);
+          return session;
+        } catch {
+          await clearFirebaseCompanySession(services);
+          return null;
+        }
       }
     }
   }

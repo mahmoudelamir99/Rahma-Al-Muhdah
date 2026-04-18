@@ -8,4 +8,5 @@ window.__RAHMA_FIREBASE_CONFIG__ = window.__RAHMA_FIREBASE_CONFIG__ || {
   measurementId: '',
 };
 
-window.__RAHMA_SITE_BASE_URL__ = window.__RAHMA_SITE_BASE_URL__ || 'https://rahma-al-muhdah-c0430.web.app/';
+window.__RAHMA_ADMIN_BASE_URL__ = window.__RAHMA_ADMIN_BASE_URL__ || '/admin-dashboard/';
+window.__RAHMA_SITE_BASE_URL__ = window.__RAHMA_SITE_BASE_URL__ || `${window.location.origin}/`;

@@ -7,7 +7,7 @@ import { cleanAdminText } from '../lib/admin-dashboard';
 import { SITE_METADATA } from '../lib/admin-data';
 import { useAdmin } from '../lib/admin-store';
 
-const LOGIN_BACKGROUND_PATH = '/admin-login-bg.jpg';
+const LOGIN_BACKGROUND_PATH = '/admin-dashboard/admin-brand.jpg';
 const DEFAULT_ADMIN_NAME = 'محمود';
 
 export default function Login() {

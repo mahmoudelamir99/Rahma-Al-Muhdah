@@ -1,38 +1,33 @@
 {
   "version": 2,
-  "builds": [
+  "routes": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "."
-      }
+      "src": "/admin-dashboard/assets/(.*)",
+      "dest": "/al-rahma-recruitment-admin/dist/assets/$1"
     },
     {
-      "src": "al-rahma-recruitment-admin/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "al-rahma-recruitment-admin/dist"
-      }
-    }
-  ],
-  "routes": [
+      "src": "/admin-dashboard/(firebase-site-config\\.js|supabase-site-config\\.js|logo-mark\\.png|admin-brand\\.jpg|favicon\\.ico)",
+      "dest": "/al-rahma-recruitment-admin/dist/$1"
+    },
     {
       "src": "/admin-dashboard",
       "dest": "/al-rahma-recruitment-admin/dist/index.html"
     },
     {
       "src": "/admin-dashboard/(.*)",
-      "dest": "/al-rahma-recruitment-admin/dist/$1"
+      "dest": "/al-rahma-recruitment-admin/dist/index.html"
+    },
+    {
+      "src": "/company-auth",
+      "dest": "/تسجيل-الدخول-وإنشاء-حساب/dist/index.html"
+    },
+    {
+      "src": "/company-auth/(.*)",
+      "dest": "/تسجيل-الدخول-وإنشاء-حساب/dist/$1"
     },
     {
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ],
-  "functions": {
-    "api/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }

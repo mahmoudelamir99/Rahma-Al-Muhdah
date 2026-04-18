@@ -1,0 +1,12 @@
+.git
+.gitignore
+.vercel
+node_modules
+**/node_modules
+**/.vite
+**/.cache
+**/coverage
+**/*.log
+tmp_public_repo
+temp_admin
+local-static-server.cjs

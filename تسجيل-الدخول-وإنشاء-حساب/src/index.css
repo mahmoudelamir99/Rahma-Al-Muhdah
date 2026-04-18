@@ -307,7 +307,7 @@ img {
 }
 
 .portal-input--with-left {
-  padding-left: 4.1rem;
+  padding-left: 5rem;
 }
 
 .portal-field-icon,
@@ -331,7 +331,7 @@ img {
 }
 
 .portal-field-action {
-  left: 0.7rem;
+  left: 0.9rem;
   border: 0;
   background: #f4efe4;
   color: #627980;
@@ -347,6 +347,16 @@ img {
   background: #eef6f6;
   color: var(--portal-primary);
   box-shadow: 0 8px 16px rgba(15, 61, 76, 0.08);
+}
+
+@media (max-width: 640px) {
+  .portal-input--with-left {
+    padding-left: 4.7rem;
+  }
+
+  .portal-field-action {
+    left: 0.78rem;
+  }
 }
 
 .portal-switch-row {

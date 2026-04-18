@@ -335,6 +335,7 @@ export default function Companies() {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [savingCompany, setSavingCompany] = useState(false);
   const [savingCompanyPassword, setSavingCompanyPassword] = useState(false);
+  const [deletingCompanyId, setDeletingCompanyId] = useState<string | null>(null);
   const [showCreatePassword, setShowCreatePassword] = useState(false);
   const [showCreatePasswordConfirm, setShowCreatePasswordConfirm] = useState(false);
   const [showPasswordDialogValue, setShowPasswordDialogValue] = useState(false);
@@ -854,6 +855,18 @@ export default function Companies() {
     setFeedback({ tone: 'success', text: 'تمت إضافة الملاحظة الداخلية.' });
   };
 
+  const handleHardDeleteCompany = async (companyId: string) => {
+    if (!companyId || deletingCompanyId === companyId) return;
+
+    setDeletingCompanyId(companyId);
+    try {
+      const result = await softDeleteCompany(companyId);
+      setFeedback({ tone: result.ok ? 'success' : 'danger', text: result.message });
+    } finally {
+      setDeletingCompanyId(null);
+    }
+  };
+
   return (
     <>
       <AnimatePresence>
@@ -976,13 +989,11 @@ export default function Companies() {
                       </AdminButton>
                       <AdminButton
                         variant="danger"
-                        onClick={() => {
-                          softDeleteCompany(company.id);
-                          setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا من النظام.' });
-                        }}
+                        onClick={() => void handleHardDeleteCompany(company.id)}
+                        disabled={deletingCompanyId === company.id}
                       >
                         <Trash2 size={15} />
-                        حذف نهائي
+                        {deletingCompanyId === company.id ? 'جارٍ الحذف...' : 'حذف نهائي'}
                       </AdminButton>
                       <AdminButton variant="ghost" onClick={() => openDrawer(company)}>
                         <Eye size={15} />
@@ -1126,13 +1137,11 @@ export default function Companies() {
                       )}
                       <AdminButton
                         variant="danger"
-                        onClick={() => {
-                          softDeleteCompany(company.id);
-                          setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا من النظام.' });
-                        }}
+                        onClick={() => void handleHardDeleteCompany(company.id)}
+                        disabled={deletingCompanyId === company.id}
                       >
                         <Trash2 size={15} />
-                        حذف نهائي
+                        {deletingCompanyId === company.id ? 'جارٍ الحذف...' : 'حذف نهائي'}
                       </AdminButton>
                     </div>
                   </motion.article>
@@ -1449,12 +1458,13 @@ export default function Companies() {
                 <ShieldCheck size={15} />
                 {selectedCompany.status === 'restricted' ? 'إعادة تفعيل الشركة' : 'إيقاف الشركة'}
               </AdminButton>
-              <AdminButton variant="danger" onClick={() => {
-                  softDeleteCompany(selectedCompany.id);
-                  setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا من النظام.' });
-              }}>
+              <AdminButton
+                variant="danger"
+                onClick={() => void handleHardDeleteCompany(selectedCompany.id)}
+                disabled={deletingCompanyId === selectedCompany.id}
+              >
                 <Trash2 size={15} />
-                حذف الشركة نهائيًا
+                {deletingCompanyId === selectedCompany.id ? 'جارٍ حذف الشركة...' : 'حذف الشركة نهائيًا'}
               </AdminButton>
               <AdminButton
                 variant="soft"

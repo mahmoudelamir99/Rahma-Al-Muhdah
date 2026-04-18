@@ -47,7 +47,7 @@ body {
   line-height: 1.72;
   color: var(--text);
   background: var(--bg);
-  background-attachment: fixed;
+  background-attachment: scroll;
   overflow-x: hidden;
   overflow-wrap: break-word;
   word-break: normal;
@@ -922,43 +922,6 @@ select option {
   min-height: calc(100vh - 88px);
   padding-top: 3rem !important;
   padding-bottom: 3rem !important;
-}
-
-/* Hero background video: never reserve layout or show a strip when disabled */
-[data-home-hero-video-wrap][hidden],
-[data-home-hero-video-wrap].hidden {
-  display: none !important;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-[data-home-hero-video-wrap]:not(.hidden) {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.home-hero-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-  filter: saturate(1.02) contrast(1.01) brightness(0.9);
-}
-
-.home-hero-video__overlay {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(245, 248, 255, 0.02), rgba(245, 248, 255, 0.2)),
-    linear-gradient(135deg, rgba(3, 46, 100, 0.02), rgba(3, 46, 100, 0.06));
-  pointer-events: none;
 }
 
 body.page-home section.home-hero-static[data-purpose='hero-section'] {
@@ -3214,7 +3177,7 @@ body.page-jobs .jobs-search-panel__field select option {
 
 .listing-job-card__primary {
   background: linear-gradient(135deg, var(--accent), var(--primary));
-  color: #071422;
+  color: #fff;
   box-shadow: 0 16px 34px rgba(46, 211, 167, 0.16);
 }
 
@@ -5318,6 +5281,31 @@ body.page-jobs .jobs-search-panel__field select {
 
 .listing-job-card__primary {
   background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+.listing-job-card__primary,
+.jobs-coverflow-card__primary,
+.product-job-card__apply,
+.product-hero__actions .job-apply-cta,
+.product-hero__actions [data-apply-current] {
+  color: #fff !important;
+  text-shadow: 0 1px 1px rgba(72, 33, 4, 0.24) !important;
+}
+
+.listing-job-card__primary *,
+.jobs-coverflow-card__primary *,
+.product-job-card__apply *,
+.product-hero__actions .job-apply-cta *,
+.product-hero__actions [data-apply-current] * {
+  color: inherit !important;
+}
+
+.listing-job-card__primary .interactive-shell__inner,
+.jobs-coverflow-card__primary .interactive-shell__inner,
+.product-job-card__apply .interactive-shell__inner,
+.product-hero__actions .job-apply-cta .interactive-shell__inner,
+.product-hero__actions [data-apply-current] .interactive-shell__inner {
+  color: #fff !important;
 }
 
 .listing-job-card__secondary {
@@ -11567,9 +11555,25 @@ body.page-about .product-shell::after {
 }
 
 .jobs-coverflow-card__primary[aria-disabled='true'] {
-  opacity: 0.72;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.96);
+  background: linear-gradient(135deg, rgba(15, 61, 76, 0.95), rgba(31, 107, 122, 0.95));
+  box-shadow: 0 14px 28px rgba(15, 61, 76, 0.18);
   cursor: not-allowed;
   pointer-events: none;
+}
+
+.listing-job-card__primary[aria-disabled='true'] {
+  color: rgba(255, 255, 255, 0.96) !important;
+  background: linear-gradient(135deg, rgba(15, 61, 76, 0.95), rgba(31, 107, 122, 0.95)) !important;
+  box-shadow: 0 14px 28px rgba(15, 61, 76, 0.18) !important;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.jobs-coverflow-card__primary[aria-disabled='true'] .interactive-shell__inner,
+.listing-job-card__primary[aria-disabled='true'] .interactive-shell__inner {
+  color: rgba(255, 255, 255, 0.96) !important;
 }
 
 .jobs-coverflow__pagination {
@@ -11922,5 +11926,125 @@ body.page-jobs .jobs-results__badge {
     border-radius: 0.72rem;
     font-size: 0.72rem;
     letter-spacing: -0.01em;
+  }
+}
+
+/* Final compact tuning for lighter browsing */
+.site-action,
+button.site-action,
+a.site-action,
+.listing-job-card__actions a,
+.listing-job-card__actions button,
+.jobs-coverflow-card__primary,
+.jobs-coverflow-card__secondary {
+  min-height: 2.5rem;
+  padding: 0.48rem 0.9rem !important;
+  font-size: 0.88rem !important;
+  font-weight: 800;
+}
+
+.page-card,
+.hero-card,
+.directory-company-card,
+.listing-job-card.page-card,
+.home-live-card,
+.jobs-coverflow-card {
+  padding: 0.92rem !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 14px 30px rgba(18, 30, 54, 0.06);
+}
+
+.page-section--hero .hero-card,
+.page-section--hero .hero-card.hero-card--light {
+  padding: 1.15rem 1.2rem !important;
+}
+
+.page-section--hero .hero-card h1,
+.page-section--hero .hero-card.hero-card--light h1,
+.page-section--hero .hero-card h2,
+.page-section--hero .hero-card.hero-card--light h2 {
+  font-size: clamp(1.72rem, 3vw, 2.5rem) !important;
+}
+
+.page-card h2,
+.page-card h3,
+.directory-company-card__meta h3,
+.listing-job-card h3,
+.jobs-coverflow-card h3 {
+  font-size: 1.02rem !important;
+}
+
+.page-card p,
+.page-card li,
+.page-card a:not(.site-action),
+.directory-company-card__summary,
+.directory-company-card__meta p,
+.listing-job-card__summary,
+.listing-job-card__company,
+.jobs-coverflow-card__summary,
+.jobs-coverflow-card__company,
+.hero-card__copy,
+.hero-card__meta {
+  font-size: 0.88rem !important;
+}
+
+.home-live-card strong {
+  font-size: 1.55rem !important;
+}
+
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .page-card,
+  .hero-card,
+  .directory-company-card,
+  .listing-job-card.page-card,
+  .home-live-card,
+  .jobs-coverflow-card {
+    padding: 0.78rem !important;
+    border-radius: 0.9rem !important;
+  }
+
+  .site-action,
+  button.site-action,
+  a.site-action,
+  .listing-job-card__actions a,
+  .listing-job-card__actions button,
+  .jobs-coverflow-card__primary,
+  .jobs-coverflow-card__secondary {
+    min-height: 2.25rem;
+    padding: 0.38rem 0.72rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .page-section--hero .hero-card,
+  .page-section--hero .hero-card.hero-card--light {
+    padding: 1rem !important;
+  }
+
+  .page-section--hero .hero-card h1,
+  .page-section--hero .hero-card.hero-card--light h1,
+  .page-section--hero .hero-card h2,
+  .page-section--hero .hero-card.hero-card--light h2 {
+    font-size: clamp(1.5rem, 7vw, 2rem) !important;
+  }
+
+  .page-card p,
+  .page-card li,
+  .page-card a:not(.site-action),
+  .directory-company-card__summary,
+  .directory-company-card__meta p,
+  .listing-job-card__summary,
+  .listing-job-card__company,
+  .jobs-coverflow-card__summary,
+  .jobs-coverflow-card__company,
+  .hero-card__copy,
+  .hero-card__meta {
+    font-size: 0.82rem !important;
   }
 }

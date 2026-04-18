@@ -11,4 +11,4 @@ Disallow: /تسجيل-الدخول-وإنشاء-حساب/dist/
 Disallow: /al-rahma-recruitment-admin/
 Disallow: /al-rahma-recruitment-admin/dist/
 
-Sitemap: https://rahma-al-muhdah-c0430.web.app/sitemap.xml
+Sitemap: https://rahma-al-muhdah.vercel.app/sitemap.xml

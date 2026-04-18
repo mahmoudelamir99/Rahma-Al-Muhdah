@@ -9,7 +9,7 @@
     bookmarkedJobs: 'rahmaBookmarkedJobs',
   };
   const COMPANY_DASHBOARD_FEEDBACK_STORAGE_KEY = 'rahmaCompanyDashboardFeedback';
-  const PUBLIC_SITE_BUILD = '20260413-1';
+  const PUBLIC_SITE_BUILD = '20260414-1';
   const PUBLIC_SITE_BUILD_MARKER_KEY = 'rahmaPublicBuildMarker';
   const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
   let publicJobsCoverflowSwiper = null;
@@ -863,14 +863,24 @@
     }
   };
 
+  const getRelativeHtmlPath = (pathname, fallback = 'index.html') => {
+    const safeFallback = String(fallback || '').trim() || 'index.html';
+    const normalizedPath = String(pathname || '')
+      .trim()
+      .replace(/\\/g, '/')
+      .replace(/^\/+/, '');
+    const fileName = normalizedPath.split('/').filter(Boolean).pop() || '';
+    return /\.html$/i.test(fileName) ? fileName : safeFallback;
+  };
+
   const getRelativeUrl = (url) => {
     const nextUrl = new URL(url, window.location.href);
-    const relativePath = nextUrl.pathname.replace(/^\/+/, '') || 'index.html';
+    const relativePath = getRelativeHtmlPath(nextUrl.pathname, 'index.html');
     return `${relativePath}${nextUrl.search}${nextUrl.hash}`;
   };
 
   const sanitizeInternalNavigationTarget = (target, fallback = 'index.html') => {
-    const safeFallback = typeof fallback === 'string' && fallback.trim() ? fallback.trim() : 'index.html';
+    const safeFallback = getRelativeHtmlPath(fallback, 'index.html');
     if (typeof target !== 'string' || !target.trim()) return safeFallback;
 
     try {
@@ -878,7 +888,7 @@
       if (!['http:', 'https:'].includes(nextUrl.protocol)) return safeFallback;
       if (nextUrl.origin !== window.location.origin) return safeFallback;
       if (!/\.html$/i.test(nextUrl.pathname)) return safeFallback;
-      return getRelativeUrl(nextUrl.href);
+      return `${getRelativeHtmlPath(nextUrl.pathname, safeFallback)}${nextUrl.search}${nextUrl.hash}`;
     } catch (error) {
       console.warn('Rejected unsafe navigation target', target, error);
       return safeFallback;
@@ -1043,7 +1053,7 @@
       return `${window.location.protocol}//${host}:4174/`;
     }
 
-    return 'https://rahma-al-muhdah-admin.web.app/';
+    return `${window.location.origin}/admin-dashboard`;
   };
   const buildAdminUrl = (hashPath = '') => {
     const runtimeBaseUrl = normalizeExternalBaseUrl(window.__RAHMA_ADMIN_BASE_URL__);
@@ -1079,6 +1089,7 @@
   const ADMIN_RUNTIME_SHARED_URL = 'admin-runtime.shared.json';
   const SHARED_RUNTIME_SYNC_PATH = '/__runtime-sync__/public-runtime';
   const SHARED_RUNTIME_SYNC_PORT = '4173';
+  const PUBLIC_RUNTIME_BROADCAST_CHANNEL = 'rahma-public-runtime';
   const MAINTENANCE_SHELL_ID = 'rahma-maintenance-shell';
   const COMPANY_PLACEHOLDER_IMAGE = 'assets/company-placeholder.svg';
   const COMPANY_IMAGE_MAX_BYTES = 2 * 1024 * 1024;
@@ -1096,6 +1107,8 @@
       measurementId: String(rawConfig.measurementId || '').trim(),
     };
   })();
+  let publicRuntimeBroadcastChannel = null;
+  let publicRuntimeBroadcastBound = false;
   const hasFirebaseSiteConfig = () =>
     Boolean(firebaseSiteConfig.apiKey && firebaseSiteConfig.authDomain && firebaseSiteConfig.projectId && firebaseSiteConfig.appId);
   let firebaseSiteServicesPromise = null;
@@ -1277,6 +1290,19 @@
 
     return hasStructuredData || relatedCompanyNames.has(normalize(company?.name));
   };
+  const normalizeRuntimeContent = (content = {}) => {
+    if (!content || typeof content !== 'object') {
+      return {};
+    }
+
+    const nextContent = { ...content };
+    if ('homeHeroVideoUrl' in nextContent) {
+      delete nextContent.homeHeroVideoUrl;
+    }
+
+    return nextContent;
+  };
+
   const sanitizeAdminRuntime = (runtime = {}) => {
     const repairedRuntime =
       runtime && typeof runtime === 'object' ? repairLegacyStoredValue(runtime).value : runtime;
@@ -1286,6 +1312,14 @@
 
     const nextRuntime = { ...repairedRuntime };
     let changed = repairedRuntime !== runtime;
+
+    if (repairedRuntime?.content && typeof repairedRuntime.content === 'object') {
+      const normalizedContent = normalizeRuntimeContent(repairedRuntime.content);
+      if (JSON.stringify(normalizedContent) !== JSON.stringify(repairedRuntime.content)) {
+        nextRuntime.content = normalizedContent;
+        changed = true;
+      }
+    }
 
     if (Array.isArray(repairedRuntime?.jobs)) {
       const jobs = repairedRuntime.jobs.filter((job) => !isLegacyStaticJobRecord(job) && isMeaningfulRuntimeJob(job));
@@ -1349,8 +1383,8 @@
       ...(incomingRuntime?.settings || {}),
     },
     content: {
-      ...(currentRuntime?.content || {}),
-      ...(incomingRuntime?.content || {}),
+      ...normalizeRuntimeContent(currentRuntime?.content || {}),
+      ...normalizeRuntimeContent(incomingRuntime?.content || {}),
     },
     companies: mergeRuntimeCollections(
       Array.isArray(currentRuntime?.companies) ? currentRuntime.companies : [],
@@ -1382,6 +1416,34 @@
   };
   let sharedRuntimeFingerprint = '';
 
+  const getPublicRuntimeBroadcastChannel = () => {
+    if (typeof window === 'undefined' || typeof window.BroadcastChannel !== 'function') {
+      return null;
+    }
+
+    if (!publicRuntimeBroadcastChannel) {
+      publicRuntimeBroadcastChannel = new window.BroadcastChannel(PUBLIC_RUNTIME_BROADCAST_CHANNEL);
+    }
+
+    return publicRuntimeBroadcastChannel;
+  };
+
+  const initPublicRuntimeBroadcastSync = () => {
+    const channel = getPublicRuntimeBroadcastChannel();
+    if (!channel || publicRuntimeBroadcastBound) return;
+
+    publicRuntimeBroadcastBound = true;
+    channel.addEventListener('message', (event) => {
+      if (event?.data?.type !== 'public-runtime-updated') return;
+
+      refreshPublicPagesFromFirebaseCache();
+      void syncAdminRuntimeFromSharedFile().then((changed) => {
+        if (!changed) return;
+        refreshPublicPagesFromFirebaseCache();
+      });
+    });
+  };
+
   const readSharedAdminRuntime = async () => {
     try {
       const response = await fetch(`${ADMIN_RUNTIME_SHARED_URL}?_=${Date.now()}`, {
@@ -1395,8 +1457,8 @@
     }
   };
 
-  const syncAdminRuntimeFromSharedFile = async () => {
-    if (hasFirebaseSiteConfig() && !isPrivateRuntimeSyncHost(window.location.hostname)) {
+  const syncAdminRuntimeFromSharedFile = async ({ force = false } = {}) => {
+    if (!force && hasFirebaseSiteConfig() && !isPrivateRuntimeSyncHost(window.location.hostname)) {
       return false;
     }
 
@@ -3031,22 +3093,21 @@
       });
     };
 
-  const AUTH_APP_PATH = 'auth.html';
+  const AUTH_APP_PATH = 'company-auth/index.html';
   const buildAuthUrl = (view, redirectTarget) =>
     buildQueryUrl(
-      normalize(view) === 'register'
-        ? 'register.html'
-        : normalize(view) === 'login'
-          ? 'login.html'
-          : AUTH_APP_PATH,
-      normalize(view) === 'register' || normalize(view) === 'login'
-        ? {
-            redirect: redirectTarget,
-          }
-        : {
-            view,
-            redirect: redirectTarget,
-          },
+      AUTH_APP_PATH,
+      {
+        view:
+          normalize(view) === 'register'
+            ? 'register'
+            : normalize(view) === 'forgot-password'
+              ? 'forgot-password'
+              : normalize(view) === 'reset-password'
+                ? 'reset-password'
+                : 'login',
+        redirect: redirectTarget,
+      },
     );
 
   const buildLoginUrl = (redirectTarget) => buildAuthUrl('login', redirectTarget);
@@ -5232,6 +5293,37 @@
           await signOutCompanySession();
           window.location.href = buildLoginUrl('company-dashboard.html');
           return;
+        }
+
+        if (firebaseAuthState.supported && firebaseAuthState.user) {
+          try {
+            const services = await getFirebaseSiteServices();
+            if (services?.db && services?.firestoreModule) {
+              const companySnapshot = await services.firestoreModule.getDoc(
+                services.firestoreModule.doc(services.db, 'companies', firebaseAuthState.user.uid),
+              );
+
+              if (!companySnapshot.exists()) {
+                await signOutCompanySession();
+                window.location.href = buildLoginUrl('company-dashboard.html');
+                return;
+              }
+
+              const companyRecord = companySnapshot.data() || {};
+              const normalizedCompanyStatus = normalize(String(companyRecord.status || ''));
+              if (
+                companyRecord.deletedAt ||
+                normalize(companyRecord.deletedBy || '') === 'company' ||
+                ['restricted', 'suspended', 'archived'].includes(normalizedCompanyStatus)
+              ) {
+                await signOutCompanySession();
+                window.location.href = buildLoginUrl('company-dashboard.html');
+                return;
+              }
+            }
+          } catch (companyGuardError) {
+            console.warn('Unable to validate Firebase company access guard', companyGuardError);
+          }
         }
       }
 
@@ -11752,25 +11844,28 @@
 
   const syncRuntimeFromStorage = (event) => {
     if (event.key === ADMIN_RUNTIME_KEY) {
-      window.location.reload();
+      refreshPublicPagesFromFirebaseCache();
     }
   };
 
   const shouldPollSharedRuntime =
     isPrivateRuntimeSyncHost(window.location.hostname) || !READONLY_PUBLIC_PAGES.has(CURRENT_SITE_PAGE);
-  const SHARED_RUNTIME_POLL_MS = shouldPollSharedRuntime ? 30000 : 120000;
+  const SHARED_RUNTIME_POLL_MS = shouldPollSharedRuntime ? 1800 : 7000;
 
   initPageState();
   initLegacyMojibakeDomRepair();
+  void syncAdminRuntimeFromSharedFile({ force: true }).then((changed) => {
+    if (!changed) return;
+    refreshPublicPagesFromFirebaseCache();
+  });
   window.setInterval(() => {
     void syncAdminRuntimeFromSharedFile().then((changed) => {
       if (!changed) return;
-      if (shouldPollSharedRuntime) {
-        window.location.reload();
-      }
+      refreshPublicPagesFromFirebaseCache();
     });
   }, SHARED_RUNTIME_POLL_MS);
   window.addEventListener('storage', syncRuntimeFromStorage);
+  initPublicRuntimeBroadcastSync();
   initAdminAccessGuard();
   initMobileBrandHomeLinks();
   initPasswordVisibilityToggles();

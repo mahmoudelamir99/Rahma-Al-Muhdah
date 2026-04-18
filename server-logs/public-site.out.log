@@ -1055,3 +1055,9 @@ Serving K:\«· ⁄œÌ·«  «·ÃœÌœ…\Rahma Al Muhdah on port 4173
 192.168.1.2 - - [02/Apr/2026 17:13:13] "GET /admin-runtime.shared.json?_=1775142792984 HTTP/1.1" 200 -
 192.168.1.2 - - [02/Apr/2026 17:14:13] "GET /admin-runtime.shared.json?_=1775142852994 HTTP/1.1" 200 -
 192.168.1.2 - - [02/Apr/2026 17:15:13] "GET /admin-runtime.shared.json?_=1775142912997 HTTP/1.1" 200 -
+[Sat 04/18/2026 11:08:26.93] public launcher starting
+C:\Windows\System32\python
+C:\Users\accma\AppData\Local\Microsoft\WindowsApps\python.exe
+[ERROR] Failed to launch 'C:\Users\accma\AppData\Local\Programs\Python\Python311\python.exe' (0x80070003)
+This may be a corrupt install or a system configuration issue.
+[Sat 04/18/2026 11:08:29.25] public server launch requested

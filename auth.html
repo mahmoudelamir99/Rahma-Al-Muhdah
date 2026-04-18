@@ -113,13 +113,14 @@
           <img src="logo-mark.png" alt="شعار الرحمة المهداه للتوظيف" />
         </div>
         <span class="auth-shell__badge">بوابة الشركات</span>
-        <h1>جارٍ تجهيز صفحة الدخول</h1>
+        <h1>جارٍ تجهيز بوابة الشركات</h1>
         <p>
-          إذا لم يتم التحويل تلقائيًا، استخدم الأزرار التالية للوصول مباشرة إلى تسجيل الدخول أو إنشاء حساب شركة جديد.
+          هذه البوابة مخصصة للشركات. إذا كنت باحثًا عن عمل فاستخدم صفحة متابعة الطلب أو تصفح الوظائف مباشرة.
         </p>
         <div class="auth-shell__actions">
-          <a class="auth-shell__button" href="login.html">فتح تسجيل الدخول</a>
+          <a class="auth-shell__button" href="login.html">دخول الشركات</a>
           <a class="auth-shell__button auth-shell__button--ghost" href="register.html">فتح إنشاء حساب</a>
+          <a class="auth-shell__button auth-shell__button--ghost" href="track-application.html">متابعة الطلب</a>
         </div>
       </div>
     </main>
@@ -128,7 +129,7 @@
         const params = new URLSearchParams(window.location.search);
         const view = params.get('view') === 'register' ? 'register' : 'login';
         const redirect = params.get('redirect');
-        const target = new URL('./تسجيل-الدخول-وإنشاء-حساب/dist/index.html', window.location.href);
+        const target = new URL('./company-auth/index.html', window.location.href);
         target.searchParams.set('view', view);
         if (redirect) {
           target.searchParams.set('redirect', redirect);

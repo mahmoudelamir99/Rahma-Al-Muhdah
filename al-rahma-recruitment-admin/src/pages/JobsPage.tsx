@@ -40,6 +40,7 @@ import {
 type JobFormState = {
   title: string;
   companyName: string;
+  positions: string;
   location: string;
   type: string;
   salary: string;
@@ -53,6 +54,7 @@ type JobFormState = {
 const EMPTY_FORM: JobFormState = {
   title: '',
   companyName: '',
+  positions: '1',
   location: '',
   type: 'دوام كامل',
   salary: '',
@@ -68,6 +70,7 @@ function getJobForm(job?: JobRecord | null): JobFormState {
   return {
     title: cleanAdminText(job.title),
     companyName: cleanAdminText(job.companyName),
+    positions: cleanAdminText(job.positions || '1'),
     location: cleanAdminText(job.location),
     type: cleanAdminText(job.type),
     salary: cleanAdminText(job.salary),
@@ -77,6 +80,11 @@ function getJobForm(job?: JobRecord | null): JobFormState {
     featured: job.featured,
     status: job.status,
   };
+}
+
+function getJobPositionsCount(job?: Pick<JobRecord, 'positions'> | null) {
+  const parsed = Number.parseInt(String(job?.positions || '1').replace(/[^\d]/g, ''), 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
 }
 
 function getJobDisplayStatus(job: JobRecord) {
@@ -251,6 +259,7 @@ export default function JobsPage() {
     const draft: JobDraft = {
       title: formState.title.trim(),
       companyName: formState.companyName.trim(),
+      positions: formState.positions.trim(),
       location: formState.location.trim(),
       type: formState.type.trim(),
       salary: formState.salary.trim(),
@@ -272,6 +281,7 @@ export default function JobsPage() {
       {
         title: cleanAdminText(job.title),
         companyName: cleanAdminText(job.companyName),
+        positions: cleanAdminText(job.positions || '1'),
         location: cleanAdminText(job.location),
         type: cleanAdminText(job.type),
         salary: cleanAdminText(job.salary),
@@ -410,6 +420,8 @@ export default function JobsPage() {
             <div className="grid gap-3 p-4 lg:hidden">
               {visibleJobs.map((job, index) => {
                 const applicantsCount = relatedApplications(job).length;
+                const positionsCount = getJobPositionsCount(job);
+                const remainingCount = Math.max(positionsCount - applicantsCount, 0);
                 const displayStatus = getJobDisplayStatus(job);
 
                 return (
@@ -453,15 +465,20 @@ export default function JobsPage() {
                       </div>
                     ) : null}
 
-                    <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
                       <div className="rounded-[1rem] border border-[rgba(24,37,63,0.08)] px-3.5 py-3">
                         <div className="text-[11px] font-bold text-[#7a8b9e]">المتقدمون</div>
                         <div className="mt-2 text-base font-black text-[#122341]">{formatNumber(applicantsCount)}</div>
                       </div>
 
                       <div className="rounded-[1rem] border border-[rgba(24,37,63,0.08)] px-3.5 py-3">
-                        <div className="text-[11px] font-bold text-[#7a8b9e]">نوع الوظيفة</div>
-                        <div className="mt-2 text-sm font-black text-[#122341]">{cleanAdminText(job.type || 'غير محدد')}</div>
+                        <div className="text-[11px] font-bold text-[#7a8b9e]">العدد المطلوب</div>
+                        <div className="mt-2 text-base font-black text-[#122341]">{formatNumber(positionsCount)}</div>
+                      </div>
+
+                      <div className="rounded-[1rem] border border-[rgba(24,37,63,0.08)] px-3.5 py-3">
+                        <div className="text-[11px] font-bold text-[#7a8b9e]">المتبقي</div>
+                        <div className="mt-2 text-base font-black text-[#122341]">{formatNumber(remainingCount)}</div>
                       </div>
                     </div>
 
@@ -478,6 +495,7 @@ export default function JobsPage() {
                     <th>الوظيفة</th>
                     <th>الشركة</th>
                     <th>الموقع</th>
+                    <th>المطلوب</th>
                     <th>التقديمات</th>
                     <th>الحالة</th>
                     <th>التمييز</th>
@@ -509,6 +527,7 @@ export default function JobsPage() {
                         </td>
                         <td>{cleanAdminText(job.companyName || 'غير محددة')}</td>
                         <td>{cleanAdminText(job.location || 'غير محدد')}</td>
+                        <td className="font-black text-[#11213d]">{formatNumber(getJobPositionsCount(job))}</td>
                         <td className="font-black text-[#11213d]">{formatNumber(relatedApplications(job).length)} متقدم</td>
                         <td>
                           <AdminBadge tone={displayStatus.tone}>{displayStatus.label}</AdminBadge>
@@ -592,12 +611,22 @@ export default function JobsPage() {
                 <div className="mt-2 text-sm font-black text-[#122341]">{cleanAdminText(selectedJob.salary || 'غير محدد')}</div>
               </div>
               <div className="rounded-[1.25rem] bg-[#f7f9fc] px-4 py-4">
+                <div className="text-xs font-bold text-[#7a8b9e]">العدد المطلوب</div>
+                <div className="mt-2 text-sm font-black text-[#122341]">{formatNumber(getJobPositionsCount(selectedJob))}</div>
+              </div>
+              <div className="rounded-[1.25rem] bg-[#f7f9fc] px-4 py-4">
                 <div className="text-xs font-bold text-[#7a8b9e]">القطاع</div>
                 <div className="mt-2 text-sm font-black text-[#122341]">{cleanAdminText(selectedJob.sector || 'غير محدد')}</div>
               </div>
               <div className="rounded-[1.25rem] bg-[#f7f9fc] px-4 py-4">
                 <div className="text-xs font-bold text-[#7a8b9e]">عدد المتقدمين</div>
                 <div className="mt-2 text-sm font-black text-[#122341]">{formatNumber(selectedJobApplications.length)}</div>
+              </div>
+              <div className="rounded-[1.25rem] bg-[#f7f9fc] px-4 py-4">
+                <div className="text-xs font-bold text-[#7a8b9e]">المتبقي</div>
+                <div className="mt-2 text-sm font-black text-[#122341]">
+                  {formatNumber(Math.max(getJobPositionsCount(selectedJob) - selectedJobApplications.length, 0))}
+                </div>
               </div>
             </div>
 
@@ -714,6 +743,20 @@ export default function JobsPage() {
               </AdminField>
               <AdminField label="الموقع">
                 <AdminInput value={formState.location} onChange={(event) => setFormState((current) => ({ ...current, location: event.target.value }))} />
+              </AdminField>
+              <AdminField label="العدد المطلوب">
+                <AdminInput
+                  type="number"
+                  min="1"
+                  inputMode="numeric"
+                  value={formState.positions}
+                  onChange={(event) =>
+                    setFormState((current) => ({
+                      ...current,
+                      positions: event.target.value.replace(/[^\d]/g, '') || '1',
+                    }))
+                  }
+                />
               </AdminField>
               <AdminField label="نوع الوظيفة">
                 <AdminSelect value={formState.type} onChange={(event) => setFormState((current) => ({ ...current, type: event.target.value }))}>

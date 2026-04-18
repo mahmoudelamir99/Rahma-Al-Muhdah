@@ -7,3 +7,5 @@ window.__RAHMA_FIREBASE_CONFIG__ = window.__RAHMA_FIREBASE_CONFIG__ || {
   appId: '1:915215545786:web:799e7fa51cac0311699983',
   measurementId: '',
 };
+
+window.__RAHMA_ADMIN_BASE_URL__ = window.__RAHMA_ADMIN_BASE_URL__ || '/admin-dashboard/';

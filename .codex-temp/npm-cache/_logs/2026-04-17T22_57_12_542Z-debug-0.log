@@ -1,0 +1,42 @@
+0 verbose cli C:\Program Files\nodejs\node.exe k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.2
+2 info using node@v24.13.0
+3 silly config load:file:k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\npmrc
+4 silly config load:file:K:\التعديلات الجديدة\Rahma Al Muhdah\next-public-site\.npmrc
+5 silly config load:file:C:\Users\accma\.npmrc
+6 silly config load:file:C:\Users\accma\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install
+8 verbose argv "install" "--ignore-scripts" "--legacy-peer-deps"
+9 verbose logfile logs-max:10 dir:k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_logs\2026-04-17T22_57_12_542Z-
+10 verbose logfile k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_logs\2026-04-17T22_57_12_542Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:2348810240 maxSize:587202560 maxEntrySize:293601280
+13 silly idealTree buildDeps
+14 silly fetch manifest @emnapi/runtime@^1.7.0
+15 silly packumentCache full:https://registry.npmjs.org/@emnapi%2fruntime cache-miss
+16 http cache https://registry.npmjs.org/@emnapi%2fruntime 601ms (cache hit)
+17 silly packumentCache full:https://registry.npmjs.org/@emnapi%2fruntime set size:108129 disposed:false
+18 silly placeDep ROOT @emnapi/runtime@1.10.0 OK for: @img/sharp-wasm32@0.34.5 want: ^1.7.0
+19 verbose stack TypeError: Invalid Version: 
+19 verbose stack     at new SemVer (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\semver\classes\semver.js:38:13)
+19 verbose stack     at compare (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\semver\functions\compare.js:3:32)
+19 verbose stack     at Object.gte (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\semver\functions\gte.js:2:30)
+19 verbose stack     at Node.canDedupe (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\node.js:1081:32)
+19 verbose stack     at PlaceDep.pruneDedupable (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:426:14)
+19 verbose stack     at new PlaceDep (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:278:14)
+19 verbose stack     at #buildDepStep (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:920:18)
+19 verbose stack     at async Arborist.buildIdealTree (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:181:7)
+19 verbose stack     at async Promise.all (index 1)
+19 verbose stack     at async Arborist.reify (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\reify.js:131:5)
+20 error Invalid Version: 
+21 silly unfinished npm timer reify 1776466633905
+22 silly unfinished npm timer reify:loadTrees 1776466633907
+23 silly unfinished npm timer idealTree:buildDeps 1776466635083
+24 silly unfinished npm timer idealTree:node_modules/@img/sharp-wasm32 1776466635085
+25 verbose cwd K:\التعديلات الجديدة\Rahma Al Muhdah\next-public-site
+26 verbose os Windows_NT 10.0.26100
+27 verbose node v24.13.0
+28 verbose npm  v10.9.2
+29 verbose exit 1
+30 verbose code 1
+31 error A complete log of this run can be found in: k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_logs\2026-04-17T22_57_12_542Z-debug-0.log

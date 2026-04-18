@@ -20,7 +20,7 @@ import {
 import { requestRemoteCandidateAuthPurge } from './candidate-remote-auth';
 import { requestRemoteCompanyAuthPurge } from './company-remote-auth';
 import { getFirebaseServices, hasFirebaseConfig } from './firebase';
-import { trySyncSupabaseAuthFromAdminCredentials, signOutSupabaseAuxAuth } from './supabase';
+import { hasSupabaseConfig, trySyncSupabaseAuthFromAdminCredentials, signOutSupabaseAuxAuth } from './supabase';
 
 const STORAGE_KEYS = {
   state: 'rahmaAdminControlCenter.v1',
@@ -32,7 +32,8 @@ const STORAGE_KEYS = {
   loginAttempts: 'rahmaAdminLoginAttempts.v1',
 } as const;
 const SHARED_RUNTIME_SYNC_PATH = '/__runtime-sync__/public-runtime';
-const SHARED_RUNTIME_POLL_INTERVAL_MS = 6000;
+const SHARED_RUNTIME_POLL_INTERVAL_MS = 1500;
+const PUBLIC_RUNTIME_BROADCAST_CHANNEL = 'rahma-public-runtime';
 
 function isPrivateRuntimeSyncHost(hostname = '') {
   const normalizedHost = String(hostname || '').trim().toLowerCase();
@@ -107,6 +108,15 @@ const normalizeLooseArabic = (value: string | null | undefined) =>
     .replace(/\s*-\s*/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+const normalizeEasternArabicDigits = (value: string | null | undefined) =>
+  String(value ?? '')
+    .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 1632))
+    .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776));
+const normalizeJobPositionsValue = (value: unknown) => {
+  const normalizedDigits = normalizeEasternArabicDigits(String(value ?? '')).replace(/[^\d]/g, '');
+  const parsed = Number.parseInt(normalizedDigits, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? String(parsed) : '1';
+};
 const LEGACY_DEMO_APPLICANT_SIGNATURE_HASHES = new Set(['8f42223b', 'b54f11e7']);
 const buildApplicantSignatureHash = (values: Array<string | null | undefined>) =>
   hashLegacySeedKey(values.map((value) => normalizeLooseArabic(value)).join('||'));
@@ -270,6 +280,8 @@ export type JobRecord = {
   id: string;
   title: string;
   companyName: string;
+  companyId?: string;
+  positions: string;
   location: string;
   type: string;
   postedLabel: string;
@@ -292,6 +304,7 @@ export type JobRecord = {
 export type JobDraft = {
   title: string;
   companyName: string;
+  positions: string;
   location: string;
   type: string;
   salary: string;
@@ -325,6 +338,13 @@ export type ApplicationRecord = {
   cvFileType: string;
   jobTitle: string;
   companyName: string;
+  companyId?: string;
+  company?: {
+    id?: string;
+  } | null;
+  job?: {
+    companyId?: string;
+  } | null;
   status: 'pending' | 'review' | 'interview' | 'approved' | 'accepted' | 'rejected' | 'hired';
   rejectionReason: string;
   companyTag: string;
@@ -488,7 +508,7 @@ type AdminContextValue = {
   restoreUser: (userId: string) => void;
   updateCompanyStatus: (companyId: string, status: CompanyRecord['status']) => void;
   toggleCompanyVerified: (companyId: string) => void;
-  softDeleteCompany: (companyId: string) => void;
+  softDeleteCompany: (companyId: string) => Promise<{ ok: boolean; message: string }>;
   restoreCompany: (companyId: string) => void;
   saveCompany: (draft: CompanyDraft, companyId?: string | null) => string | null;
   updateJobStatus: (jobId: string, status: JobRecord['status']) => void;
@@ -1074,6 +1094,8 @@ function normalizeJobRecordData(job: JobRecord): JobRecord {
     ...job,
     title: String(job.title || '').trim(),
     companyName: String(job.companyName || '').trim(),
+    companyId: String(job.companyId || '').trim() || undefined,
+    positions: normalizeJobPositionsValue(job.positions),
     location: String(job.location || '').trim(),
     type: String(job.type || '').trim(),
     postedLabel: String(job.postedLabel || '').trim(),
@@ -1264,6 +1286,8 @@ function mergeJobRecords(current: JobRecord, incoming: JobRecord): JobRecord {
     id: pickPreferredText(current.id, incoming.id),
     title: pickPreferredText(current.title, incoming.title),
     companyName: pickPreferredText(current.companyName, incoming.companyName),
+    companyId: pickPreferredText(current.companyId || '', incoming.companyId || '') || undefined,
+    positions: pickPreferredText(current.positions, incoming.positions, '1'),
     location: pickPreferredText(current.location, incoming.location),
     type: pickPreferredText(current.type, incoming.type),
     postedLabel: pickPreferredText(current.postedLabel, incoming.postedLabel),
@@ -2247,6 +2271,8 @@ function buildJobs(profile: Record<string, unknown>): JobRecord[] {
         id: String(job?.id || createId('job')),
         title,
         companyName: String(job?.companyName || companyName || '').trim(),
+        companyId: String(job?.companyId || profile.companyId || profile.id || '').trim() || undefined,
+        positions: normalizeJobPositionsValue(job?.positions || job?.jobPositions),
         location: String(
           job?.location ||
             job?.city ||
@@ -2503,11 +2529,13 @@ function buildPublicRuntime(state: AdminState) {
   const cleanState = sanitizePersistedState(state);
   return {
     settings: cleanState.settings,
-    content: cleanState.content,
+    content: normalizeContentState(cleanState.content),
     jobs: cleanState.jobs.map((job) => ({
       id: job.id,
       title: job.title,
       companyName: job.companyName,
+      companyId: job.companyId,
+      positions: job.positions,
       location: job.location,
       type: job.type,
       postedLabel: job.postedLabel,
@@ -2743,6 +2771,37 @@ async function syncSharedPublicRuntimeFile(runtime: ReturnType<typeof buildPubli
   }
 }
 
+let publicRuntimeBroadcastChannel: BroadcastChannel | null = null;
+
+function getPublicRuntimeBroadcastChannel() {
+  if (typeof window === 'undefined' || typeof window.BroadcastChannel !== 'function') {
+    return null;
+  }
+
+  if (!publicRuntimeBroadcastChannel) {
+    publicRuntimeBroadcastChannel = new window.BroadcastChannel(PUBLIC_RUNTIME_BROADCAST_CHANNEL);
+  }
+
+  return publicRuntimeBroadcastChannel;
+}
+
+function broadcastPublicRuntimeUpdate(fingerprint: string) {
+  if (!fingerprint) return;
+
+  const channel = getPublicRuntimeBroadcastChannel();
+  if (!channel) return;
+
+  try {
+    channel.postMessage({
+      type: 'public-runtime-updated',
+      fingerprint,
+      timestamp: Date.now(),
+    });
+  } catch {
+    // Ignore optional same-browser broadcast failures.
+  }
+}
+
 function syncSiteApplicationStatus(
   applicationId: string,
   status: ApplicationRecord['status'],
@@ -2887,6 +2946,8 @@ function mapFirebaseJobToAdmin(entry: Record<string, unknown>): JobRecord {
     id: String(entry.id || createId('job')),
     title: String(entry.title || entry.jobTitle || '').trim(),
     companyName: String(entry.companyName || '').trim(),
+    companyId: String(entry.companyId || '').trim() || undefined,
+    positions: normalizeJobPositionsValue(entry.positions || entry.jobPositions),
     location: String(entry.location || '').trim(),
     type: String(entry.type || '').trim(),
     postedLabel: String(entry.postedLabel || 'الآن').trim() || 'الآن',
@@ -3263,6 +3324,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     };
 
     void syncSharedRuntime();
+    const broadcastChannel = getPublicRuntimeBroadcastChannel();
+    const handleBroadcastMessage = (event: MessageEvent<{ type?: string }>) => {
+      if (event?.data?.type !== 'public-runtime-updated') return;
+      void syncSharedRuntime();
+    };
+
+    broadcastChannel?.addEventListener('message', handleBroadcastMessage);
     const interval = window.setInterval(() => {
       void syncSharedRuntime();
     }, SHARED_RUNTIME_POLL_INTERVAL_MS);
@@ -3270,6 +3338,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
       window.clearInterval(interval);
+      broadcastChannel?.removeEventListener('message', handleBroadcastMessage);
     };
   }, []);
 
@@ -3278,6 +3347,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     const fingerprint = JSON.stringify(publicRuntime);
     saveJson(STORAGE_KEYS.state, state);
     saveJson(STORAGE_KEYS.publicRuntime, publicRuntime);
+    broadcastPublicRuntimeUpdate(fingerprint);
     if (hasFirebaseConfig()) {
       return;
     }
@@ -3468,6 +3538,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
               salary: job.salary,
               summary: job.summary,
               sector: job.sector,
+              positions: job.positions,
               applicationEnabled: job.applicationEnabled,
               featured: job.featured,
               status: job.status,
@@ -3580,11 +3651,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }),
       );
 
+      const normalizedContent = normalizeContentState(slice.content);
       await firestoreModule.setDoc(
         firestoreModule.doc(db, FIREBASE_SITE_CONFIG_DOC.collection, FIREBASE_SITE_CONFIG_DOC.id),
         {
           settings: slice.settings,
-          content: slice.content,
+          content: normalizedContent,
+          'content.homeHeroVideoUrl': firestoreModule.deleteField(),
           updatedAt: new Date().toISOString(),
         },
         { merge: true },
@@ -3929,9 +4002,112 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const softDeleteCompany = (companyId: string) => {
+  const softDeleteCompany: AdminContextValue['softDeleteCompany'] = async (companyId) => {
     const targetCompany = state.companies.find((company) => company.id === companyId) || null;
-    if (!targetCompany) return;
+    if (!targetCompany) {
+      return { ok: false, message: 'لم نعد نجد هذه الشركة داخل الحالة الحالية.' };
+    }
+
+    {
+      const normalizedCompanyName = normalize(targetCompany.name);
+      const normalizedCompanyId = normalize(companyId);
+      const relatedJobs = state.jobs.filter((job) => normalize(job.companyName) === normalizedCompanyName);
+      const relatedJobIds = new Set(relatedJobs.map((job) => job.id));
+      const relatedApplications = state.applications.filter(
+        (application) =>
+          normalize(application.companyName) === normalizedCompanyName ||
+          normalize(String(application.companyId || application.company?.id || application.job?.companyId || '')) === normalizedCompanyId ||
+          relatedJobs.some(
+            (job) =>
+              normalize(job.title) === normalize(application.jobTitle) &&
+              normalize(job.companyName) === normalize(application.companyName),
+          ),
+      );
+      const relatedApplicationIds = new Set(
+        relatedApplications
+          .map((application) => String(application.requestId || application.id || '').trim())
+          .filter(Boolean),
+      );
+
+      if (hasFirebaseConfig() || hasSupabaseConfig()) {
+        try {
+          const authResult = await requestRemoteCompanyAuthPurge(companyId, targetCompany.email, targetCompany.name);
+          if (!authResult.ok) {
+            writeAudit(
+              actorName,
+              'فشل حذف شركة نهائي',
+              'companies',
+              companyId,
+              `تم إيقاف حذف الشركة قبل إزالة بياناتها المحلية لأن الحذف النهائي من Firebase/Auth لم يكتمل: ${authResult.message}`,
+              'danger',
+            );
+            return { ok: false, message: authResult.message };
+          }
+        } catch (error) {
+          const failureMessage =
+            error instanceof Error && error.message.trim()
+              ? error.message.trim()
+              : 'تعذر حذف الشركة نهائيًا من Firebase/Auth الآن.';
+          writeAudit(
+            actorName,
+            'فشل حذف شركة نهائي',
+            'companies',
+            companyId,
+            `تم إيقاف حذف الشركة قبل إزالة بياناتها المحلية لأن الحذف النهائي من Firebase/Auth فشل: ${failureMessage}`,
+            'danger',
+          );
+          return { ok: false, message: failureMessage };
+        }
+      }
+
+      updateState((current) => ({
+        ...current,
+        companies: current.companies.filter((company) => company.id !== companyId),
+        users: current.users.filter((user) => {
+          const matchesCompanyRole = normalize(user.role) === 'company';
+          const matchesEmail = normalize(user.email) === normalize(targetCompany.email);
+          const matchesCompanyName = normalize(user.companyName) === normalizedCompanyName;
+          return !(matchesCompanyRole && (matchesEmail || matchesCompanyName));
+        }),
+        jobs: current.jobs.filter((job) => {
+          const matchesJobId = relatedJobIds.has(job.id);
+          const matchesCompanyName = normalize(job.companyName) === normalizedCompanyName;
+          const matchesCompanyId = normalize(String(job.companyId || '')) === normalizedCompanyId;
+          return !matchesJobId && !matchesCompanyName && !matchesCompanyId;
+        }),
+        applications: current.applications.filter((application) => {
+          const requestId = String(application.requestId || application.id || '').trim();
+          const matchesApplicationId = requestId ? relatedApplicationIds.has(requestId) : false;
+          const matchesCompanyName = normalize(application.companyName) === normalizedCompanyName;
+          const matchesCompanyId =
+            normalize(String(application.companyId || application.company?.id || application.job?.companyId || '')) ===
+            normalizedCompanyId;
+          const matchesRelatedJob = relatedJobs.some(
+            (job) =>
+              normalize(job.title) === normalize(application.jobTitle) &&
+              normalize(job.companyName) === normalize(application.companyName),
+          );
+
+          return !matchesApplicationId && !matchesCompanyName && !matchesCompanyId && !matchesRelatedJob;
+        }),
+        auditLogs: [
+          createAdminAudit(
+            actorName,
+            'حذف شركة نهائي',
+            'companies',
+            companyId,
+            'تم حذف الشركة نهائيًا مع إزالة الوظائف والطلبات المرتبطة بها ومنع أي دخول سابق للحساب.',
+            'warning',
+          ),
+          ...current.auditLogs,
+        ],
+      }));
+
+      return {
+        ok: true,
+        message: 'تم حذف الشركة نهائيًا من النظام ومنع أي دخول سابق لها.',
+      };
+    }
 
     const normalizedCompanyName = normalize(targetCompany.name);
     const relatedJobs = state.jobs.filter((job) => normalize(job.companyName) === normalizedCompanyName);
@@ -3982,6 +4158,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         const batch = firestoreModule.writeBatch(db);
 
         batch.delete(firestoreModule.doc(db, 'companies', companyId));
+        batch.delete(firestoreModule.doc(db, 'users', companyId));
 
         relatedJobs.forEach((job) => {
           batch.delete(firestoreModule.doc(db, 'jobs', job.id));
@@ -3995,31 +4172,6 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
         await batch.commit();
 
-        // Try to delete from Auth as well
-        void (async () => {
-          try {
-            const authResult = await requestRemoteCompanyAuthPurge(companyId);
-            if (!authResult.ok) {
-              writeAudit(
-                actorName,
-                'فشل حذف شركة من Auth',
-                'companies',
-                companyId,
-                `تم حذف الشركة من قاعدة البيانات لكن تعذر حذفها من Auth: ${authResult.message}`,
-                'warning',
-              );
-            }
-          } catch (error) {
-            writeAudit(
-              actorName,
-              'فشل حذف شركة من Auth',
-              'companies',
-              companyId,
-              'تم حذف الشركة من قاعدة البيانات لكن تعذر حذفها من Auth.',
-              'warning',
-            );
-          }
-        })();
       } catch {
         writeAudit(
           actorName,
@@ -4328,6 +4480,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const saveJob: AdminContextValue['saveJob'] = (draft, jobId = null) => {
     const trimmedTitle = draft.title.trim();
     const trimmedCompanyName = draft.companyName.trim();
+    const normalizedPositions = normalizeJobPositionsValue(draft.positions);
     const trimmedLocation = draft.location.trim();
     const trimmedType = draft.type.trim();
     const trimmedSalary = draft.salary.trim();
@@ -4349,6 +4502,10 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                   ...job,
                   title: trimmedTitle,
                   companyName: trimmedCompanyName,
+                  companyId:
+                    current.companies.find((company) => normalize(company.name) === normalize(trimmedCompanyName))?.id ||
+                    job.companyId,
+                  positions: normalizedPositions,
                   location: trimmedLocation,
                   type: trimmedType || job.type,
                   salary: trimmedSalary || job.salary,
@@ -4370,6 +4527,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
               id: nextJobId,
               title: trimmedTitle,
               companyName: trimmedCompanyName,
+              companyId: current.companies.find((company) => normalize(company.name) === normalize(trimmedCompanyName))?.id,
+              positions: normalizedPositions,
               location: trimmedLocation,
               type: trimmedType || 'دوام كامل',
               postedLabel: draft.postedLabel?.trim() || 'الآن',

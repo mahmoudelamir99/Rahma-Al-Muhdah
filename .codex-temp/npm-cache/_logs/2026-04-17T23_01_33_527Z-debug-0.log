@@ -1,0 +1,83 @@
+0 verbose cli C:\Program Files\nodejs\node.exe k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.2
+2 info using node@v24.13.0
+3 silly config load:file:k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\npmrc
+4 silly config load:file:K:\التعديلات الجديدة\Rahma Al Muhdah\next-public-site\.npmrc
+5 silly config load:file:C:\Users\accma\.npmrc
+6 silly config load:file:C:\Users\accma\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install
+8 verbose argv "install" "--ignore-scripts"
+9 verbose logfile logs-max:10 dir:k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_logs\2026-04-17T23_01_33_527Z-
+10 verbose logfile k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_logs\2026-04-17T23_01_33_527Z-debug-0.log
+11 silly logfile start cleaning logs, removing 1 files
+12 silly logfile done cleaning log files
+13 silly packumentCache heap:2348810240 maxSize:587202560 maxEntrySize:293601280
+14 silly idealTree buildDeps
+15 silly fetch manifest @tailwindcss/oxide-android-arm64@4.2.2
+16 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-android-arm64 cache-miss
+17 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-android-arm64 1351ms (cache miss)
+18 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-android-arm64 set size:undefined disposed:false
+19 silly fetch manifest @tailwindcss/oxide-darwin-arm64@4.2.2
+20 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-darwin-arm64 cache-miss
+21 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-darwin-arm64 710ms (cache miss)
+22 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-darwin-arm64 set size:undefined disposed:false
+23 silly fetch manifest @tailwindcss/oxide-darwin-x64@4.2.2
+24 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-darwin-x64 cache-miss
+25 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-darwin-x64 751ms (cache miss)
+26 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-darwin-x64 set size:undefined disposed:false
+27 silly fetch manifest @tailwindcss/oxide-freebsd-x64@4.2.2
+28 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-freebsd-x64 cache-miss
+29 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-freebsd-x64 477ms (cache miss)
+30 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-freebsd-x64 set size:undefined disposed:false
+31 silly fetch manifest @tailwindcss/oxide-linux-arm-gnueabihf@4.2.2
+32 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-arm-gnueabihf cache-miss
+33 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-linux-arm-gnueabihf 775ms (cache miss)
+34 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-arm-gnueabihf set size:undefined disposed:false
+35 silly fetch manifest @tailwindcss/oxide-linux-arm64-gnu@4.2.2
+36 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-arm64-gnu cache-miss
+37 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-linux-arm64-gnu 471ms (cache miss)
+38 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-arm64-gnu set size:undefined disposed:false
+39 silly fetch manifest @tailwindcss/oxide-linux-arm64-musl@4.2.2
+40 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-arm64-musl cache-miss
+41 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-linux-arm64-musl 533ms (cache miss)
+42 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-arm64-musl set size:undefined disposed:false
+43 silly fetch manifest @tailwindcss/oxide-linux-x64-gnu@4.2.2
+44 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-x64-gnu cache-miss
+45 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-linux-x64-gnu 481ms (cache miss)
+46 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-x64-gnu set size:undefined disposed:false
+47 silly fetch manifest @tailwindcss/oxide-linux-x64-musl@4.2.2
+48 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-x64-musl cache-miss
+49 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-linux-x64-musl 517ms (cache miss)
+50 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-linux-x64-musl set size:undefined disposed:false
+51 silly fetch manifest @tailwindcss/oxide-wasm32-wasi@4.2.2
+52 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-wasm32-wasi cache-miss
+53 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-wasm32-wasi 512ms (cache miss)
+54 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-wasm32-wasi set size:undefined disposed:false
+55 silly fetch manifest @tailwindcss/oxide-win32-arm64-msvc@4.2.2
+56 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-win32-arm64-msvc cache-miss
+57 http fetch GET 200 https://registry.npmjs.org/@tailwindcss%2foxide-win32-arm64-msvc 596ms (cache miss)
+58 silly packumentCache full:https://registry.npmjs.org/@tailwindcss%2foxide-win32-arm64-msvc set size:undefined disposed:false
+59 silly placeDep ROOT @tailwindcss/oxide-android-arm64@4.2.2 OK for: @tailwindcss/oxide@4.2.2 want: 4.2.2
+60 verbose stack TypeError: Invalid Version: 
+60 verbose stack     at new SemVer (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\semver\classes\semver.js:38:13)
+60 verbose stack     at compare (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\semver\functions\compare.js:3:32)
+60 verbose stack     at Object.gte (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\semver\functions\gte.js:2:30)
+60 verbose stack     at Node.canDedupe (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\node.js:1081:32)
+60 verbose stack     at PlaceDep.pruneDedupable (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:426:14)
+60 verbose stack     at new PlaceDep (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\place-dep.js:278:14)
+60 verbose stack     at #buildDepStep (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:920:18)
+60 verbose stack     at async Arborist.buildIdealTree (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\build-ideal-tree.js:181:7)
+60 verbose stack     at async Promise.all (index 1)
+60 verbose stack     at async Arborist.reify (k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_npx\753985bec210f4c7\node_modules\npm\node_modules\@npmcli\arborist\lib\arborist\reify.js:131:5)
+61 error Invalid Version: 
+62 silly unfinished npm timer reify 1776466894945
+63 silly unfinished npm timer reify:loadTrees 1776466894946
+64 silly unfinished npm timer idealTree:buildDeps 1776466896356
+65 silly unfinished npm timer idealTree:node_modules/@tailwindcss/oxide 1776466896358
+66 verbose cwd K:\التعديلات الجديدة\Rahma Al Muhdah\next-public-site
+67 verbose os Windows_NT 10.0.26100
+68 verbose node v24.13.0
+69 verbose npm  v10.9.2
+70 verbose exit 1
+71 verbose code 1
+72 error A complete log of this run can be found in: k:\التعديلات الجديدة\Rahma Al Muhdah\.codex-temp\npm-cache\_logs\2026-04-17T23_01_33_527Z-debug-0.log
