@@ -838,6 +838,17 @@
 
   const safeReadSessionJSON = (key, fallback) => {
     try {
+      // Try to read from cookie first (for cross-origin/port sharing)
+      const cookieValue = readCookie(key);
+      if (cookieValue) {
+        try {
+          const parsed = JSON.parse(cookieValue);
+          return parsed;
+        } catch {
+          // Fall through to localStorage/sessionStorage
+        }
+      }
+      
       return readStoredSession(window.sessionStorage, key) ?? readStoredSession(window.localStorage, key) ?? fallback;
     } catch (error) {
       console.warn(`Unable to read session ${key}`, error);
@@ -853,8 +864,44 @@
       const secondaryStorage = rememberSession ? window.sessionStorage : window.localStorage;
       primaryStorage.setItem(key, JSON.stringify(repairedValue));
       secondaryStorage.removeItem(key);
+      
+      // Only persist session payload to cookie, not large profile or runtime data.
+      if (key === STORAGE_KEYS.session) {
+        try {
+          const payload = JSON.stringify(repairedValue);
+          const maxAge = rememberSession ? SESSION_TTL_MS / 1000 : undefined;
+          let cookieString = `${key}=${encodeURIComponent(payload)}; path=/; SameSite=Lax`;
+          if (typeof maxAge === 'number') {
+            cookieString += `; max-age=${maxAge}`;
+          }
+          if (window.location.hostname && window.location.hostname !== 'localhost') {
+            cookieString += `; domain=${window.location.hostname}`;
+          }
+          document.cookie = cookieString;
+        } catch (cookieError) {
+          console.warn(`Unable to save session to cookie ${key}`, cookieError);
+        }
+      }
     } catch (error) {
       console.warn(`Unable to save session ${key}`, error);
+    }
+  };
+
+  const readCookie = (name) => {
+    try {
+      const cookies = document.cookie.split(';');
+      for (const cookie of cookies) {
+        const separatorIndex = cookie.indexOf('=');
+        if (separatorIndex < 0) continue;
+        const cookieName = cookie.slice(0, separatorIndex).trim();
+        const cookieValue = cookie.slice(separatorIndex + 1);
+        if (cookieName === name) {
+          return decodeURIComponent(cookieValue || '');
+        }
+      }
+      return null;
+    } catch {
+      return null;
     }
   };
 
@@ -898,6 +945,17 @@
   const clearSession = () => {
     window.sessionStorage.removeItem(STORAGE_KEYS.session);
     window.localStorage.removeItem(STORAGE_KEYS.session);
+    
+    // Also clear from cookie
+    try {
+      let cookieString = `${STORAGE_KEYS.session}=; path=/; max-age=0`;
+      if (window.location.hostname && window.location.hostname !== 'localhost') {
+        cookieString += `; domain=${window.location.hostname}`;
+      }
+      document.cookie = cookieString;
+    } catch (error) {
+      console.warn('Unable to clear session cookie', error);
+    }
   };
   const saveCompanyDashboardFeedback = (payload = null) => {
     if (!payload?.selector || !payload?.message) return;
@@ -1093,7 +1151,21 @@
   })();
   const hasFirebaseSiteConfig = () =>
     Boolean(firebaseSiteConfig.apiKey && firebaseSiteConfig.authDomain && firebaseSiteConfig.projectId && firebaseSiteConfig.appId);
+  const SUPABASE_SITE_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/module';
+  const SUPABASE_DEFAULT_STORAGE_BUCKET = 'company-assets';
+  const supabaseSiteConfig = (() => {
+    const rawConfig = window.__RAHMA_SUPABASE_CONFIG__ || {};
+    return {
+      url: String(rawConfig.url || '').trim(),
+      anonKey: String(rawConfig.anonKey || '').trim(),
+      storageBucket: String(rawConfig.storageBucket || SUPABASE_DEFAULT_STORAGE_BUCKET).trim(),
+      siteBaseUrl: String(rawConfig.siteBaseUrl || '').trim(),
+      adminBaseUrl: String(rawConfig.adminBaseUrl || '').trim(),
+    };
+  })();
+  const hasSupabaseSiteConfig = () => Boolean(supabaseSiteConfig.url && supabaseSiteConfig.anonKey);
   let firebaseSiteServicesPromise = null;
+  let supabaseSiteServicesPromise = null;
   const firebaseRuntimeCache = {
     companies: [],
     jobs: [],
@@ -2081,11 +2153,57 @@
       return '';
     }
   };
-  const buildFirebaseRuntimeDocument = (runtime = {}) => ({
-    settings: runtime?.settings && typeof runtime.settings === 'object' ? runtime.settings : {},
-    content: runtime?.content && typeof runtime.content === 'object' ? runtime.content : {},
-    updatedAt: new Date().toISOString(),
-  });
+
+  const getSupabaseSiteServices = async () => {
+    if (!hasSupabaseSiteConfig()) return null;
+    if (!supabaseSiteServicesPromise) {
+      supabaseSiteServicesPromise = (async () => {
+        try {
+          const module = await import(`${SUPABASE_SITE_CDN_BASE}/index.js`);
+          const { createClient } = module;
+          const client = createClient(supabaseSiteConfig.url, supabaseSiteConfig.anonKey);
+          return { client };
+        } catch (error) {
+          console.warn('Unable to bootstrap Supabase on public site', error);
+          supabaseSiteServicesPromise = null;
+          return null;
+        }
+      })();
+    }
+    return supabaseSiteServicesPromise;
+  };
+
+  const uploadCompanyAssetToSupabase = async (file, session = null, kind = 'asset') => {
+    if (!file || !session?.companyId || !hasSupabaseSiteConfig()) {
+      return '';
+    }
+
+    const services = await getSupabaseSiteServices();
+    if (!services) return '';
+
+    try {
+      const { client } = services;
+      const safeFileName = String(file.name || `${kind}.bin`).replace(/[^\w.-]+/g, '-');
+      const filePath = `companies/${session.companyId}/${kind}-${Date.now()}-${safeFileName}`;
+      const { error } = await client.storage.from(supabaseSiteConfig.storageBucket).upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true,
+        contentType: file.type || undefined,
+      });
+
+      if (error) {
+        console.warn('Unable to upload company asset to Supabase Storage', error);
+        return '';
+      }
+
+      const { data } = client.storage.from(supabaseSiteConfig.storageBucket).getPublicUrl(filePath);
+      return data?.publicUrl || '';
+    } catch (error) {
+      console.warn('Unable to upload company asset to Supabase Storage', error);
+      return '';
+    }
+  };
+
   const syncRuntimeDocumentToFirebase = async (runtime = {}) => {
     if (!hasFirebaseSiteConfig()) return false;
     const services = await getFirebaseSiteServices();
@@ -5778,6 +5896,8 @@
       const companyCoverUrl = profile?.companyCoverUrl || profile?.companyProfile?.companyCoverUrl || '';
       let pendingCompanyLogoAsset = null;
       let pendingCompanyCoverAsset = null;
+      let pendingCompanyLogoFile = null;
+      let pendingCompanyCoverFile = null;
       const setProfileFeedback = (message, tone = 'info') => {
         feedbackBox.className = 'application-status';
         feedbackBox.classList.add(`application-status--${tone}`);
@@ -5802,7 +5922,20 @@
         return {
           url: await buildCompanyAssetDataUrl(file, kind),
           meta: buildSelectedAssetMeta(file),
+          file,
         };
+      };
+      const uploadCompanyAssetIfAvailable = async (file, kind, fallbackUrl) => {
+        if (!file) return fallbackUrl;
+        if (hasSupabaseSiteConfig() && activeSession?.companyId) {
+          const uploadedUrl = await uploadCompanyAssetToSupabase(file, activeSession, kind);
+          if (uploadedUrl) return uploadedUrl;
+        }
+        if (hasFirebaseSiteConfig() && activeSession?.companyId) {
+          const uploadedUrl = await uploadCompanyAssetToFirebase(file, activeSession, kind);
+          if (uploadedUrl) return uploadedUrl;
+        }
+        return fallbackUrl;
       };
 
       const fillField = (field, value) => {
@@ -5884,6 +6017,7 @@
           const file = event.target?.files?.[0] || null;
           if (!file) {
             pendingCompanyLogoAsset = null;
+            pendingCompanyLogoFile = null;
             return;
           }
 
@@ -5891,6 +6025,7 @@
             setProfileFeedback('جارٍ تجهيز شعار الشركة...', 'info');
             const nextAsset = await prepareSelectedImage(file, 'شعار الشركة', 'logo');
             pendingCompanyLogoAsset = nextAsset;
+            pendingCompanyLogoFile = file;
             if (nextAsset?.url) {
               setImageSource(
                 '[data-company-profile-logo-preview]',
@@ -5908,6 +6043,7 @@
             setProfileFeedback('تم تجهيز شعار الشركة وسيتم حفظه عند الضغط على زر حفظ بيانات الشركة.', 'success');
           } catch (error) {
             pendingCompanyLogoAsset = null;
+            pendingCompanyLogoFile = null;
             logoField.value = '';
             setProfileFeedback(error?.message || 'تعذر تجهيز شعار الشركة الآن.', 'error');
           }
@@ -5920,6 +6056,7 @@
           const file = event.target?.files?.[0] || null;
           if (!file) {
             pendingCompanyCoverAsset = null;
+            pendingCompanyCoverFile = null;
             return;
           }
 
@@ -5927,6 +6064,7 @@
             setProfileFeedback('جارٍ تجهيز صورة الغلاف...', 'info');
             const nextAsset = await prepareSelectedImage(file, 'صورة الغلاف', 'cover');
             pendingCompanyCoverAsset = nextAsset;
+            pendingCompanyCoverFile = file;
             if (nextAsset?.url) {
               setImageSource(
                 '[data-company-profile-cover-preview]',
@@ -5938,6 +6076,7 @@
             setProfileFeedback('تم تجهيز صورة الغلاف وسيتم حفظها عند الضغط على زر حفظ بيانات الشركة.', 'success');
           } catch (error) {
             pendingCompanyCoverAsset = null;
+            pendingCompanyCoverFile = null;
             coverField.value = '';
             setProfileFeedback(error?.message || 'تعذر تجهيز صورة الغلاف الآن.', 'error');
           }
@@ -6123,14 +6262,29 @@
 
         try {
           setDashboardButtonPending(submitButton, true, 'جارٍ حفظ بيانات الشركة...');
+
           if (selectedLogo && !pendingCompanyLogoAsset?.url) {
             nextCompanyLogoUrl = await readSelectedImage(selectedLogo, 'شعار الشركة', 'logo');
             nextCompanyLogoMeta = buildSelectedAssetMeta(selectedLogo);
           }
-
           if (selectedCover && !pendingCompanyCoverAsset?.url) {
             nextCompanyCoverUrl = await readSelectedImage(selectedCover, 'صورة الغلاف', 'cover');
             nextCompanyCoverMeta = buildSelectedAssetMeta(selectedCover);
+          }
+
+          if (activeSession?.companyId) {
+            if (pendingCompanyLogoFile) {
+              const uploadedLogoUrl = await uploadCompanyAssetIfAvailable(pendingCompanyLogoFile, 'logo', nextCompanyLogoUrl);
+              if (uploadedLogoUrl) {
+                nextCompanyLogoUrl = uploadedLogoUrl;
+              }
+            }
+            if (pendingCompanyCoverFile) {
+              const uploadedCoverUrl = await uploadCompanyAssetIfAvailable(pendingCompanyCoverFile, 'cover', nextCompanyCoverUrl);
+              if (uploadedCoverUrl) {
+                nextCompanyCoverUrl = uploadedCoverUrl;
+              }
+            }
           }
         } catch (error) {
           setDashboardButtonPending(submitButton, false);
@@ -6223,6 +6377,8 @@
         if (coverField) coverField.value = '';
         pendingCompanyLogoAsset = null;
         pendingCompanyCoverAsset = null;
+        pendingCompanyLogoFile = null;
+        pendingCompanyCoverFile = null;
         const successMessage = 'تم حفظ بيانات الشركة والصور بنجاح.';
         setProfileFeedback(successMessage, 'success');
         showToast('تم تحديث ملف الشركة بنجاح.');
@@ -6512,8 +6668,10 @@
     };
 
     const getVisibleCompanyApplications = () => {
+      const selectedStatusValue =
+        statusFilterControl instanceof HTMLSelectElement ? String(statusFilterControl.value || 'all').trim() : 'all';
       const selectedStatus =
-        statusFilterControl instanceof HTMLSelectElement ? normalizeApplicationStatus(statusFilterControl.value || 'all') : 'all';
+        selectedStatusValue === 'all' ? 'all' : normalizeApplicationStatus(selectedStatusValue);
       const selectedJob =
         jobFilterControl instanceof HTMLSelectElement ? String(jobFilterControl.value || 'all').trim() : 'all';
       const selectedTag =

@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import {
   BarChart3,
   BriefcaseBusiness,
@@ -11,7 +12,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   Tooltip,
   XAxis,
   YAxis,
@@ -30,11 +30,12 @@ import {
   formatNumber,
   getActivityFeed,
   getApplicationStatusSeries,
-  getCompaniesStatusSeries,
   getRealRecordCounts,
+  getSectorsSeries,
   getTopCompanies,
   getTopJobs,
   getTrendsSeries,
+  getApplicationTrendsDetailed,
 } from '../lib/admin-dashboard';
 import { useAdmin } from '../lib/admin-store';
 
@@ -48,12 +49,13 @@ export default function Reports() {
   }, [refreshFromSite]);
 
   const statusSeries = useMemo(() => getApplicationStatusSeries(state), [state]);
-  const companiesSeries = useMemo(() => getCompaniesStatusSeries(state), [state]);
   const activityFeed = useMemo(() => getActivityFeed(state), [state]);
   const topCompanies = useMemo(() => getTopCompanies(state), [state]);
   const topJobs = useMemo(() => getTopJobs(state), [state]);
   const trends = useMemo(() => getTrendsSeries(state), [state]);
   const realCounts = useMemo(() => getRealRecordCounts(state), [state]);
+  const sectorsSeries = useMemo(() => getSectorsSeries(state), [state]);
+  const detailedTrends = useMemo(() => getApplicationTrendsDetailed(state), [state]);
 
   return (
     <>
@@ -76,67 +78,74 @@ export default function Reports() {
       />
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <AdminStatCard label="كل الشركات" value={formatNumber(realCounts.companies)} helper="إجمالي السجلات الحقيقية الحالية" icon={Building2} tone="secondary" />
-        <AdminStatCard label="كل الوظائف" value={formatNumber(realCounts.jobs)} helper="وظائف مرتبطة بشركات حقيقية وغير محذوفة" icon={BriefcaseBusiness} tone="primary" />
-        <AdminStatCard label="كل الطلبات" value={formatNumber(realCounts.applications)} helper="طلبات حقيقية مرتبطة ببيانات صالحة للعرض" icon={BarChart3} tone="accent" />
+        <AdminStatCard label="كل الشركات" value={formatNumber(realCounts.companies)} helper="إجمالي السجلات الحقيقية" icon={Building2} tone="secondary" />
+        <AdminStatCard label="كل الوظائف" value={formatNumber(realCounts.jobs)} helper="وظائف نشطة لشركات حقيقية" icon={BriefcaseBusiness} tone="primary" />
+        <AdminStatCard label="كل الطلبات" value={formatNumber(realCounts.applications)} helper="إجمالي التقديمات الصالحة" icon={BarChart3} tone="accent" />
         <AdminStatCard label="سجل التدقيق" value={formatNumber(state.auditLogs.length)} helper="آخر عمليات الإدارة" icon={ShieldCheck} tone="success" />
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <AdminPanel title="توزيع حالات الطلبات" description="الأعداد الحالية حسب نتيجة أو مرحلة كل طلب.">
-          {statusSeries.some((item) => item.value > 0) ? (
-            <AdminResponsiveChart className="h-[320px]">
-              {({ width, height }) => (
-                <BarChart width={width} height={height} data={statusSeries} margin={{ top: 10, right: 8, left: 8, bottom: 0 }}>
-                  <CartesianGrid vertical={false} stroke="rgba(24,37,63,0.08)" />
-                  <XAxis dataKey="label" tickLine={false} axisLine={false} tick={{ fill: '#73849a', fontSize: 12 }} />
-                  <YAxis tickLine={false} axisLine={false} tick={{ fill: '#73849a', fontSize: 12 }} />
-                  <Tooltip formatter={(value: number) => formatNumber(value)} />
-                  <Bar dataKey="value" radius={[12, 12, 0, 0]}>
-                    {statusSeries.map((entry) => (
-                      <Cell key={entry.key} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              )}
-            </AdminResponsiveChart>
-          ) : (
-            <AdminEmptyState title="لا توجد طلبات بعد" description="عند وصول طلبات فعلية سيظهر التقرير هنا تلقائيًا." />
-          )}
-        </AdminPanel>
-
-        <AdminPanel title="توزيع حالات الشركات" description="صورة مباشرة لوضع الشركات داخل النظام.">
-          {companiesSeries.some((item) => item.value > 0) ? (
-            <div className="space-y-3">
-              {companiesSeries.map((item) => (
-                <div key={item.key} className="rounded-[1.35rem] bg-[#f8fafc] px-4 py-4">
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <div className="text-sm font-black text-[#11213d]">{item.label}</div>
-                    <AdminBadge tone="info">{formatNumber(item.value)}</AdminBadge>
+      <section className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+        <AdminPanel title="توزيع القطاعات" description="توزيع الشركات حسب النشاط الاقتصادي.">
+          {sectorsSeries.length > 0 ? (
+            <div className="space-y-4">
+              {sectorsSeries.slice(0, 5).map((item) => (
+                <div key={item.key} className="relative">
+                  <div className="mb-2 flex items-center justify-between text-xs font-bold">
+                    <span className="text-[#11213d]">{item.label}</span>
+                    <span className="text-[#73849c]">{item.value} شركة</span>
                   </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-white">
-                    <div
+                  <div className="h-2 overflow-hidden rounded-full bg-[#f1f5f9]">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(item.value / sectorsSeries[0].value) * 100}%` }}
+                      transition={{ duration: 1, ease: 'easeOut' }}
                       className="h-full rounded-full"
-                      style={{
-                        width: `${Math.max(6, (item.value / Math.max(1, ...companiesSeries.map((entry) => entry.value))) * 100)}%`,
-                        backgroundColor: item.color,
-                      }}
+                      style={{ backgroundColor: item.color }}
                     />
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <AdminEmptyState title="لا توجد شركات بعد" description="أضف شركات أو فعّل بياناتها لتظهر الرسوم هنا." />
+            <AdminEmptyState title="لا توجد قطاعات" description="أضف تصنيفات للشركات لتظهر هنا." />
           )}
+        </AdminPanel>
+
+        <AdminPanel title="توزيع حالات الطلبات" description="الأعداد الحالية حسب نتيجة كل طلب.">
+          <div className="space-y-4">
+            {statusSeries.map((item) => (
+              <div key={item.key} className="flex items-center gap-4">
+                <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                <div className="flex-1 text-sm font-bold text-[#11213d]">{item.label}</div>
+                <div className="text-sm font-black text-[#64748b]">{formatNumber(item.value)}</div>
+              </div>
+            ))}
+          </div>
         </AdminPanel>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <AdminPanel title="الشركات الأعلى نشاطًا" description="مرتبة بعدد الوظائف المفتوحة حاليًا.">
+      <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+        <AdminPanel title="اتجاهات التقديم اليومية" description="معدل الطلبات خلال الـ 7 أيام الماضية.">
+          <AdminResponsiveChart className="h-[300px]">
+            {({ width, height }) => (
+              <BarChart width={width} height={height} data={detailedTrends} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid vertical={false} stroke="rgba(24,37,63,0.05)" />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: '#73849a', fontSize: 11 }} />
+                <YAxis tickLine={false} axisLine={false} tick={{ fill: '#73849a', fontSize: 11 }} />
+                <Tooltip
+                  cursor={{ fill: 'rgba(24,37,63,0.02)' }}
+                  contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}
+                />
+                <Bar dataKey="value" fill="#005dac" radius={[6, 6, 0, 0]} barSize={32} />
+              </BarChart>
+            )}
+          </AdminResponsiveChart>
+        </AdminPanel>
+
+        <AdminPanel title="أعلى الشركات نشاطًا" description="الشركات الأكثر نشراً للوظائف.">
           {topCompanies.length ? (
             <div className="space-y-3">
-              {topCompanies.map((company) => (
+              {topCompanies.slice(0, 4).map((company) => (
                 <div key={company.id} className="rounded-[1.35rem] bg-[#f8fafc] px-4 py-4">
                   <div className="flex items-center justify-between gap-3">
                     <div>
@@ -149,33 +158,13 @@ export default function Reports() {
               ))}
             </div>
           ) : (
-            <AdminEmptyState title="لا توجد بيانات كافية" description="ستظهر أفضل الشركات هنا بمجرد وجود نشاط فعلي." />
-          )}
-        </AdminPanel>
-
-        <AdminPanel title="الوظائف الأعلى استقبالًا" description="أعلى الوظائف حسب عدد المتقدمين الحالي.">
-          {topJobs.length ? (
-            <div className="space-y-3">
-              {topJobs.map((job) => (
-                <div key={job.id} className="rounded-[1.35rem] bg-[#f8fafc] px-4 py-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-black text-[#11213d]">{cleanAdminText(job.title)}</div>
-                      <div className="mt-1 truncate text-xs text-[#73849a]">{cleanAdminText(job.companyName)} · {cleanAdminText(job.location)}</div>
-                    </div>
-                    <AdminBadge tone="info">{formatNumber(job.applicantsCount)} متقدم</AdminBadge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <AdminEmptyState title="لا توجد وظائف نشطة" description="عند نشر وظائف فعلية ستظهر هنا الأعلى تفاعلًا." />
+            <AdminEmptyState title="لا توجد بيانات" description="ستظهر أفضل الشركات هنا بمجرد وجود نشاط فعلي." />
           )}
         </AdminPanel>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <AdminPanel title="نشاط الأشهر الأخيرة" description="ملخص سريع لحركة الوظائف والتقديمات عبر آخر 6 أشهر.">
+        <AdminPanel title="اتجاهات عامة" description="ملخص سريع لحركة الوظائف والتقديمات.">
           {trends.some((item) => item.jobs || item.applications) ? (
             <div className="grid gap-4 md:grid-cols-2">
               {trends.map((item) => (
@@ -189,7 +178,7 @@ export default function Reports() {
               ))}
             </div>
           ) : (
-            <AdminEmptyState title="لا توجد حركة زمنية بعد" description="سيظهر هذا التقرير عندما تتوفر تواريخ نشر وتقديم فعلية." />
+            <AdminEmptyState title="لا توجد حركة" description="سيظهر هذا التقرير عند توفر بيانات كافية." />
           )}
         </AdminPanel>
 
@@ -204,7 +193,7 @@ export default function Reports() {
               ))}
             </div>
           ) : (
-            <AdminEmptyState title="سجل النشاط فارغ" description="عند تنفيذ عمليات حقيقية من اللوحة سيظهر السجل هنا." />
+            <AdminEmptyState title="سجل النشاط فارغ" description="عند تنفيذ عمليات من اللوحة سيظهر السجل هنا." />
           )}
         </AdminPanel>
       </section>

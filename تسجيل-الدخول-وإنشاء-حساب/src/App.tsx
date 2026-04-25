@@ -4,14 +4,15 @@ import ForgotPassword from './components/ForgotPassword';
 import Login from './components/Login';
 import Register from './components/Register';
 import ResetPassword from './components/ResetPassword';
+import CheckEmail from './components/CheckEmail';
 import { bootstrapCompanySession, hasCompanyPasswordRecoveryPending } from './lib/company-auth';
 import { buildSiteUrl, sanitizeRedirectTarget } from './lib/navigation';
 
-type PortalView = 'login' | 'register' | 'forgot-password' | 'reset-password';
+type PortalView = 'login' | 'register' | 'forgot-password' | 'reset-password' | 'check-email';
 
 function getInitialView(searchParams: URLSearchParams): PortalView {
   const view = searchParams.get('view');
-  if (view === 'register' || view === 'forgot-password' || view === 'reset-password') {
+  if (view === 'register' || view === 'forgot-password' || view === 'reset-password' || view === 'check-email') {
     return view;
   }
 
@@ -46,7 +47,7 @@ export default function App() {
   }, [currentPage]);
 
   useEffect(() => {
-    if (currentPage === 'forgot-password' || currentPage === 'reset-password') {
+    if (currentPage === 'forgot-password' || currentPage === 'reset-password' || currentPage === 'check-email') {
       setBootstrapped(true);
       return;
     }
@@ -93,6 +94,10 @@ export default function App() {
 
   if (currentPage === 'reset-password') {
     return <ResetPassword onNavigate={setCurrentPage} />;
+  }
+
+  if (currentPage === 'check-email') {
+    return <CheckEmail onNavigate={setCurrentPage} redirectTo={redirectTarget} />;
   }
 
   return <Register onNavigate={setCurrentPage} redirectTo={redirectTarget} />;

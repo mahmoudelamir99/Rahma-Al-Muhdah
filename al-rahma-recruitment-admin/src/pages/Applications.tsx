@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -80,7 +80,7 @@ const ADMIN_TAG_LABELS: Record<string, string> = {
 };
 
 const SHORTLIST_OPTIONS = [
-  { value: 'all', label: 'كل المرشحين' },
+  { value: 'all', label: 'كل المتقدمين' },
   { value: 'shortlisted', label: 'القائمة المختصرة' },
   { value: 'regular', label: 'غير مختصرين' },
 ] as const;
@@ -437,7 +437,7 @@ export default function Applications() {
       adminRating: Number(adminRatingDraft || 0),
       shortlisted: shortlistedDraft,
     });
-    setFeedback({ tone: 'success', text: 'تم حفظ متابعة الأدمن على المرشح.' });
+    setFeedback({ tone: 'success', text: 'تم حفظ متابعة الأدمن على المتقدم.' });
   };
 
   const submitNote = () => {
@@ -520,9 +520,9 @@ export default function Applications() {
       </AnimatePresence>
 
       <AdminPageHeader
-        eyebrow="المرشحون"
+        eyebrow="الطلبات"
         title="إدارة طلبات التوظيف بخط سير أوضح"
-        description="فلترة سريعة، تقييم داخلي، قائمة مختصرة، وكشف تكرار مع ربط مباشر بما تسجله الشركة والأدمن على كل مرشح."
+        description="فلترة سريعة، تقييم داخلي، قائمة مختصرة، وكشف تكرار مع ربط مباشر بما تسجله الشركة والأدمن على كل طلب."
         actions={
           <>
             <AdminButton variant="secondary" onClick={refreshFromSite}>
@@ -779,7 +779,7 @@ export default function Applications() {
         )}
       </AdminDataShell>
 
-      <AdminDrawer open={Boolean(selectedApplication)} onClose={closeDrawer} title="ملف المتقدم" description="بيانات الطلب، مسار الحالة، وملاحظات الإدارة في مكان واحد.">
+      <AdminDrawer open={Boolean(selectedApplication)} onClose={closeDrawer} title="تفاصيل طلب التوظيف" description="بيانات المتقدم، مسار الحالة، والملاحظات الإدارة في مكان واحد.">
         {selectedApplication ? (
           <div className="space-y-5">
             <div className="space-y-2 text-right">
@@ -800,7 +800,7 @@ export default function Applications() {
                   تم اكتشاف تكرار محتمل
                 </div>
                 <p>
-                  هذا المرشح مكرر بعدد <strong>{selectedDuplicateMeta.count}</strong> سجلات بناءً على{' '}
+                  هذا المتقدم مكرر بعدد <strong>{selectedDuplicateMeta.count}</strong> سجلات بناءً على{' '}
                   {selectedDuplicateMeta.reasons.join(' و')}.
                 </p>
               </section>
@@ -814,6 +814,7 @@ export default function Applications() {
                 ['البريد الإلكتروني', selectedApplication.applicantEmail || 'غير متاح'],
                 ['المدينة', selectedApplication.city || 'غير محدد'],
                 ['العنوان', selectedApplication.address || 'غير محدد'],
+                ['الرقم القومي', selectedApplication.nationalId || 'غير محدد'],
                 ['سنوات الخبرة', selectedApplication.experienceYears || selectedApplication.experience || 'غير محدد'],
                 ['الراتب المتوقع', selectedApplication.expectedSalary || 'غير محدد'],
                 ['المؤهل', selectedApplication.educationLevel || 'غير محدد'],
@@ -832,7 +833,7 @@ export default function Applications() {
               <section className="rounded-[1.2rem] border border-[rgba(24,37,63,0.08)] bg-white p-4">
                 <div className="mb-3">
                   <h3 className="text-sm font-black text-[#10213d]">متابعة الشركة</h3>
-                  <p className="mt-1 text-xs leading-6 text-[#718399]">آخر تجهيز أو تصنيف وضعته الشركة على هذا المرشح.</p>
+                  <p className="mt-1 text-xs leading-6 text-[#718399]">آخر تجهيز أو تصنيف وضعته الشركة على هذا الطلب.</p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-[1.1rem] bg-[#f5f8fc] px-4 py-3">
@@ -894,6 +895,39 @@ export default function Applications() {
                   />
                 </label>
                 <AdminButton onClick={saveReviewMeta}>حفظ متابعة الأدمن</AdminButton>
+              </div>
+            </section>
+
+            <section className="rounded-[1.2rem] border border-[rgba(24,37,63,0.08)] bg-white p-4">
+              <div className="mb-3">
+                <h3 className="text-sm font-black text-[#10213d]">المستندات والملفات</h3>
+                <p className="mt-1 text-xs leading-6 text-[#718399]">عرض وتحميل المستندات المرفقة مع الطلب.</p>
+              </div>
+              <div className="grid gap-3">
+                {[
+                  { label: 'السيرة الذاتية (CV)', url: `https://al-rahma-recruitment.supabase.co/storage/v1/object/public/cvs/${selectedApplication.cvFileName}`, exists: !!selectedApplication.cvFileName },
+                  { label: 'صورة الرقم القومي', url: selectedApplication.nationalIdImageUrl, exists: !!selectedApplication.nationalIdImageUrl },
+                  { label: 'شهادة المؤهل', url: selectedApplication.educationCertificateImageUrl, exists: !!selectedApplication.educationCertificateImageUrl },
+                  { label: 'صورة الموقف من التجنيد', url: selectedApplication.militaryStatusImageUrl, exists: !!selectedApplication.militaryStatusImageUrl },
+                  { label: 'صورة الخدمة العامة', url: selectedApplication.publicServiceImageUrl, exists: !!selectedApplication.publicServiceImageUrl },
+                ].map((doc) => (
+                  <div key={doc.label} className="flex items-center justify-between gap-3 rounded-[1.1rem] bg-[#f5f8fc] px-4 py-3">
+                    <div className="text-xs font-bold text-[#7a8b9e]">{doc.label}</div>
+                    {doc.exists ? (
+                      <a
+                        href={doc.url || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-black text-[#2563eb] hover:underline"
+                      >
+                        <Download size={14} />
+                        عرض الملف
+                      </a>
+                    ) : (
+                      <div className="text-xs font-bold text-[#b14f4f]">غير مرفق</div>
+                    )}
+                  </div>
+                ))}
               </div>
             </section>
 

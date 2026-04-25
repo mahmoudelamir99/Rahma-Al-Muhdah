@@ -1,0 +1,37 @@
+- generic [ref=e2]:
+  - banner [ref=e5]:
+    - link "شعار رحمة المهداه رحمة المهداه" [ref=e6] [cursor=pointer]:
+      - /url: /
+      - img "شعار رحمة المهداه" [ref=e8]
+      - generic [ref=e9]: رحمة المهداه
+    - button "فتح القائمة" [ref=e10]:
+      - img [ref=e11]
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - img [ref=e16]
+        - heading "تسجيل دخول الشركات" [level=2] [ref=e19]
+        - paragraph [ref=e20]: ادخل على لوحة شركتك لإدارة الوظائف ومتابعة الطلبات والمستندات.
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]: البريد الإلكتروني
+          - generic [ref=e24]:
+            - img
+            - textbox "البريد الإلكتروني" [ref=e25]:
+              - /placeholder: company@email.com
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]: كلمة المرور
+            - link "نسيت كلمة المرور؟" [ref=e29] [cursor=pointer]:
+              - /url: /forgot-password
+          - generic [ref=e30]:
+            - img
+            - textbox "كلمة المرور" [ref=e31]:
+              - /placeholder: ••••••••
+            - button [ref=e32]:
+              - img [ref=e33]
+        - button "دخول لوحة الشركة" [ref=e36]
+      - generic [ref=e37]:
+        - generic [ref=e38]: لسه ما عندكش حساب؟
+        - link "سجل شركتك" [ref=e39] [cursor=pointer]:
+          - /url: /register

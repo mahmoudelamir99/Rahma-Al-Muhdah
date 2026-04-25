@@ -12,7 +12,7 @@ const Messages = lazy(() => import('./pages/Messages'));
 const Notifications = lazy(() => import('./pages/Notifications'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Settings = lazy(() => import('./pages/Settings'));
-const Candidates = lazy(() => import('./pages/Candidates'));
+const AuditLogs = lazy(() => import('./pages/AuditLogs'));
 
 export default function App() {
   return (
@@ -26,11 +26,11 @@ export default function App() {
             <Route path="companies" element={<Companies />} />
             <Route path="jobs" element={<Jobs />} />
             <Route path="applications" element={<Applications />} />
-            <Route path="candidates" element={<Candidates />} />
             <Route path="reports" element={<Reports />} />
             <Route path="messages" element={<Messages />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="audit-logs" element={<AuditLogs />} />
             <Route path="content" element={<Navigate to="/settings" replace />} />
             <Route path="roles" element={<Navigate to="/settings" replace />} />
             <Route path="security" element={<Navigate to="/settings" replace />} />

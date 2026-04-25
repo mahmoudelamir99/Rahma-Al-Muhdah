@@ -117,12 +117,6 @@ export default function Dashboard() {
       allowed: hasPermission('applications:view'),
     },
     {
-      id: 'candidates',
-      label: 'بيانات المرشحين',
-      path: '/candidates',
-      allowed: hasPermission('applications:view'),
-    },
-    {
       id: 'new-company',
       label: 'دعوة شركة جديدة',
       path: '/companies',

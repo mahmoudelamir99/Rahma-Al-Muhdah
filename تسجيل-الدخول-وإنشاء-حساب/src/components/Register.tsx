@@ -17,7 +17,7 @@ import PhoneInput, { PHONE_COUNTRIES } from './PhoneInput';
 import PortalShell from './PortalShell';
 
 interface RegisterProps {
-  onNavigate: (page: 'login' | 'register') => void;
+  onNavigate: (page: 'login' | 'register' | 'check-email') => void;
   redirectTo?: string;
 }
 
@@ -89,9 +89,7 @@ export default function Register({ onNavigate, redirectTo }: RegisterProps) {
           window.location.href = buildSiteUrl(nextTarget, 'company-dashboard.html');
         }, 320);
       } else if (result.requiresEmailVerification) {
-        window.setTimeout(() => {
-          onNavigate('login');
-        }, 900);
+        onNavigate('check-email');
       }
     } catch (error) {
       setStatus({

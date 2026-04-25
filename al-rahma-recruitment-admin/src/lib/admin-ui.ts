@@ -164,7 +164,7 @@ export function getFunnelSteps(applications: ApplicationRecord[]) {
     },
     {
       key: 'approved',
-      label: 'المرشحون الموافق عليهم',
+      label: 'المتقدمون الموافق عليهم',
       value: applications.filter((application) => !application.deletedAt && ['approved', 'accepted', 'hired'].includes(application.status)).length,
     },
     {

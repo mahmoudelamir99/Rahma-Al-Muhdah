@@ -93,6 +93,58 @@ function normalize(value: string | null | undefined) {
   return String(value || '').trim().toLowerCase();
 }
 
+// Cookie management helpers for session persistence across origins
+function setCookie(name: string, value: string, options: { maxAge?: number; path?: string; domain?: string } = {}) {
+  try {
+    const path = options.path || '/';
+    let cookieString = `${name}=${encodeURIComponent(value)}; path=${path}; SameSite=Lax`;
+    if (typeof options.maxAge === 'number') {
+      cookieString += `; max-age=${options.maxAge}`;
+    }
+
+    // Try to set domain to current domain to ensure sharing across ports/paths
+    if (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost') {
+      const domain = window.location.hostname;
+      cookieString += `; domain=${domain}`;
+    }
+
+    document.cookie = cookieString;
+  } catch (error) {
+    console.warn(`Failed to set cookie ${name}:`, error);
+  }
+}
+
+function getCookie(name: string): string | null {
+  try {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const separatorIndex = cookie.indexOf('=');
+      if (separatorIndex < 0) continue;
+      const cookieName = cookie.slice(0, separatorIndex).trim();
+      const cookieValue = cookie.slice(separatorIndex + 1);
+      if (cookieName === name) {
+        return decodeURIComponent(cookieValue || '');
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function removeCookie(name: string, path = '/') {
+  try {
+    let cookieString = `${name}=; path=${path}; max-age=0`;
+    if (typeof window !== 'undefined' && window.location.hostname && window.location.hostname !== 'localhost') {
+      const domain = window.location.hostname;
+      cookieString += `; domain=${domain}`;
+    }
+    document.cookie = cookieString;
+  } catch (error) {
+    console.warn(`Failed to remove cookie ${name}:`, error);
+  }
+}
+
 function normalizeCompanySocialLinks(value: unknown): CompanySocialLinks {
   const source = value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
   return {
@@ -126,14 +178,19 @@ function safeWriteJSON(key: string, value: unknown) {
 }
 
 function safeWriteSession(session: CompanySession, remember: boolean) {
+  const payload = JSON.stringify(session);
+  
+  // Always try to save to cookie first (for cross-origin sharing)
+  setCookie(AUTH_SESSION_KEY, payload, { maxAge: remember ? SESSION_TTL_MS / 1000 : undefined });
+  
+  // Also save to localStorage/sessionStorage as fallback
   const storage = remember ? window.localStorage : window.sessionStorage;
   const alternate = remember ? window.sessionStorage : window.localStorage;
-  const payload = JSON.stringify(session);
 
   try {
     storage.setItem(AUTH_SESSION_KEY, payload);
   } catch (error) {
-    console.warn('Unable to persist auth session', error);
+    console.warn('Unable to persist auth session to localStorage', error);
   }
 
   try {
@@ -144,6 +201,10 @@ function safeWriteSession(session: CompanySession, remember: boolean) {
 }
 
 function clearStoredSession() {
+  // Clear from cookie
+  removeCookie(AUTH_SESSION_KEY, '/');
+  
+  // Also clear from localStorage/sessionStorage
   try {
     window.sessionStorage.removeItem(AUTH_SESSION_KEY);
     window.localStorage.removeItem(AUTH_SESSION_KEY);
@@ -153,6 +214,17 @@ function clearStoredSession() {
 }
 
 function safeReadSession(): CompanySession | null {
+  // Try to read from cookie first (for cross-origin sharing)
+  const cookieValue = getCookie(AUTH_SESSION_KEY);
+  if (cookieValue) {
+    try {
+      return JSON.parse(cookieValue) as CompanySession;
+    } catch {
+      // Fall through to localStorage sources
+    }
+  }
+
+  // Fallback to localStorage/sessionStorage
   const sources = [window.sessionStorage, window.localStorage];
 
   for (const storage of sources) {
@@ -173,12 +245,8 @@ export function getStoredCompanySession(): CompanySession | null {
   if (!session) return null;
 
   if (!session.expiresAt || Number.isNaN(Date.parse(session.expiresAt)) || Date.now() > Date.parse(session.expiresAt)) {
-    try {
-      window.sessionStorage.removeItem(AUTH_SESSION_KEY);
-      window.localStorage.removeItem(AUTH_SESSION_KEY);
-    } catch {
-      // Ignore cleanup failures.
-    }
+    // Clear all storage locations when expired
+    clearStoredSession();
     return null;
   }
 

@@ -1,0 +1,111 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e4]:
+      - link "شعار رحمة المهداه رحمة المهداه" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "شعار رحمة المهداه" [ref=e7]
+        - generic [ref=e8]: رحمة المهداه
+      - button "فتح القائمة" [ref=e9]:
+        - img [ref=e10]
+    - main [ref=e11]:
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - img [ref=e15]
+          - heading "متابعة طلب التوظيف" [level=1] [ref=e18]
+          - paragraph [ref=e19]: أدخل رقم المتابعة أو رقم الموبايل لمعرفة حالة طلبك أو استرجاع أرقام الطلبات الخاصة بك
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - button "برقم المتابعة" [ref=e22]
+            - button "نسيت رقم الطلب؟" [ref=e23]
+          - generic [ref=e24]:
+            - generic [ref=e25]:
+              - generic [ref=e26]: رقم المتابعة (5 أرقام)
+              - generic [ref=e27]:
+                - img [ref=e28]
+                - 'textbox "مثال: 34589" [ref=e31]'
+            - button "ابحث عن طلبي" [ref=e32]:
+              - text: ابحث عن طلبي
+              - img
+    - contentinfo [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - link "شعار رحمة المهداه رحمة المهداه" [ref=e37] [cursor=pointer]:
+              - /url: /
+              - img "شعار رحمة المهداه" [ref=e39]
+              - generic [ref=e40]: رحمة المهداه
+            - paragraph [ref=e41]: منصة التوظيف الأولى للكفاءات والكوادر المميزة. نوصل الناس بالفرص الحقيقية.
+            - generic [ref=e42]:
+              - link "Facebook" [ref=e43] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e44]
+              - link "Instagram" [ref=e50] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e51]
+              - link "LinkedIn" [ref=e54] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e55]
+              - link "Website" [ref=e58] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e59]
+          - generic [ref=e62]:
+            - heading "روابط سريعة" [level=4] [ref=e63]
+            - list [ref=e64]:
+              - listitem [ref=e65]:
+                - link "تصفح الوظائف" [ref=e66] [cursor=pointer]:
+                  - /url: /jobs
+                  - text: تصفح الوظائف
+              - listitem [ref=e68]:
+                - link "سجّل شركتك" [ref=e69] [cursor=pointer]:
+                  - /url: /register
+                  - text: سجّل شركتك
+              - listitem [ref=e71]:
+                - link "تتبع طلبك" [ref=e72] [cursor=pointer]:
+                  - /url: /track
+                  - text: تتبع طلبك
+              - listitem [ref=e74]:
+                - link "من نحن" [ref=e75] [cursor=pointer]:
+                  - /url: /about
+                  - text: من نحن
+              - listitem [ref=e77]:
+                - link "تواصل معنا" [ref=e78] [cursor=pointer]:
+                  - /url: /contact
+                  - text: تواصل معنا
+          - generic [ref=e80]:
+            - heading "معلومات التواصل" [level=4] [ref=e81]
+            - list [ref=e82]:
+              - listitem [ref=e83]:
+                - img [ref=e85]
+                - generic [ref=e88]: العاشر من رمضان، الأردنية، مول الحجاز، الدور الرابع، مكتب رقم ١٠
+              - listitem [ref=e89]:
+                - img [ref=e91]
+                - link "alrahma.almohdah.recruitment@gmail.com" [ref=e94] [cursor=pointer]:
+                  - /url: mailto:alrahma.almohdah.recruitment@gmail.com
+              - listitem [ref=e95]:
+                - img [ref=e97]
+                - generic [ref=e99]: تواصل عبر البريد الإلكتروني
+          - generic [ref=e100]:
+            - heading "ساعات العمل" [level=4] [ref=e101]
+            - generic [ref=e102]:
+              - img [ref=e104]
+              - generic [ref=e107]:
+                - paragraph [ref=e108]: الأحد – الخميس
+                - paragraph [ref=e109]: ٨:٠٠ ص – ٥:٠٠ م
+            - iframe [ref=e111]:
+              - link "‏\"خرائط Google\" (يتم فتح الرابط في علامة تبويب جديدة)" [ref=f2e4] [cursor=pointer]:
+                - /url: about:invalid#zClosurez
+                - text: ‏"خرائط Google"
+                - img [ref=f2e6]
+            - link "افتح في خرائط جوجل" [ref=e112] [cursor=pointer]:
+              - /url: https://maps.app.goo.gl/qZjFsnfB6j9qP8Eu8
+              - img [ref=e113]
+              - text: افتح في خرائط جوجل
+        - generic [ref=e116]:
+          - paragraph [ref=e117]: © 2026 رحمة المهداه للتوظيف. جميع الحقوق محفوظة.
+          - generic [ref=e118]:
+            - link "سياسة الخصوصية" [ref=e119] [cursor=pointer]:
+              - /url: /privacy
+            - generic [ref=e120]: "|"
+            - link "الشروط والأحكام" [ref=e121] [cursor=pointer]:
+              - /url: /terms
+  - alert [ref=e122]

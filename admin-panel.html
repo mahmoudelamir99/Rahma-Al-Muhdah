@@ -3,354 +3,219 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
-  <meta http-equiv="refresh" content="0; url=https://rahma-al-muhdah-admin.web.app/#/dashboard" />
-  <title>لوحة وصول آمنة | الرحمة المهداه للتوظيف</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet"/>
+  <title>لوحة التحكم الداخلية | الرحمة المهداه للتوظيف</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css?v=20260410-2" />
   <style>
-    :root {
-      color-scheme: light;
-      --blue: #2563eb;
-      --blue-dark: #1e40af;
-      --gold: #f59e0b;
-      --cream: #f8f6f1;
-      --ink: #0f172a;
-      --muted: #64748b;
-      --panel: rgba(255, 255, 255, 0.9);
-    }
+    :root { color-scheme: light; --blue: #2563eb; --blue-dark: #1e40af; --gold: #f59e0b; --ink: #0f172a; --muted: #64748b; --panel: rgba(255, 255, 255, 0.94); }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Cairo", "Segoe UI", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 24%),
-        radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.16), transparent 28%),
-        linear-gradient(180deg, #f8fafc 0%, #f8f6f1 100%);
-      overflow: hidden;
-      overflow-wrap: break-word;
-      word-break: normal;
-      text-rendering: optimizeLegibility;
-    }
-    body::before,
-    body::after {
-      content: "";
-      position: fixed;
-      inset: auto;
-      border-radius: 999px;
-      filter: blur(16px);
-      opacity: 0.8;
-      pointer-events: none;
-    }
-    body::before {
-      width: 18rem;
-      height: 18rem;
-      top: -4rem;
-      right: -5rem;
-      background: rgba(37, 99, 235, 0.18);
-    }
-    body::after {
-      width: 16rem;
-      height: 16rem;
-      bottom: -5rem;
-      left: -4rem;
-      background: rgba(245, 158, 11, 0.18);
-    }
-    main {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 28px;
-    }
-    .shell {
-      width: min(100%, 1120px);
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 24px;
-      align-items: stretch;
-    }
-    .panel {
-      position: relative;
-      overflow: hidden;
-      border-radius: 32px;
-      background: var(--panel);
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.14);
-      backdrop-filter: blur(22px);
-    }
-    .hero {
-      padding: 32px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 100%;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: rgba(245, 158, 11, 0.12);
-      color: #92400e;
-      font-size: 13px;
-      font-weight: 900;
-    }
-    .logo {
-      width: 108px;
-      height: 108px;
-      display: grid;
-      place-items: center;
-      margin-bottom: 18px;
-    }
-    .logo img {
-      width: 108px;
-      height: 108px;
-      object-fit: contain;
-    }
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      line-height: 1.22;
-      font-weight: 900;
-      letter-spacing: 0;
-      text-wrap: balance;
-    }
-    .lead {
-      margin: 16px 0 0;
-      font-size: 1rem;
-      line-height: 2;
-      color: var(--muted);
-      max-width: 40rem;
-      text-wrap: pretty;
-    }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 24px;
-    }
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      min-height: 48px;
-      padding: 0 18px;
-      border-radius: 16px;
-      border: 0;
-      text-decoration: none;
-      font-weight: 900;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-    }
-    .button:hover {
-      transform: translateY(-1px);
-    }
-    .button--primary {
-      background: linear-gradient(135deg, var(--gold), #f97316);
-      color: #fff;
-      box-shadow: 0 18px 36px rgba(245, 158, 11, 0.24);
-    }
-    .button--ghost {
-      background: rgba(255, 255, 255, 0.76);
-      color: var(--ink);
-      border: 1px solid rgba(148, 163, 184, 0.22);
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 28px;
-    }
-    .stat {
-      padding: 16px;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-    }
-    .stat strong {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 1.05rem;
-      font-weight: 900;
-    }
-    .stat span {
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.7;
-      text-wrap: pretty;
-    }
-    .side {
-      padding: 28px;
-      display: grid;
-      gap: 16px;
-      align-content: start;
-    }
-    .side-card {
-      border-radius: 24px;
-      padding: 22px;
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(30, 64, 175, 0.95));
-      color: white;
-      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
-    }
-    .side-card h2 {
-      margin: 0 0 10px;
-      font-size: 1.2rem;
-      font-weight: 900;
-    }
-    .side-card p {
-      margin: 0;
-      line-height: 1.9;
-      color: rgba(255, 255, 255, 0.88);
-    }
-    .checklist {
-      display: grid;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .check {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.08);
-      color: rgba(255, 255, 255, 0.95);
-      font-size: 0.94rem;
-      line-height: 1.7;
-    }
-    .check::before {
-      content: "✓";
-      display: inline-grid;
-      place-items: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      flex: none;
-      font-weight: 900;
-    }
-    .floating {
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      padding: 18px;
-      display: grid;
-      gap: 10px;
-    }
-    .floating .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      color: var(--muted);
-      font-size: 0.92rem;
-      overflow-wrap: break-word;
-    }
-    .floating strong {
-      color: var(--ink);
-    }
-    @media (max-width: 900px) {
-      .shell {
-        grid-template-columns: 1fr;
-      }
-      .hero {
-        min-height: auto;
-      }
-      .stats {
-        grid-template-columns: 1fr;
-      }
-    }
+    body { margin: 0; min-height: 100vh; font-family: "Cairo", "Segoe UI", sans-serif; color: var(--ink); background: linear-gradient(180deg, #f8fafc 0%, #f8f6f1 100%); }
+    main { max-width: 1180px; margin: 0 auto; padding: 24px; display: grid; gap: 22px; }
+    .panel, .card { border-radius: 28px; background: var(--panel); border: 1px solid rgba(148, 163, 184, 0.24); box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08); }
+    .hero { padding: 32px; display: grid; gap: 20px; }
+    .hero h1 { margin: 0; font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; }
+    .hero p { margin: 0; color: var(--muted); line-height: 1.85; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 18px; border-radius: 16px; border: 0; font-weight: 900; text-decoration: none; cursor: pointer; transition: transform 0.2s ease; }
+    .button:hover { transform: translateY(-1px); }
+    .button--primary { background: linear-gradient(135deg, var(--gold), #f97316); color: #fff; }
+    .button--ghost { background: rgba(255,255,255,0.88); color: var(--ink); border: 1px solid rgba(148, 163, 184, 0.3); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .stat { padding: 20px; border-radius: 22px; background: white; border: 1px solid rgba(148, 163, 184, 0.14); }
+    .stat strong { display: block; margin-bottom: 6px; font-size: 1.4rem; font-weight: 900; }
+    .stat span { color: #475569; }
+    .panel-header { padding: 28px 30px 0; display: flex; justify-content: space-between; gap: 16px; }
+    .panel-header h2 { margin: 0; font-size: 1.4rem; font-weight: 900; }
+    .panel-header p { margin: 0; color: #475569; line-height: 1.8; }
+    .panel-body { padding: 0 30px 30px; display: grid; gap: 18px; }
+    .form-row { display: grid; gap: 10px; }
+    .form-row label { display: grid; gap: 10px; font-weight: 700; color: #0f172a; }
+    .form-row input, .form-row textarea { border-radius: 16px; border: 1px solid rgba(148, 163, 184, 0.24); padding: 14px; font: inherit; background: white; color: #0f172a; }
+    .form-row textarea { min-height: 120px; resize: vertical; }
+    .status-chip { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px; font-weight: 900; }
+    .status-chip--active { background: rgba(22, 163, 74, 0.12); color: #166534; }
+    .status-chip--inactive { background: rgba(148, 163, 184, 0.12); color: #334155; }
+    .application-list { display: grid; gap: 14px; }
+    .application-item { padding: 18px; border-radius: 22px; background: white; border: 1px solid rgba(148, 163, 184, 0.16); }
+    .application-item h4 { margin: 0 0 8px; font-size: 1rem; font-weight: 900; }
+    .application-item p { margin: 0; color: #475569; line-height: 1.75; }
+    @media (max-width: 900px) { .grid-3 { grid-template-columns: 1fr; } }
   </style>
-  <!-- RAHMA SEO START -->
-  <meta name="description" content="لوحة التحكم الداخلية المخصصة لإدارة المنصة والبيانات والصلاحيات.">
-  <meta name="keywords" content="لوحة التحكم, الإدارة, الرحمة المهداه للتوظيف">
-  <meta name="robots" content="noindex,nofollow">
-  <meta property="og:site_name" content="الرحمة المهداه للتوظيف">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="لوحة التحكم الرئيسية | الرحمة المهداه للتوظيف">
-  <meta property="og:description" content="لوحة التحكم الداخلية المخصصة لإدارة المنصة والبيانات والصلاحيات.">
-  <meta property="og:url" content="/admin-panel.html">
-  <meta property="og:image" content="/logo-mark.png">
-  <meta property="og:locale" content="ar_EG">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="لوحة التحكم الرئيسية | الرحمة المهداه للتوظيف">
-  <meta name="twitter:description" content="لوحة التحكم الداخلية المخصصة لإدارة المنصة والبيانات والصلاحيات.">
-  <meta name="twitter:image" content="/logo-mark.png">
-  <link rel="canonical" href="/admin-panel.html">
-<!-- RAHMA SEO END -->
+  <script src="firebase-site-config.js" defer></script>
+  <script src="site.js?v=20260410-2" defer></script>
+  <script defer>
+    const ADMIN_RUNTIME_KEY = 'rahmaAdminPublicRuntime.v1';
+    const APPLICATIONS_KEY = 'rahmaJobApplications';
+
+    const parseJsonSafe = (value) => {
+      try { return JSON.parse(value); } catch { return null; }
+    };
+
+    const readLocalRuntime = () => {
+      const raw = localStorage.getItem(ADMIN_RUNTIME_KEY);
+      return raw ? parseJsonSafe(raw) : null;
+    };
+
+    const readLocalApplications = () => {
+      const raw = localStorage.getItem(APPLICATIONS_KEY);
+      const parsed = parseJsonSafe(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    };
+
+    const renderApplicationList = (applications) => {
+      const container = document.querySelector('[data-application-list]');
+      if (!container) return;
+      container.innerHTML = applications.length ? applications.map(app => `
+        <article class="application-item">
+          <h4>${app.name || app.email || 'طلب جديد'}</h4>
+          <p>${(app.message || app.role || 'لا توجد تفاصيل إضافية').replace(/\n/g, '<br/>')}</p>
+        </article>
+      `).join('') : '<p class="help-text">لا توجد طلبات محلية محفوظة.</p>';
+    };
+
+    const updateAdminStats = (runtime) => {
+      const runtimeData = runtime || {};
+      const companies = Array.isArray(runtimeData.companies) ? runtimeData.companies.length : 0;
+      const jobs = Array.isArray(runtimeData.jobs) ? runtimeData.jobs.length : 0;
+      const applications = readLocalApplications().length;
+      const maintenanceOn = Boolean(runtimeData.settings?.maintenanceMode);
+
+      document.querySelector('[data-admin-stat="companies"]').textContent = companies;
+      document.querySelector('[data-admin-stat="jobs"]').textContent = jobs;
+      document.querySelector('[data-admin-stat="applications"]').textContent = applications;
+      const status = document.querySelector('[data-maintenance-status]');
+      if (status) {
+        status.textContent = maintenanceOn ? 'نشط' : 'متوقف';
+        status.className = `status-chip ${maintenanceOn ? 'status-chip--active' : 'status-chip--inactive'}`;
+      }
+    };
+
+    const setMaintenanceForm = (runtime) => {
+      const settings = runtime?.settings || {};
+      document.querySelector('[data-toggle-maintenance]').checked = Boolean(settings.maintenanceMode);
+      document.querySelector('[data-maintenance-reason]').value = settings.maintenanceReason || '';
+      document.querySelector('[data-maintenance-until]').value = settings.maintenanceUntil || '';
+    };
+
+    const saveSettings = () => {
+      const toggle = document.querySelector('[data-toggle-maintenance]');
+      const reason = document.querySelector('[data-maintenance-reason]');
+      const until = document.querySelector('[data-maintenance-until]');
+      const stored = readLocalRuntime() || {};
+      const updated = {
+        ...stored,
+        settings: {
+          ...(stored.settings || {}),
+          maintenanceMode: Boolean(toggle.checked),
+          maintenanceReason: reason.value.trim(),
+          maintenanceUntil: until.value,
+        },
+      };
+      localStorage.setItem(ADMIN_RUNTIME_KEY, JSON.stringify(updated));
+      updateAdminStats(updated);
+      alert('تم حفظ إعدادات الصيانة محليًا. يرجى إعادة تحميل الصفحة لتطبيقها.');
+    };
+
+    const loadSharedRuntime = async () => {
+      try {
+        const response = await fetch('admin-runtime.shared.json?_=' + Date.now());
+        if (!response.ok) return null;
+        return await response.json();
+      } catch {
+        return null;
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      let runtime = readLocalRuntime();
+      const sourceNode = document.querySelector('[data-runtime-source]');
+      if (runtime) {
+        if (sourceNode) sourceNode.textContent = 'التخزين المحلي';
+      } else {
+        runtime = await loadSharedRuntime();
+        if (runtime) {
+          if (sourceNode) sourceNode.textContent = 'الملف المشترك';
+        } else {
+          runtime = {};
+          if (sourceNode) sourceNode.textContent = 'غير متاح';
+        }
+      }
+
+      document.querySelector('[data-runtime-path]').textContent = ADMIN_RUNTIME_KEY;
+      updateAdminStats(runtime);
+      setMaintenanceForm(runtime);
+      renderApplicationList(readLocalApplications());
+
+      document.querySelector('[data-save-settings]').addEventListener('click', saveSettings);
+      document.querySelector('[data-refresh]').addEventListener('click', () => window.location.reload());
+    });
+  </script>
 </head>
 <body>
   <main>
-    <div class="shell">
-      <section class="panel hero">
+    <section class="panel hero">
+      <span class="badge">لوحة الإدارة الداخلية</span>
+      <h1>إدارة الموقع محليًا</h1>
+      <p>يمكنك مراقبة حالة النظام وتحديث إعدادات الصيانة من هنا. يتم استخدام التخزين المحلي أولاً، ثم يتم تحميل البيانات من الملف المشترك إذا لم تكن البيانات المحلية موجودة.</p>
+      <div class="actions">
+        <button class="button button--primary" type="button" data-refresh>إعادة تحميل البيانات</button>
+        <a class="button button--ghost" href="admin-login.html">العودة لبوابة الدخول</a>
+      </div>
+      <div class="grid-3">
+        <article class="stat"><strong data-admin-stat="companies">0</strong><span>شركات مسجلة</span></article>
+        <article class="stat"><strong data-admin-stat="jobs">0</strong><span>وظائف متاحة</span></article>
+        <article class="stat"><strong data-admin-stat="applications">0</strong><span>طلبات محفوظة محليًا</span></article>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
         <div>
-          <span class="badge">لوحة التحكم التنفيذية</span>
-          <div style="margin-top: 18px;" class="logo">
-            <img src="logo-mark.png" alt="الرحمة المهداه للتوظيف" />
-          </div>
-          <h1>جاري فتح لوحة التحكم الرئيسية</h1>
-          <p class="lead">
-            هذه هي بوابة الإدارة النهائية للمنصة، وتجمع بين إدارة المستخدمين والشركات والوظائف والطلبات والرسائل والأمان من مكان واحد.
-          </p>
-          <div class="actions">
-            <a class="button button--primary" href="https://rahma-al-muhdah-admin.web.app/#/dashboard">فتح لوحة التحكم</a>
-            <a class="button button--ghost" href="https://rahma-al-muhdah-admin.web.app/#/login">العودة لبوابة الدخول</a>
-          </div>
+          <h2>إعدادات الصيانة</h2>
+          <p>قم بتفعيل أو إلغاء تفعيل وضع الصيانة، ثم احفظ التغييرات محليًا.</p>
         </div>
+        <span class="status-chip status-chip--inactive" data-maintenance-status>متوقف</span>
+      </div>
+      <div class="panel-body">
+        <div class="form-row">
+          <label>
+            <span>تفعيل وضع الصيانة</span>
+            <input type="checkbox" data-toggle-maintenance />
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            <span>سبب الصيانة</span>
+            <textarea data-maintenance-reason placeholder="أدخل سبب الصيانة..."></textarea>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            <span>وقت الانتهاء المتوقع</span>
+            <input type="datetime-local" data-maintenance-until />
+          </label>
+        </div>
+        <div class="actions">
+          <button class="button button--primary" type="button" data-save-settings>حفظ الإعدادات</button>
+          <button class="button button--ghost" type="button" data-refresh>إعادة تحميل</button>
+        </div>
+        <p class="help-text">مصدر البيانات: <strong data-runtime-source>جارٍ التحميل</strong></p>
+        <p class="help-text">المفتاح المستخدم: <strong data-runtime-path></strong></p>
+      </div>
+    </section>
 
-        <div class="stats" aria-label="مزايا لوحة التحكم">
-          <div class="stat">
-            <strong>Users</strong>
-            <span>إدارة الحسابات والحظر والأرشفة والتوثيق.</span>
-          </div>
-          <div class="stat">
-            <strong>Moderation</strong>
-            <span>مراجعة الوظائف والشركات والتقديمات.</span>
-          </div>
-          <div class="stat">
-            <strong>Security</strong>
-            <span>صلاحيات دقيقة، Audit Log، وتأكيد مزدوج.</span>
-          </div>
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>الطلبات المحلية</h2>
+          <p>عرض آخر الطلبات المخزنة محليًا. سيتم عرض البيانات من التخزين المحلي في حال وجودها.</p>
         </div>
-      </section>
-
-      <aside class="panel side">
-        <div class="side-card">
-          <h2>الواجهة الجديدة مصممة للعمل اليومي الحقيقي</h2>
-          <p>
-            من هنا تستطيع إدارة كل ما يخص الموقع بشكل مباشر وواضح، مع واجهة حديثة تدعم الهاتف والديسكتوب وتمنح Super Admin التحكم الكامل.
-          </p>
-          <div class="checklist">
-            <div class="check">ربط مباشر بالموقع العام وإعدادات التشغيل</div>
-            <div class="check">لوحة responsive وتفاعلية مع انتقالات سلسة</div>
-            <div class="check">وصول آمن وآلي إلى المسار الجديد للوحة الأدمن</div>
-          </div>
-        </div>
-        <div class="floating">
-          <div class="row"><span>المسار المباشر</span><strong>/admin-dashboard</strong></div>
-          <div class="row"><span>الحالة</span><strong style="color:#16a34a;">جاهزة</strong></div>
-          <div class="row"><span>الصلاحية العليا</span><strong>Super Admin</strong></div>
-        </div>
-      </aside>
-    </div>
+      </div>
+      <div class="panel-body application-list" data-application-list></div>
+      <div class="panel-body">
+        <p class="help-text">إذا لم يتم العثور على طلبات محليًا، سيتم عرض رسالة توضيحية هنا.</p>
+      </div>
+    </section>
   </main>
-  <script>
-    window.location.replace('https://rahma-al-muhdah-admin.web.app/#/dashboard');
-  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-

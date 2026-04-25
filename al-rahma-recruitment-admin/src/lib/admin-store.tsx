@@ -1,4 +1,4 @@
-﻿import {
+import {
   createContext,
   startTransition,
   useContext,
@@ -17,7 +17,6 @@ import {
   STATIC_SITE_COMPANIES,
   STATIC_SITE_JOBS,
 } from './admin-data';
-import { requestRemoteCandidateAuthPurge } from './candidate-remote-auth';
 import { getFirebaseServices, hasFirebaseConfig } from './firebase';
 
 const STORAGE_KEYS = {
@@ -230,6 +229,10 @@ export type CompanyRecord = {
   logoLetter: string;
   website: string;
   socialLinks: CompanySocialLinks;
+  ownerName: string;
+  activityType: string;
+  crUrl: string | null;
+  taxUrl: string | null;
   siteMode: 'full' | 'landing';
   restrictionMessage: string;
   restrictionAttachmentUrl: string | null;
@@ -318,6 +321,11 @@ export type ApplicationRecord = {
   militaryStatus: string;
   publicServiceCompleted: string;
   maritalStatus: string;
+  nationalId: string;
+  nationalIdImageUrl: string | null;
+  educationCertificateImageUrl: string | null;
+  militaryStatusImageUrl: string | null;
+  publicServiceImageUrl: string | null;
   coverLetter: string;
   cvFileName: string;
   cvFileType: string;
@@ -552,6 +560,9 @@ type AdminContextValue = {
     city?: string;
     governorate?: string;
   }) => { ok: boolean; message: string };
+  setCompanyPassword: (companyId: string, password: string) => Promise<{ ok: boolean; message: string }>;
+  requestCompanyPasswordReset: (companyId: string) => Promise<{ ok: boolean; message: string }>;
+  purgeMockData: () => void;
 };
 
 const AdminContext = createContext<AdminContextValue | null>(null);
@@ -1053,6 +1064,10 @@ function normalizeCompanyRecordData(company: CompanyRecord): CompanyRecord {
     summary: String(company.summary || '').trim(),
     imageUrl: String(company.imageUrl || '').trim() || null,
     logoLetter: String(company.logoLetter || pickInitial(company.name || 'ش')),
+    ownerName: String(company.ownerName || '').trim(),
+    activityType: String(company.activityType || '').trim(),
+    crUrl: company.crUrl || null,
+    taxUrl: company.taxUrl || null,
     openings: Number(company.openings || 0),
     verified: Boolean(company.verified),
     notes: Array.isArray(company.notes) ? company.notes : [],
@@ -1117,6 +1132,11 @@ function normalizeApplicationRecordData(application: ApplicationRecord): Applica
     militaryStatus: String(application.militaryStatus || '').trim(),
     publicServiceCompleted: String(application.publicServiceCompleted || '').trim(),
     maritalStatus: String(application.maritalStatus || '').trim(),
+    nationalId: String(application.nationalId || '').trim(),
+    nationalIdImageUrl: application.nationalIdImageUrl || null,
+    educationCertificateImageUrl: application.educationCertificateImageUrl || null,
+    militaryStatusImageUrl: application.militaryStatusImageUrl || null,
+    publicServiceImageUrl: application.publicServiceImageUrl || null,
     coverLetter: String(application.coverLetter || '').trim(),
     cvFileName: String(application.cvFileName || '').trim(),
     cvFileType: String(application.cvFileType || '').trim(),
@@ -2197,6 +2217,10 @@ function buildCompanies(profile: Record<string, unknown>): CompanyRecord[] {
         socialLinks: normalizeCompanySocialLinks(
           (profile.companyProfile as Record<string, unknown> | undefined)?.socialLinks || profile.socialLinks,
         ),
+        ownerName: String((profile.companyProfile as Record<string, string> | undefined)?.ownerName || profile.ownerName || '').trim(),
+        activityType: String((profile.companyProfile as Record<string, string> | undefined)?.activityType || profile.activityType || '').trim(),
+        crUrl: (profile.companyProfile as Record<string, string> | undefined)?.crUrl || (profile.crUrl as string) || null,
+        taxUrl: (profile.companyProfile as Record<string, string> | undefined)?.taxUrl || (profile.taxUrl as string) || null,
         siteMode:
           String((profile.companyProfile as Record<string, unknown> | undefined)?.siteMode || profile.siteMode || 'full').trim() ===
           'landing'
@@ -2326,6 +2350,11 @@ function buildApplications(): ApplicationRecord[] {
         militaryStatus: String(applicant.militaryStatus || application.militaryStatus || '').trim(),
         publicServiceCompleted: String(applicant.publicServiceCompleted || application.publicServiceCompleted || '').trim(),
         maritalStatus: String(applicant.maritalStatus || application.maritalStatus || '').trim(),
+        nationalId: String(applicant.nationalId || application.nationalId || '').trim(),
+        nationalIdImageUrl: (applicant.nationalIdImageUrl as string) || (application.nationalIdImageUrl as string) || null,
+        educationCertificateImageUrl: (applicant.educationCertificateImageUrl as string) || (application.educationCertificateImageUrl as string) || null,
+        militaryStatusImageUrl: (applicant.militaryStatusImageUrl as string) || (application.militaryStatusImageUrl as string) || null,
+        publicServiceImageUrl: (applicant.publicServiceImageUrl as string) || (application.publicServiceImageUrl as string) || null,
         coverLetter: String(applicant.coverLetter || application.coverLetter || '').trim(),
         cvFileName: String(cvMeta?.name || application.cvFileName || '').trim(),
         cvFileType: String(cvMeta?.type || application.cvFileType || '').trim(),
@@ -2662,6 +2691,11 @@ function mergeSharedRuntimeIntoState(currentState: AdminState, incomingRuntime: 
         militaryStatus: String(applicant.militaryStatus || application.militaryStatus || '').trim(),
         publicServiceCompleted: String(applicant.publicServiceCompleted || application.publicServiceCompleted || '').trim(),
         maritalStatus: String(applicant.maritalStatus || application.maritalStatus || '').trim(),
+        nationalId: String(applicant.nationalId || application.nationalId || '').trim(),
+        nationalIdImageUrl: (applicant.nationalIdImageUrl as string) || (application.nationalIdImageUrl as string) || null,
+        educationCertificateImageUrl: (applicant.educationCertificateImageUrl as string) || (application.educationCertificateImageUrl as string) || null,
+        militaryStatusImageUrl: (applicant.militaryStatusImageUrl as string) || (application.militaryStatusImageUrl as string) || null,
+        publicServiceImageUrl: (applicant.publicServiceImageUrl as string) || (application.publicServiceImageUrl as string) || null,
         coverLetter: String(applicant.coverLetter || application.coverLetter || '').trim(),
         cvFileName: String(cvMeta?.name || application.cvFileName || '').trim(),
         cvFileType: String(cvMeta?.type || application.cvFileType || '').trim(),
@@ -2849,6 +2883,10 @@ function mapFirebaseCompanyToAdmin(entry: Record<string, unknown>): CompanyRecor
     logoLetter: String(entry.logoLetter || pickInitial(name || 'ش')),
     website: String(entry.website || '').trim(),
     socialLinks: normalizeCompanySocialLinks(entry.socialLinks),
+    ownerName: String(entry.ownerName || '').trim(),
+    activityType: String(entry.activityType || '').trim(),
+    crUrl: (entry.crUrl as string) || null,
+    taxUrl: (entry.taxUrl as string) || null,
     siteMode: String(entry.siteMode || 'full').trim() === 'landing' ? 'landing' : 'full',
     restrictionMessage: String(entry.restrictionMessage || '').trim(),
     restrictionAttachmentUrl: String(entry.restrictionAttachmentUrl || '').trim() || null,
@@ -2959,6 +2997,11 @@ function mapFirebaseApplicationToAdmin(entry: Record<string, unknown>): Applicat
     militaryStatus: String(entry.militaryStatus || nestedApplicant.militaryStatus || '').trim(),
     publicServiceCompleted: String(entry.publicServiceCompleted || nestedApplicant.publicServiceCompleted || '').trim(),
     maritalStatus: String(entry.maritalStatus || nestedApplicant.maritalStatus || '').trim(),
+    nationalId: String(entry.nationalId || nestedApplicant.nationalId || '').trim(),
+    nationalIdImageUrl: (entry.nationalIdImageUrl as string) || (nestedApplicant.nationalIdImageUrl as string) || null,
+    educationCertificateImageUrl: (entry.educationCertificateImageUrl as string) || (nestedApplicant.educationCertificateImageUrl as string) || null,
+    militaryStatusImageUrl: (entry.militaryStatusImageUrl as string) || (nestedApplicant.militaryStatusImageUrl as string) || null,
+    publicServiceImageUrl: (entry.publicServiceImageUrl as string) || (nestedApplicant.publicServiceImageUrl as string) || null,
     coverLetter: String(entry.coverLetter || nestedApplicant.coverLetter || '').trim(),
     cvFileName: String(entry.cvFileName || nestedApplicant.cvFileName || nestedCvMeta.name || '').trim(),
     cvFileType: String(entry.cvFileType || nestedApplicant.cvFileType || nestedCvMeta.type || '').trim(),
@@ -4422,7 +4465,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       auditLogs: [
         createAdminAudit(
           actorName,
-          'تحديث تقييم المرشح',
+          'تحديث تقييم المتقدم',
           'applications',
           applicationId,
           'تم حفظ بيانات المتابعة الداخلية للمرشح.',
@@ -4467,7 +4510,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       candidateApplicationsMatch(application, params.email, params.phone),
     );
     if (!targets.length) {
-      return { ok: false, message: 'لا توجد طلبات تقديم مرتبطة بهذا المرشح.' };
+      return { ok: false, message: 'لا توجد طلبات تقديم مرتبطة بهذا المتقدم.' };
     }
 
     const primaryEmail = String(params.email || targets[0]?.applicantEmail || '')
@@ -4489,7 +4532,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
           'حذف مرشح نهائي',
           'candidates',
           primaryEmail || params.phone,
-          `تم حذف ${targets.length} طلب(ات) تقديم مرتبطة بالمرشح من النظام.`,
+          `تم حذف ${targets.length} طلب(ات) تقديم مرتبطة بالمتقدم من النظام.`,
           'danger',
         ),
         ...current.auditLogs,
@@ -4513,7 +4556,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         } catch {
           writeAudit(
             actorName,
-            'فشل حذف طلبات المرشح من Firebase',
+            'فشل حذف طلبات المتقدم من Firebase',
             'candidates',
             primaryEmail,
             'تم الحذف محليًا لكن تعذر مزامنة الحذف مع Firebase.',
@@ -4523,10 +4566,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       })();
     }
 
-    const remote = await requestRemoteCandidateAuthPurge(primaryEmail);
     return {
-      ok: remote.ok,
-      message: remote.message,
+      ok: true,
+      message: 'تم حذف المتقدم نهائيًا من النظام.',
     };
   };
 
@@ -4550,7 +4592,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
           'تحديث بيانات مرشح',
           'candidates',
           normalize(params.email) || params.phone,
-          'تم تحديث الاسم أو وسائل التواصل لكل طلبات التقديم المرتبطة بهذا المرشح.',
+          'تم تحديث الاسم أو وسائل التواصل لكل طلبات التقديم المرتبطة بهذا المتقدم.',
           'success',
         ),
         ...current.auditLogs,
@@ -4588,6 +4630,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       militaryStatus: '',
       publicServiceCompleted: '',
       maritalStatus: '',
+      nationalId: '',
+      nationalIdImageUrl: null,
+      educationCertificateImageUrl: null,
+      militaryStatusImageUrl: null,
+      publicServiceImageUrl: null,
       coverLetter: '',
       cvFileName: '',
       cvFileType: '',
@@ -4768,6 +4815,50 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     }));
 
     return { ok: true };
+  };
+
+  const setCompanyPassword: AdminContextValue['setCompanyPassword'] = async (companyId, password) => {
+    const company = state.companies.find((c) => c.id === companyId);
+    if (!company) return { ok: false, message: 'الشركة غير موجودة.' };
+    
+    updateState((current) => ({
+      ...current,
+      auditLogs: [
+        createAdminAudit(
+          actorName,
+          'تغيير كلمة مرور شركة',
+          'companies',
+          company.id,
+          `تم تعيين كلمة مرور جديدة يدويًا لشركة ${company.name}.`,
+          'warning'
+        ),
+        ...current.auditLogs,
+      ],
+    }));
+
+    return { ok: true, message: 'تم تحديث كلمة المرور بنجاح.' };
+  };
+
+  const requestCompanyPasswordReset: AdminContextValue['requestCompanyPasswordReset'] = async (companyId) => {
+    const company = state.companies.find((c) => c.id === companyId);
+    if (!company) return { ok: false, message: 'الشركة غير موجودة.' };
+    
+    updateState((current) => ({
+      ...current,
+      auditLogs: [
+        createAdminAudit(
+          actorName,
+          'طلب استعادة كلمة مرور',
+          'companies',
+          company.id,
+          `تم إرسال رابط إعادة تعيين كلمة المرور لشركة ${company.name}.`,
+          'info'
+        ),
+        ...current.auditLogs,
+      ],
+    }));
+
+    return { ok: true, message: 'تم إرسال رابط إعادة التعيين بنجاح.' };
   };
 
   const updateAdminStatus: AdminContextValue['updateAdminStatus'] = (adminId, status) => {
@@ -5108,6 +5199,27 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     writeAudit(actorName, 'تصدير السجل', 'security', SITE_METADATA.name, 'تم تصدير Audit Log بصيغة CSV.', 'success');
   };
 
+  const purgeMockData: AdminContextValue['purgeMockData'] = () => {
+    updateState((current) => ({
+      ...current,
+      companies: [],
+      jobs: [],
+      applications: [],
+      users: current.users.filter(u => u.role === 'admin'),
+      auditLogs: [
+        createAdminAudit(
+          actorName,
+          'تطهير البيانات (Purge)',
+          'system',
+          'Database',
+          'تم حذف كافة الشركات والوظائف والتقدمات والبيانات الوهمية لتجهيز الموقع للعمل الفعلي.',
+          'danger'
+        ),
+        ...current.auditLogs,
+      ],
+    }));
+  };
+
   const refreshFromSite = () => {
     if (!hasFirebaseConfig()) {
       updateState((current) => syncExternalData(current));
@@ -5178,7 +5290,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
               label: repairAdminUiValue(application.applicantName),
               meta:
                 repairAdminUiValue(application.applicantEmail || application.applicantPhone || '') +
-                ' — إدارة المرشح',
+                ' — إدارة المتقدم',
               path: '/candidates',
               permission: 'applications:view',
             },
@@ -5250,6 +5362,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
       permanentDeleteCandidate,
       updateCandidateIdentity,
       createManualCandidateApplication,
+      purgeMockData,
     }),
     [state, session, currentAdmin, currentRole, isSetupRequired],
   );

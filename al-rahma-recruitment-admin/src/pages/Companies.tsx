@@ -1,4 +1,4 @@
-﻿import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   BriefcaseBusiness,
   Building2,
@@ -16,6 +16,9 @@ import {
   ShieldCheck,
   Trash2,
   Upload,
+  Download,
+  FileText,
+  User,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -66,6 +69,10 @@ type CompanyFormState = {
   summary: string;
   website: string;
   socialLinks: CompanySocialLinks;
+  ownerName: string;
+  activityType: string;
+  crUrl: string | null;
+  taxUrl: string | null;
   status: CompanyRecord['status'];
   verified: boolean;
   siteMode: CompanyRecord['siteMode'];
@@ -100,6 +107,10 @@ const EMPTY_FORM: CompanyFormState = {
   summary: '',
   website: '',
   socialLinks: EMPTY_SOCIAL_LINKS,
+  ownerName: '',
+  activityType: '',
+  crUrl: null,
+  taxUrl: null,
   status: 'pending',
   verified: false,
   siteMode: 'full',
@@ -283,6 +294,10 @@ function getFormState(company?: CompanyRecord | null): CompanyFormState {
       linkedin: cleanAdminText(company.socialLinks?.linkedin || ''),
       x: cleanAdminText(company.socialLinks?.x || ''),
     },
+    ownerName: cleanAdminText(company.ownerName || ''),
+    activityType: cleanAdminText(company.activityType || ''),
+    crUrl: company.crUrl || null,
+    taxUrl: company.taxUrl || null,
     status: company.status,
     verified: company.verified,
     siteMode: 'full',
@@ -316,8 +331,9 @@ export default function Companies() {
     restoreCompany,
     addNote,
     refreshFromSite,
-  } =
-    useAdmin();
+    setCompanyPassword,
+    requestCompanyPasswordReset,
+  } = useAdmin();
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -455,6 +471,10 @@ export default function Companies() {
           linkedin: cleanAdminText(company.socialLinks?.linkedin || ''),
           x: cleanAdminText(company.socialLinks?.x || ''),
         },
+        ownerName: cleanAdminText(company.ownerName || ''),
+        activityType: cleanAdminText(company.activityType || ''),
+        crUrl: company.crUrl || null,
+        taxUrl: company.taxUrl || null,
         status: company.status,
         verified: company.verified,
         siteMode: company.siteMode,
@@ -637,33 +657,12 @@ export default function Companies() {
     }
 
     setSavingCompanyPassword(true);
-
     try {
-      const adminToken = await getAuthenticatedAdminToken();
-      const response = await fetch(new URL('/api/admin/set-company-password', window.location.origin).toString(), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${adminToken}`,
-        },
-        body: JSON.stringify({
-          companyId: company.id,
-          companyName: company.name,
-          email: company.email,
-          password: nextPassword,
-        }),
-      });
-
-      const payload = (await response.json().catch(() => null)) as { ok?: boolean; message?: string } | null;
-      if (!response.ok || !payload?.ok) {
-        throw new Error(cleanAdminText(payload?.message || 'تعذر تحديث كلمة مرور الشركة الآن.'));
-      }
+      const result = await setCompanyPassword(company.id, nextPassword);
+      if (!result.ok) throw new Error(result.message);
 
       addNote('companies', company.id, `تم تعيين / تحديث كلمة مرور دخول الشركة بواسطة الأدمن للبريد ${company.email}.`);
-      setFeedback({
-        tone: 'success',
-        text: cleanAdminText(payload.message || 'تم تحديث كلمة مرور الشركة بنجاح.'),
-      });
+      setFeedback({ tone: 'success', text: result.message || 'تم تحديث كلمة مرور الشركة بنجاح.' });
       resetCompanyPasswordDialog();
     } catch (error) {
       setFeedback({
@@ -813,6 +812,10 @@ export default function Companies() {
           linkedin: normalizeUrl(formState.socialLinks.linkedin),
           x: normalizeUrl(formState.socialLinks.x),
         },
+        ownerName: formState.ownerName.trim(),
+        activityType: formState.activityType.trim(),
+        crUrl: formState.crUrl,
+        taxUrl: formState.taxUrl,
         status: formState.status,
         verified: formState.verified,
         siteMode: 'full',
@@ -1122,15 +1125,39 @@ export default function Companies() {
                           تعديل
                         </AdminButton>
                       )}
+                      {company.status === 'pending' && !company.deletedAt && (
+                        <>
+                          <AdminButton
+                            variant="primary"
+                            onClick={() => {
+                              updateCompanyStatus(company.id, 'approved');
+                              setFeedback({ tone: 'success', text: `تم اعتماد شركة ${company.name} بنجاح.` });
+                            }}
+                          >
+                            <ShieldCheck size={15} />
+                            اعتماد
+                          </AdminButton>
+                          <AdminButton
+                            variant="soft"
+                            onClick={() => {
+                              updateCompanyStatus(company.id, 'restricted');
+                              setFeedback({ tone: 'info', text: `تم رفض/إيقاف شركة ${company.name}.` });
+                            }}
+                          >
+                            <EyeOff size={15} />
+                            رفض
+                          </AdminButton>
+                        </>
+                      )}
                       <AdminButton
                         variant="danger"
                         onClick={() => {
                           softDeleteCompany(company.id);
-                          setFeedback({ tone: 'success', text: 'تم حذف الشركة نهائيًا من النظام.' });
+                          setFeedback({ tone: 'success', text: 'تم حذف الشركة من الواجهة الحالية.' });
                         }}
                       >
                         <Trash2 size={15} />
-                        حذف نهائي
+                        حذف
                       </AdminButton>
                     </div>
                   </motion.article>
@@ -1179,8 +1206,14 @@ export default function Companies() {
             <AdminField label="اسم الشركة" required>
               <AdminInput value={formState.name} onChange={(event) => setFormState((current) => ({ ...current, name: event.target.value }))} />
             </AdminField>
-            <AdminField label="البريد الإلكتروني" required>
-              <AdminInput type="email" value={formState.email} onChange={(event) => setFormState((current) => ({ ...current, email: event.target.value }))} />
+            <AdminField label="بريد الشركة" required hint="يستخدم لتسجيل الدخول والمراسلات.">
+              <AdminInput type="email" dir="ltr" value={formState.email} onChange={(event) => setFormState((current) => ({ ...current, email: event.target.value }))} />
+            </AdminField>
+            <AdminField label="اسم صاحب الشركة / المدير المسئول">
+              <AdminInput value={formState.ownerName} onChange={(event) => setFormState((current) => ({ ...current, ownerName: event.target.value }))} />
+            </AdminField>
+            <AdminField label="نوع النشاط">
+              <AdminInput value={formState.activityType} onChange={(event) => setFormState((current) => ({ ...current, activityType: event.target.value }))} />
             </AdminField>
             {!editingCompany ? (
               <>
@@ -1367,12 +1400,44 @@ export default function Companies() {
                 <div>{cleanAdminText(selectedCompany.landline || 'لا يوجد رقم أرضي')}</div>
                 <div>{cleanAdminText(selectedCompany.address || 'لا يوجد عنوان')}</div>
               </div>
-            <div className="rounded-[1rem] border border-[rgba(19,53,91,0.08)] bg-[#fbfcfe] p-3 text-sm leading-7 text-[#5e7087]">
-              <div className="mb-2 font-black text-[#17355b]">الحالة</div>
-              <div>الحالة: {getCompanyDisplayStatusLabel(selectedCompany)}</div>
-              <div>التوثيق: {selectedCompany.verified ? 'موثقة' : 'غير موثقة'}</div>
-              <div>الموقع: {selectedCompany.website ? cleanAdminText(selectedCompany.website) : 'غير مضاف'}</div>
+              <div className="rounded-[1rem] border border-[rgba(19,53,91,0.08)] bg-[#fbfcfe] p-3 text-sm leading-7 text-[#5e7087]">
+                <div className="mb-2 font-black text-[#17355b]">الحالة والتوثيق</div>
+                <div>الحالة: {getCompanyDisplayStatusLabel(selectedCompany)}</div>
+                <div>التوثيق: {selectedCompany.verified ? 'موثقة' : 'غير موثقة'}</div>
+                <div>نوع النشاط: {cleanAdminText(selectedCompany.activityType || 'غير محدد')}</div>
+                <div>المسئول: {cleanAdminText(selectedCompany.ownerName || 'غير محدد')}</div>
+                <div>الموقع: {selectedCompany.website ? cleanAdminText(selectedCompany.website) : 'غير مضاف'}</div>
+              </div>
             </div>
+
+            <div className="rounded-[1.2rem] border border-[rgba(24,37,63,0.08)] bg-white p-4">
+              <div className="mb-3">
+                <h3 className="text-sm font-black text-[#10213d]">المستندات الرسمية</h3>
+                <p className="mt-1 text-xs leading-6 text-[#718399]">السجل التجاري والبطاقة الضريبية المرفقة.</p>
+              </div>
+              <div className="grid gap-3">
+                {[
+                  { label: 'السجل التجاري', url: selectedCompany.crUrl, exists: !!selectedCompany.crUrl },
+                  { label: 'البطاقة الضريبية', url: selectedCompany.taxUrl, exists: !!selectedCompany.taxUrl },
+                ].map((doc) => (
+                  <div key={doc.label} className="flex items-center justify-between gap-3 rounded-[1.1rem] bg-[#f5f8fc] px-4 py-3">
+                    <div className="text-xs font-bold text-[#7a8b9e]">{doc.label}</div>
+                    {doc.exists ? (
+                      <a
+                        href={doc.url || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-black text-[#2563eb] hover:underline"
+                      >
+                        <Download size={14} />
+                        عرض الملف
+                      </a>
+                    ) : (
+                      <div className="text-xs font-bold text-[#b14f4f]">غير مرفق</div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
             {isCompanyDeletionRequest(selectedCompany) ? (

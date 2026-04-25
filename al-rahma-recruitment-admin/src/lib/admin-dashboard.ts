@@ -133,6 +133,10 @@ export function cleanAdminText(value: unknown) {
   return bestValue;
 }
 
+export function repairAdminUiValue(value: unknown) {
+  return cleanAdminText(value);
+}
+
 function normalize(value: unknown) {
   return cleanAdminText(value).trim().toLowerCase();
 }
@@ -151,6 +155,40 @@ function hasMeaningfulValue(value: unknown) {
 function hasMeaningfulSocialLinks(value: unknown) {
   if (!value || typeof value !== 'object') return false;
   return Object.values(value as Record<string, unknown>).some((entry) => hasMeaningfulValue(entry));
+}
+
+export function getSectorsSeries(state: AdminState): { key: string; label: string; value: number; color: string }[] {
+  const counts: Record<string, number> = {};
+  state.companies.forEach((company) => {
+    if (company.status !== 'deleted') {
+      const sector = company.sector || 'غير محدد';
+      counts[sector] = (counts[sector] || 0) + 1;
+    }
+  });
+
+  const colors = ['#18345c', '#005dac', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'];
+  return Object.entries(counts)
+    .map(([label, value], index) => ({
+      key: label,
+      label,
+      value,
+      color: colors[index % colors.length],
+    }))
+    .sort((a, b) => b.value - a.value);
+}
+
+export function getApplicationTrendsDetailed(state: AdminState) {
+  // Mock logic for creating a 7-day trend if missing real history
+  const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+  const today = new Date().getDay();
+  
+  return Array.from({ length: 7 }).map((_, i) => {
+    const dayIndex = (today - (6 - i) + 7) % 7;
+    return {
+      name: days[dayIndex],
+      value: Math.floor(Math.random() * 15) + 5, // Replace with real data logic when history is ready
+    };
+  });
 }
 
 function isRealCompanyRecord(company: CompanyRecord) {

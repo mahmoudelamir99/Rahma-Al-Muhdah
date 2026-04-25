@@ -5,9 +5,11 @@ import {
   BriefcaseBusiness,
   Building2,
   IdCard,
+  History,
   LayoutDashboard,
   MessageSquare,
   Settings2,
+  ShieldCheck,
   UsersRound,
 } from 'lucide-react';
 
@@ -47,19 +49,11 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   },
   {
     id: 'applications',
-    name: 'المرشحون',
+    name: 'طلبات التوظيف',
     path: '/applications',
     icon: UsersRound,
     permission: 'applications:view',
-    summary: 'مراجعة الطلبات وتحديث الحالات وأسباب الرفض.',
-  },
-  {
-    id: 'candidates',
-    name: 'بيانات المرشحين',
-    path: '/candidates',
-    icon: IdCard,
-    permission: 'applications:view',
-    summary: 'تعديل بيانات المتقدم أو حذف كل طلباته نهائيًا مع ربط اختياري لـ Supabase Auth.',
+    summary: 'مراجعة طلبات التقديم، تحديث الحالات، وأسباب الرفض.',
   },
   {
     id: 'reports',
@@ -91,7 +85,15 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     path: '/settings',
     icon: Settings2,
     permission: 'settings:view',
-    summary: 'إدارة النظام والمحتوى والصلاحيات.',
+    summary: 'إدارة النظام، وضع الصيانة، والصلاحيات.',
+  },
+  {
+    id: 'audit-logs',
+    name: 'سجل العمليات',
+    path: '/audit-logs',
+    icon: History,
+    permission: 'settings:view',
+    summary: 'تتبع كل الحركات الإدارية، التعديلات، وعمليات الحذف.',
   },
 ];
 

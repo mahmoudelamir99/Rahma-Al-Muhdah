@@ -1,0 +1,21 @@
+
+> next-public-site@0.1.0 dev
+> next dev --webpack --hostname 0.0.0.0 --port 3000
+
+▲ Next.js 16.2.3 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+- Environments: .env.local
+✓ Ready in 1325ms
+  next-swc build: wasm build @next/swc-wasm-nodejs
+  Skipping creating a lockfile at K:\التعديلات الجديدة\Rahma Al Muhdah\next-public-site\.next\dev\lock because we're using WASM bindings
+
+○ Compiling proxy ...
+○ Compiling / ...
+ GET / 200 in 26.9s (next.js: 23.9s, proxy.ts: 2.1s, application-code: 902ms)
+○ Compiling /login ...
+ GET /login 200 in 14.5s (next.js: 12.4s, proxy.ts: 109ms, application-code: 1979ms)
+○ Compiling /register ...
+ GET /register 200 in 14.6s (next.js: 12.3s, proxy.ts: 315ms, application-code: 1993ms)
+ GET /register 200 in 1959ms (next.js: 458ms, proxy.ts: 965ms, application-code: 536ms)
+○ Compiling /track ...

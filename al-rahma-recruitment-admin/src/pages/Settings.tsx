@@ -68,6 +68,7 @@ export default function Settings() {
     updateAdminRole,
     updateCurrentAdminProfile,
     sendNotification,
+    purgeMockData,
   } = useAdmin();
 
   const delegatedRoleId = useMemo(() => getDefaultDelegatedRoleId(state.roles.map((role) => role.id)), [state.roles]);
@@ -263,6 +264,45 @@ export default function Settings() {
               </div>
             </AdminPanel>
 
+            {settingsDraft.maintenanceMode ? (
+              <AdminPanel title="معاينة وضع الصيانة" description="هذا ما سيراه المستخدمون عند محاولة زيارة الموقع العام.">
+                <div className="overflow-hidden rounded-[1.3rem] border border-[#f2dfb6] bg-[#fffcf5] p-1 shadow-sm">
+                  <div className="flex items-center gap-2 border-b border-[#f2dfb6]/60 bg-[#fff9eb] px-4 py-2.5">
+                    <div className="flex gap-1.5">
+                      <div className="h-2.5 w-2.5 rounded-full bg-[#e3cd9a]" />
+                      <div className="h-2.5 w-2.5 rounded-full bg-[#e3cd9a]" />
+                      <div className="h-2.5 w-2.5 rounded-full bg-[#e3cd9a]" />
+                    </div>
+                    <div className="flex-1 text-center text-[10px] font-bold tracking-tight text-[#8e7a53] opacity-60">
+                      PREVIEW: ALRAHMA-RECRUITMENT.COM
+                    </div>
+                  </div>
+                  <div className="px-6 py-10 text-center">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#fef3c7] text-[#92400e]">
+                      <Clock3 size={32} />
+                    </div>
+                    <h3 className="mt-5 text-lg font-black text-[#92400e]">المنصة في وضع الصيانة</h3>
+                    <p className="mt-3 text-sm leading-6 text-[#92400e]/70">
+                      {settingsDraft.maintenanceReason || 'نحن نقوم ببعض التحديثات التقنية الآن لتحسين تجربتكم.'}
+                    </p>
+                    {settingsDraft.maintenanceUntil ? (
+                      <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#d97706]/10 px-4 py-2 text-xs font-black text-[#92400e]">
+                        نتوقع العودة حوالي: {formatDateTime(settingsDraft.maintenanceUntil)}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+                <div className="mt-4 flex items-start gap-3 rounded-[1rem] bg-[#f8fafc] px-4 py-3.5">
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#18345c] text-white">
+                    <CheckCheck size={12} />
+                  </div>
+                  <p className="text-xs leading-5 text-[#5c6f83]">
+                    يظهر هذا التنبيه لجميع الزوار ويمنع أي عمليات تسجيل أو تقديم جديدة أثناء التحديث.
+                  </p>
+                </div>
+              </AdminPanel>
+            ) : null}
+
             <AdminPanel title="مراسلات المنصة" description="إرسال رسالة أو إشعار عام وحفظه ضمن سجل الإشعارات.">
               <div className="grid gap-4">
                 <AdminField label="الفئة المستهدفة">
@@ -280,6 +320,31 @@ export default function Settings() {
                   <AdminTextarea rows={5} value={messageForm.body} onChange={(event) => setMessageForm((current) => ({ ...current, body: event.target.value }))} placeholder="اكتب الرسالة أو الإشعار الذي تريد حفظه وإرساله..." />
                 </AdminField>
                 <AdminButton onClick={handleSendNotification}><BellRing size={16} />إرسال الرسالة</AdminButton>
+              </div>
+            </AdminPanel>
+
+            <AdminPanel title="تنظيف البيانات (Danger Zone)" description="إجراءات حذف شاملة لا يمكن التراجع عنها.">
+              <div className="rounded-[1.2rem] bg-red-50/50 border border-red-100/50 px-5 py-5">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="text-sm font-black text-red-900">تطهير كافة البيانات التجريبية</div>
+                    <div className="mt-1 text-xs text-red-700/70 leading-5">
+                      سيتم حذف جميع سجلات الشركات، الوظائف، وطلبات التقديم نهائيًا. 
+                      هذا الإجراء مخصص لتجهيز النظام للبيانات الحقيقية فقط.
+                    </div>
+                  </div>
+                  <AdminButton 
+                    variant="danger" 
+                    onClick={() => {
+                      if (window.confirm('هل أنت متأكد من حذف كافة البيانات (شركات، وظائف، طلبات)؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                        purgeMockData();
+                        setFeedback({ tone: 'danger', text: 'تم تطهير قاعدة البيانات بالكامل بنجاح.' });
+                      }
+                    }}
+                  >
+                    بدء التطهير الشامل
+                  </AdminButton>
+                </div>
               </div>
             </AdminPanel>
           </div>

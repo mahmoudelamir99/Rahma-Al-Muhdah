@@ -1,0 +1,101 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e4]:
+      - link "شعار رحمة المهداه رحمة المهداه" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "شعار رحمة المهداه" [ref=e7]
+        - generic [ref=e8]: رحمة المهداه
+      - button "فتح القائمة" [ref=e9]:
+        - img [ref=e10]
+    - main [ref=e11]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - img [ref=e16]
+          - text: مستند قانوني
+        - heading "الشروط والأحكام" [level=1] [ref=e20]
+        - paragraph [ref=e21]: باستخدامك للمنصة فإنك توافق على الالتزام بقواعد الاستخدام، ودقة البيانات، وعدم إساءة استخدام خدمات التوظيف أو المحتوى المنشور.
+      - article [ref=e24]:
+        - paragraph [ref=e26]: توفر منصة الرحمة المهداه خدمات عرض الوظائف، تسجيل الشركات، استقبال طلبات التوظيف، ومتابعة حالة الطلبات. يلتزم المستخدم أو الشركة بتقديم بيانات صحيحة ومحدثة، وعدم نشر أو إرسال محتوى مضلل أو مخالف للقانون أو يمس حقوق الآخرين. تحتفظ الإدارة بحق مراجعة أو إيقاف أي حساب أو وظيفة أو طلب عند وجود مخالفة أو اشتباه في إساءة الاستخدام. كما تحتفظ المنصة بحق تعديل المحتوى أو الخدمات أو آلية التشغيل متى كان ذلك ضروريًا لتحسين الخدمة أو الامتثال للالتزامات التنظيمية. استمرار استخدام المنصة بعد أي تحديث جوهري يُعد موافقة على النسخة الأحدث من هذه الشروط.
+    - contentinfo [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - link "شعار رحمة المهداه رحمة المهداه" [ref=e31] [cursor=pointer]:
+              - /url: /
+              - img "شعار رحمة المهداه" [ref=e33]
+              - generic [ref=e34]: رحمة المهداه
+            - paragraph [ref=e35]: منصة التوظيف الأولى للكفاءات والكوادر المميزة. نوصل الناس بالفرص الحقيقية.
+            - generic [ref=e36]:
+              - link "Facebook" [ref=e37] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e38]
+              - link "Instagram" [ref=e44] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e45]
+              - link "LinkedIn" [ref=e48] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e49]
+              - link "Website" [ref=e52] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e53]
+          - generic [ref=e56]:
+            - heading "روابط سريعة" [level=4] [ref=e57]
+            - list [ref=e58]:
+              - listitem [ref=e59]:
+                - link "تصفح الوظائف" [ref=e60] [cursor=pointer]:
+                  - /url: /jobs
+                  - text: تصفح الوظائف
+              - listitem [ref=e62]:
+                - link "سجّل شركتك" [ref=e63] [cursor=pointer]:
+                  - /url: /register
+                  - text: سجّل شركتك
+              - listitem [ref=e65]:
+                - link "تتبع طلبك" [ref=e66] [cursor=pointer]:
+                  - /url: /track
+                  - text: تتبع طلبك
+              - listitem [ref=e68]:
+                - link "من نحن" [ref=e69] [cursor=pointer]:
+                  - /url: /about
+                  - text: من نحن
+              - listitem [ref=e71]:
+                - link "تواصل معنا" [ref=e72] [cursor=pointer]:
+                  - /url: /contact
+                  - text: تواصل معنا
+          - generic [ref=e74]:
+            - heading "معلومات التواصل" [level=4] [ref=e75]
+            - list [ref=e76]:
+              - listitem [ref=e77]:
+                - img [ref=e79]
+                - generic [ref=e82]: العاشر من رمضان، الأردنية، مول الحجاز، الدور الرابع، مكتب رقم ١٠
+              - listitem [ref=e83]:
+                - img [ref=e85]
+                - link "alrahma.almohdah.recruitment@gmail.com" [ref=e88] [cursor=pointer]:
+                  - /url: mailto:alrahma.almohdah.recruitment@gmail.com
+              - listitem [ref=e89]:
+                - img [ref=e91]
+                - generic [ref=e93]: تواصل عبر البريد الإلكتروني
+          - generic [ref=e94]:
+            - heading "ساعات العمل" [level=4] [ref=e95]
+            - generic [ref=e96]:
+              - img [ref=e98]
+              - generic [ref=e101]:
+                - paragraph [ref=e102]: الأحد – الخميس
+                - paragraph [ref=e103]: ٨:٠٠ ص – ٥:٠٠ م
+            - iframe [ref=e105]:
+              - link "‏\"خرائط Google\" (يتم فتح الرابط في علامة تبويب جديدة)" [ref=f2e4] [cursor=pointer]:
+                - /url: about:invalid#zClosurez
+                - text: ‏"خرائط Google"
+                - img [ref=f2e6]
+            - link "افتح في خرائط جوجل" [ref=e106] [cursor=pointer]:
+              - /url: https://maps.app.goo.gl/qZjFsnfB6j9qP8Eu8
+              - img [ref=e107]
+              - text: افتح في خرائط جوجل
+        - generic [ref=e110]:
+          - paragraph [ref=e111]: © 2026 رحمة المهداه للتوظيف. جميع الحقوق محفوظة.
+          - generic [ref=e112]:
+            - link "سياسة الخصوصية" [ref=e113] [cursor=pointer]:
+              - /url: /privacy
+            - generic [ref=e114]: "|"
+            - link "الشروط والأحكام" [ref=e115] [cursor=pointer]:
+              - /url: /terms
+  - alert [ref=e116]

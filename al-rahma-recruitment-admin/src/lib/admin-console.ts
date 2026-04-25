@@ -75,7 +75,7 @@ export const ADMIN_MAIN_NAV: AdminMainNavItem[] = [
   },
   {
     id: 'applications',
-    label: 'المرشحون',
+    label: 'طلبات التوظيف',
     path: '/applications',
     icon: UsersRound,
     permission: 'applications:view',
