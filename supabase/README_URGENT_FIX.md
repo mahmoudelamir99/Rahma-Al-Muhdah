@@ -1,54 +1,51 @@
-# 🚨 خطوات الإصلاح العاجل
+# 🚨 خطوات إصلاح قاعدة البيانات (مطلوبة قبل التشغيل)
 
-## المشكلة
-خطأ `Could not find the table 'public.companies'` يعني إن قاعدة البيانات فارغة - الجداول لم تُنشأ بعد.
+## الخطوة 1: تشغيل migration الأعمدة المفقودة
 
-## الحل (3 خطوات فقط)
-
-### الخطوة 1: تطبيق Schema قاعدة البيانات
-
-1. افتح [Supabase Dashboard](https://supabase.com/dashboard)
-2. اختر مشروعك: `ebdqqippzkwksrdngasv`
-3. اذهب إلى **SQL Editor**
-4. انسخ كامل محتوى ملف `supabase/FULL_SETUP.sql`
-5. الصقه في SQL Editor واضغط **Run**
-6. انتظر حتى تظهر رسالة "Success"
-
-### الخطوة 2: إنشاء حساب الأدمن
-
-1. في نفس SQL Editor
-2. افتح ملف `supabase/SET_ADMIN.sql`
-3. استبدل `YOUR_ADMIN_EMAIL@example.com` بإيميل الأدمن الفعلي
-4. شغّل الـ SQL
-
-### الخطوة 3: إعادة النشر على Vercel
-
-بعد تطبيق الـ schema، أعد نشر المشروعين:
-
-```bash
-# في مجلد next-public-site
-cd next-public-site
-npx vercel --prod
-
-# في مجلد next-admin-panel  
-cd next-admin-panel
-npx vercel --prod
+افتح **Supabase SQL Editor** وشغّل الملف:
+```
+supabase/migrations/add_missing_columns.sql
 ```
 
-## ملاحظات مهمة
+هذا الملف يضيف:
+- `description` لجدول `jobs`
+- `application_enabled` لجدول `jobs`  
+- `applicants_count` لجدول `jobs`
+- `candidate_name`, `candidate_email`, `candidate_phone` لجدول `applications`
 
-- **مشكلة "User already registered"**: تم إصلاحها في الكود - الآن بيظهر رسالة عربية واضحة
-- **بطء التسجيل**: تم إصلاحه - الملفات بترفع بالتوازي بدل الواحدة ورا التانية
-- **Storage Bucket**: الـ SQL بيُنشئ bucket اسمه `company-assets` تلقائياً
+## الخطوة 2: التحقق من Site URL في Supabase Auth
 
-## التحقق من نجاح الإصلاح
+1. اذهب لـ **Authentication → URL Configuration**
+2. تأكد أن **Site URL** = `https://rahma-al-muhdah.vercel.app`
+3. أضف في **Redirect URLs**:
+   - `https://rahma-al-muhdah.vercel.app/auth/callback`
+   - `https://rahma-al-muhdah.vercel.app/auth/reset-password`
+   - `http://localhost:3000/auth/callback` (للتطوير المحلي)
 
-بعد تشغيل FULL_SETUP.sql، شغّل هذا للتحقق:
+## الخطوة 3: متغيرات البيئة في Vercel
 
+### للموقع العام:
+```
+NEXT_PUBLIC_SUPABASE_URL=https://ebdqqippzkwksrdngasv.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+NEXT_PUBLIC_APP_URL=https://rahma-al-muhdah.vercel.app
+```
+
+### للوحة الإدارة:
+```
+NEXT_PUBLIC_SUPABASE_URL=https://ebdqqippzkwksrdngasv.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+NEXT_PUBLIC_APP_URL=https://rahma-al-muhdah-admin.vercel.app
+```
+
+## الخطوة 4: إنشاء حساب Admin
+
+شغّل في SQL Editor:
 ```sql
-SELECT table_name FROM information_schema.tables 
-WHERE table_schema = 'public' 
-ORDER BY table_name;
+-- بعد تسجيل حساب عادي، حوّله لـ admin
+UPDATE public.users 
+SET role = 'admin' 
+WHERE email = 'your-admin@email.com';
 ```
 
-المفروض تشوف: `admin_activity_logs`, `applications`, `audit_logs`, `companies`, `jobs`, `site_config`, `site_settings`, `users`
+أو استخدم ملف `supabase/SET_ADMIN.sql`.
